@@ -1,0 +1,45 @@
+.visa-card {
+    height: 100%;
+    justify-content: space-between;
+}
+
+.visa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.visa-title {
+    font-size: var(--font-size-lg);
+    color: var(--color-primary);
+}
+
+.visa-price {
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    color: var(--color-text-main);
+}
+
+.visa-desc {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.visa-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-muted);
+}

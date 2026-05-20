@@ -1,0 +1,73 @@
+.visa-fee-card {
+    background: white;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.visa-fee-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.visa-fee-card.selected {
+    border-color: #3b82f6;
+    background-color: #f0f7ff;
+    box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.visa-fee-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.visa-fee-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.selected-badge {
+    background: #3b82f6;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 100px;
+    font-weight: 500;
+}
+
+.visa-fee-amount {
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.visa-fee-amount .currency {
+    font-size: 1.25rem;
+    font-weight: 500;
+    vertical-align: top;
+}
+
+.visa-fee-amount .amount {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.visa-fee-details {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}

@@ -1,0 +1,5 @@
+import logo from "../../assets/logo.png";
+<Link to="/" className="navbar-brand">
+  <img src={logo} alt="Visa Matrix Logo" />
+  <span>Visa Matrix</span>
+</Link>

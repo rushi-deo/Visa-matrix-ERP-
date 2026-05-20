@@ -1,0 +1,122 @@
+.footer {
+    background-color: #06162f;
+    /* Dark Navy Footer */
+    border-top: none;
+    /* Removed border to integrate perfectly with dark designs or standout */
+    padding: 64px 0 32px;
+    margin-top: auto;
+    color: #cfd6e4;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+@media (min-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+    }
+}
+
+.footer-brand {
+    max-width: 320px;
+}
+
+/* Footer Logo logic should match navbar but text is white here */
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.footer-logo img {
+    height: 32px;
+    /* Assuming logo image is used */
+    /* If SVG/Icon used instead in code, adapt. Usually reused component */
+    filter: brightness(0) invert(1);
+    /* Make logo white if it's a black image, or rely on src */
+}
+
+.footer-logo span {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.footer-description {
+    color: #cfd6e4;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.footer-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #ffffff;
+    /* White headings */
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-links a {
+    color: #cfd6e4;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+    /* White on hover */
+}
+
+.social-icons {
+    display: flex;
+    gap: 16px;
+}
+
+.social-icons a {
+    color: #cfd6e4;
+    transition: color 0.2s ease;
+}
+
+.social-icons a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    padding-top: 32px;
+    border-top: 1px solid rgba(11, 44, 95, 0.5);
+    /* Subtle divider #0b2c5f transparent */
+    text-align: center;
+    color: #cfd6e4;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}

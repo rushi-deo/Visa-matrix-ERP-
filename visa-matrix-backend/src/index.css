@@ -1,0 +1,121 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-slate-700/50;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-slate-950 text-slate-200 antialiased;
+    font-family: "IBM Plex Sans", sans-serif;
+    background-image:
+      radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 30%),
+      radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 28%),
+      linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  ::selection {
+    background: rgba(59, 130, 246, 0.35);
+    color: #f8fafc;
+  }
+}
+
+@layer components {
+  .app-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at center, black, transparent 85%);
+  }
+
+  .card-panel {
+    @apply rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-panel backdrop-blur-sm;
+  }
+
+  .card-header {
+    @apply mb-4 flex items-start justify-between gap-3;
+  }
+
+  .page-title {
+    @apply text-3xl font-bold tracking-tight text-slate-50;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-slate-400;
+  }
+
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-[0.32em] text-slate-500;
+  }
+
+  .status-pill {
+    @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold;
+  }
+
+  .table-shell {
+    @apply overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-900/80 shadow-panel;
+  }
+}
+
+@layer utilities {
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, 0.75) transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.75);
+    border-radius: 9999px;
+  }
+
+  .bg-app-base {
+    background-color: #0f172a;
+  }
+
+  .bg-app-card {
+    background-color: #1e293b;
+  }
+
+  .text-app-text {
+    color: #e2e8f0;
+  }
+}

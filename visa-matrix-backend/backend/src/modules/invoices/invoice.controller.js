@@ -1,0 +1,52 @@
+import supabase from "../../config/supabase.js";
+
+export const createInvoice = async (req, res) => {
+  try {
+    const { customer_id, amount, status } = req.body;
+
+    console.log("Incoming invoice payload:", req.body);
+
+    if (!customer_id || !amount) {
+      return res.status(400).json({
+        success: false,
+        error: "customer_id and amount are required"
+      });
+    }
+
+    const { data, error } = await supabase
+      .from('invoices')
+      .insert([
+        {
+          customer_id,
+          subtotal: amount,
+          tax_amount: 0,
+          total_amount: amount,
+          status: status || 'pending'
+        }
+      ])
+      .select('*');
+
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+      return res.status(400).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+    console.log("Inserted invoice:", data);
+
+    return res.status(201).json({
+      success: true,
+      message: "Invoice created successfully",
+      data: data[0]
+    });
+
+  } catch (err) {
+    console.error("Server Error:", err);
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error"
+    });
+  }
+};

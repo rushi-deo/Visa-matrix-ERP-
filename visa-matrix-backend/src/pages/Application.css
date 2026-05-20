@@ -1,0 +1,221 @@
+/* Application Container */
+.application-container {
+    max-width: 900px !important;
+}
+
+.mb-xl {
+    margin-bottom: var(--spacing-xl);
+}
+
+.step-card-wrapper {
+    padding: 2rem;
+    min-height: 400px;
+}
+
+.step-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Country Selection Grid */
+.countries-grid-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.country-select-card {
+    border: 2px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.country-select-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.country-select-card.selected {
+    border-color: #3b82f6;
+    background-color: #f0f7ff;
+}
+
+.card-flag img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.country-name {
+    display: block;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+}
+
+.check-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #3b82f6;
+    fill: #f0f7ff;
+}
+
+/* Visa Types Grid */
+.visa-fees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.header-flag {
+    width: 40px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.empty-state-card {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+    background: #f8fafc;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.empty-state-card svg {
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+/* Summary Step */
+.summary-step {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.summary-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
+}
+
+.requirements-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.requirements-card h3 {
+    margin: 0 0 1rem;
+}
+
+.requirements-card p {
+    margin: 0;
+    color: #64748b;
+}
+
+.requirements-card ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.requirements-card li {
+    padding: 0.35rem 0;
+    color: #1a1a1a;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.summary-row.total {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    font-size: 1.25rem;
+    border-top: 2px dashed #e2e8f0;
+}
+
+.summary-divider {
+    height: 1px;
+    background: #e1e4e8;
+    margin: 0.5rem 0;
+}
+
+.summary-row .label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.summary-row .value {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.value-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.2rem;
+}

@@ -1,0 +1,16 @@
+export const countryCoordinates: Record<string, { x: number; y: number }> = {
+  "United States": { x: 24, y: 30 },
+  Canada: { x: 20, y: 18 },
+  Mexico: { x: 20, y: 40 },
+  Brazil: { x: 34, y: 62 },
+  "United Kingdom": { x: 48, y: 23 },
+  France: { x: 50, y: 28 },
+  Germany: { x: 53, y: 24 },
+  Nigeria: { x: 51, y: 48 },
+  Kenya: { x: 57, y: 54 },
+  UAE: { x: 63, y: 42 },
+  India: { x: 68, y: 46 },
+  China: { x: 75, y: 32 },
+  Japan: { x: 84, y: 31 },
+  Australia: { x: 82, y: 70 },
+};

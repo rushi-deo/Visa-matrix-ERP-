@@ -1,0 +1,115 @@
+.file-uploader-wrapper {
+    margin-bottom: var(--spacing-lg);
+}
+
+.uploader-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+}
+
+.text-danger {
+    color: var(--color-danger);
+}
+
+.uploader-area {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    text-align: center;
+    background-color: var(--color-surface);
+    transition: all var(--transition-fast);
+}
+
+.uploader-area.drag-over {
+    border-color: var(--color-primary);
+    background-color: rgba(0, 51, 102, 0.05);
+    /* very light primary */
+}
+
+.uploader-icon {
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-sm);
+}
+
+.uploader-text {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.uploader-btn {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.uploader-btn:hover {
+    text-decoration: none;
+}
+
+.file-list {
+    margin-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm);
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    overflow: hidden;
+}
+
+.file-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+@media (min-width: 768px) {
+    .file-name {
+        max-width: 300px;
+    }
+}
+
+.file-size {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.file-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.status-uploading {
+    color: var(--color-secondary);
+    font-size: var(--font-size-xs);
+}
+
+.remove-btn {
+    color: var(--color-text-muted);
+    padding: 2px;
+}
+
+.remove-btn:hover {
+    color: var(--color-danger);
+}
