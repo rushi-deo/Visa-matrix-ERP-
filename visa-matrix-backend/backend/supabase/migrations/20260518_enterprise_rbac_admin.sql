@@ -112,6 +112,5 @@ insert into public.role_permissions (role_id, permission_id)
 select roles.id, permissions.id
 from public.roles
 cross join public.permissions
-where lower(roles.code) in ('admin', 'super_admin')
-   or lower(roles.name) in ('admin', 'super admin', 'super_admin')
+where lower(roles.name) in ('admin', 'super admin', 'super_admin')
 on conflict (role_id, permission_id) do nothing;

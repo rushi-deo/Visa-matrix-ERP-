@@ -9,7 +9,7 @@ export const getUserRole = async (userId) => {
   try {
     const { data, error } = await supabase
       .from("user_roles")
-      .select("role_id, roles(id, code, name)")
+      .select("role_id, roles(id, name)")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -22,7 +22,7 @@ export const getUserRole = async (userId) => {
       return null;
     }
 
-    return data.roles.name || data.roles.code;
+    return data.roles.name;
   } catch (error) {
     console.error("Error in getUserRole:", error);
     return null;
@@ -36,7 +36,7 @@ export const getUserRoleWithDetails = async (userId) => {
   try {
     const { data, error } = await supabase
       .from("user_roles")
-      .select("id, role_id, assigned_at, roles(id, code, name, description)")
+      .select("id, role_id, assigned_at, roles(id, name, description)")
       .eq("user_id", userId)
       .maybeSingle();
 
