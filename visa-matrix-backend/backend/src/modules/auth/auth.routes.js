@@ -16,13 +16,13 @@ router.post(
   "/register",
   authRateLimiter,
   requestValidator({ body: registerSchema }),
-  registerUser
+  registerUser,
 );
 router.post(
   "/login",
   authRateLimiter,
   requestValidator({ body: loginSchema }),
-  loginUser
+  loginUser,
 );
 router.post("/logout", authenticateToken, logoutUser);
 router.get("/me", authenticateToken, getMe);

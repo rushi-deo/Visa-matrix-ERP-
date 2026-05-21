@@ -20,7 +20,9 @@ export const getRolePermissions = async (roleId) => {
       .filter((item) => item.permissions)
       .map((item) => item.permissions)
       .sort((first, second) =>
-        `${first.module}:${first.action}`.localeCompare(`${second.module}:${second.action}`),
+        `${first.module}:${first.action}`.localeCompare(
+          `${second.module}:${second.action}`,
+        ),
       );
   } catch (error) {
     console.error("Error in getRolePermissions:", error);

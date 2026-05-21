@@ -3,10 +3,7 @@ import env from "../config/env.js";
 import supabase from "../config/supabase.js";
 
 const normalizeRole = (role = "") =>
-  String(role)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "_");
+  String(role).trim().toLowerCase().replace(/\s+/g, "_");
 
 const normalizeRequiredPermissions = (requiredPermissions = []) => {
   if (
@@ -41,7 +38,10 @@ const loadUserAccessProfile = async (userId, decoded) => {
     console.error("Error loading access profile:", profileError);
   }
 
-  if (profile && (profile.is_active === false || profile.status === "inactive")) {
+  if (
+    profile &&
+    (profile.is_active === false || profile.status === "inactive")
+  ) {
     return {
       blocked: true,
       message: "User account is inactive",
@@ -75,10 +75,16 @@ const loadUserAccessProfile = async (userId, decoded) => {
       userId,
       authUserId: profile?.auth_user_id || decoded.authUserId || null,
       email: profile?.email || decoded.email,
-      role: assignedRole?.name || assignedRole?.code || profile?.role || decoded.role,
-      roleCode: assignedRole?.code || normalizeRole(profile?.role || decoded.role),
+      role:
+        assignedRole?.name ||
+        assignedRole?.code ||
+        profile?.role ||
+        decoded.role,
+      roleCode:
+        assignedRole?.code || normalizeRole(profile?.role || decoded.role),
       roleId,
-      organization_id: profile?.organization_id || decoded.organization_id || null,
+      organization_id:
+        profile?.organization_id || decoded.organization_id || null,
       permissions,
     },
   };
@@ -88,7 +94,7 @@ const loadUserAccessProfile = async (userId, decoded) => {
  * Authenticate User Middleware
  * Validates JWT token and extracts user info (userId, email, role, permissions)
  * Attaches decoded user to req.user and req.auth
- * 
+ *
  * Usage: router.use(authenticateToken)
  */
 export const authenticateToken = async (req, res, next) => {
@@ -150,7 +156,7 @@ export const authenticateToken = async (req, res, next) => {
  * Authorization Middleware - Check User Roles
  * Verifies user has one of the required roles
  * Must be used after authenticateToken
- * 
+ *
  * Usage: router.get("/admin", authenticateToken, authorizeRoles("Admin", "Super Admin"), handler)
  */
 export const authorizeRoles = (...allowedRoles) => {
@@ -194,7 +200,7 @@ export const authorizeRoles = (...allowedRoles) => {
  * Verifies user has at least one of the required permissions from JWT
  * Super Admin role grants all permissions automatically
  * Must be used after authenticateToken
- * 
+ *
  * Usage: router.get("/users", authenticateToken, authorizePermissions("users:view"), handler)
  */
 export const authorizePermissions = (...requiredPermissions) => {
@@ -221,7 +227,7 @@ export const authorizePermissions = (...requiredPermissions) => {
 
       // Check if user has at least one required permission
       const hasPermission = normalizedRequiredPermissions.some((permission) =>
-        userPermissions.includes(permission)
+        userPermissions.includes(permission),
       );
 
       if (!hasPermission) {
@@ -246,7 +252,7 @@ export const authorizePermissions = (...requiredPermissions) => {
  * Authorization Middleware - Require Super Admin
  * Convenience middleware for super admin-only operations
  * Must be used after authenticateToken
- * 
+ *
  * Usage: router.delete("/system/reset", authenticateToken, requireSuperAdmin, handler)
  */
 export const requireSuperAdmin = (req, res, next) => {
@@ -258,7 +264,11 @@ export const requireSuperAdmin = (req, res, next) => {
       });
     }
 
-    if (!["super_admin", "super admin"].includes(normalizeRole(req.user.role || req.user.roleCode))) {
+    if (
+      !["super_admin", "super admin"].includes(
+        normalizeRole(req.user.role || req.user.roleCode),
+      )
+    ) {
       return res.status(403).json({
         success: false,
         message: "Super Admin access required",

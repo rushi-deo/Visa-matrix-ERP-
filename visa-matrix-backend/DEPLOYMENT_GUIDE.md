@@ -35,6 +35,7 @@ supabase db show
 4. Execute
 
 The migration will:
+
 - Create `permissions` table (40+ system permissions)
 - Create `user_roles` table
 - Create `role_permissions` table
@@ -65,12 +66,14 @@ SELECT COUNT(*) FROM public.role_permissions;
 ## Step 3: Deploy Code Changes
 
 ### Code Updates
+
 1. Pull all changes from git
 2. `backend/src/middleware/rbac.middleware.js` - NEW
 3. `backend/src/middleware/index.js` - NEW
 4. Updated 8 existing files (see IMPLEMENTATION_SUMMARY.md)
 
 ### Install/Verify Dependencies
+
 ```bash
 cd backend
 npm install
@@ -78,6 +81,7 @@ npm install
 ```
 
 ### Restart Backend
+
 ```bash
 # Development
 npm run dev
@@ -102,6 +106,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 ```
 
 **Expected Response**:
+
 ```json
 {
   "success": true,
@@ -118,6 +123,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 Copy the token and verify at https://jwt.io using your JWT_SECRET
 
 **Expected Payload**:
+
 ```json
 {
   "sub": "user-uuid",
@@ -136,6 +142,7 @@ curl -X GET http://localhost:3000/api/auth/me \
 ```
 
 **Expected Response**:
+
 ```json
 {
   "success": true,
@@ -176,6 +183,7 @@ import authorizePermissions from "../../middleware/permissionMiddleware.js";
 ```
 
 Test one existing route using old middleware:
+
 ```bash
 curl -X GET http://localhost:3000/api/users \
   -H "Authorization: Bearer <TOKEN>"
@@ -188,6 +196,7 @@ Should work as before ✅
 ## Step 6: Monitor Logs
 
 Check for errors:
+
 ```bash
 # In another terminal
 tail -f backend/backend-dev.log
@@ -199,6 +208,7 @@ tail -f backend/backend-dev.log
 ```
 
 Common issues:
+
 - "Invalid token" → JWT_SECRET mismatch
 - "Permission denied" → user_roles entry missing
 - "Token expired" → JWT_EXPIRES_IN too short
@@ -212,16 +222,16 @@ Common issues:
 ```javascript
 // Store JWT and permissions
 const response = await loginAPI(email, password);
-localStorage.setItem('token', response.token);
-localStorage.setItem('permissions', JSON.stringify(response.permissions || []));
+localStorage.setItem("token", response.token);
+localStorage.setItem("permissions", JSON.stringify(response.permissions || []));
 ```
 
 ### Update Frontend to Use /api/auth/me
 
 ```javascript
 // On app startup
-const response = await fetch('/api/auth/me', {
-  headers: { Authorization: `Bearer ${token}` }
+const response = await fetch("/api/auth/me", {
+  headers: { Authorization: `Bearer ${token}` },
 });
 const { permissions } = await response.data;
 
@@ -233,14 +243,12 @@ setUserPermissions(permissions);
 
 ```javascript
 const menuItems = [
-  { title: 'Users', route: '/users', permission: 'users:view' },
-  { title: 'Invoices', route: '/invoices', permission: 'invoices:view' },
-  { title: 'Reports', route: '/reports', permission: 'reports:view' },
+  { title: "Users", route: "/users", permission: "users:view" },
+  { title: "Invoices", route: "/invoices", permission: "invoices:view" },
+  { title: "Reports", route: "/reports", permission: "reports:view" },
 ];
 
-return menuItems.filter(item => 
-  userPermissions.includes(item.permission)
-);
+return menuItems.filter((item) => userPermissions.includes(item.permission));
 ```
 
 ---
@@ -353,7 +361,7 @@ A: Add entries to `user_roles` table mapping users to roles in `roles` table.
 ✅ /api/auth/me returns permissions  
 ✅ Protected routes enforce permissions  
 ✅ Frontend can access permission list  
-✅ Role-based sidebar works  
+✅ Role-based sidebar works
 
 ---
 
@@ -362,11 +370,13 @@ A: Add entries to `user_roles` table mapping users to roles in `roles` table.
 For issues during deployment:
 
 1. **Check Logs**
+
    ```bash
    tail -f backend/backend-dev.log | grep -i auth
    ```
 
 2. **Verify Database**
+
    ```sql
    SELECT * FROM public.permissions LIMIT 5;
    SELECT * FROM public.user_roles LIMIT 5;
@@ -379,10 +389,11 @@ For issues during deployment:
    - Check expiration time
 
 4. **Debug Middleware**
+
    ```javascript
    // Add to rbac.middleware.js
-   console.log('Auth user:', req.user);
-   console.log('Permissions:', req.user?.permissions);
+   console.log("Auth user:", req.user);
+   console.log("Permissions:", req.user?.permissions);
    ```
 
 5. **Check Imports**

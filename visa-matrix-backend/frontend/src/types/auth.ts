@@ -68,6 +68,7 @@ export type NavigationItem = {
   to: string;
   roles: FrontendRole[];
   requiredPermission?: Permission;
+  module?: string; // Added module property
 };
 
 export type Role = {

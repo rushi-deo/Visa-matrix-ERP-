@@ -15,20 +15,30 @@ export default function SidebarNav({ open, onClose }: SidebarNavProps) {
   const { hasAnyRole, user } = useAuth();
   const { can } = usePermissions();
 
+  console.log("User Role:", user?.role || "No user");
+  console.log("User Permissions:", user?.permissions || "No permissions");
+
   // Filter navigation items based on role and permissions
   const visibleItems = SIDEBAR_NAVIGATION.filter((item) => {
-    // Check if user has the required role
+    if (!user) {
+      console.warn("User is null, skipping filtering.");
+      return false;
+    }
+
+    if (item.module === "hr") return true; // Temporary bypass for HR
+
     if (!hasAnyRole(item.roles)) {
       return false;
     }
 
-    // Check if user has the required permission (if specified)
     if (item.requiredPermission && !can(item.requiredPermission)) {
       return false;
     }
 
     return true;
   });
+
+  console.log("Filtered Navigation Items:", visibleItems);
 
   return (
     <>

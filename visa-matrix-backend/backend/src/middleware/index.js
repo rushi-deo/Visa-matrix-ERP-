@@ -1,7 +1,7 @@
 /**
  * RBAC Middleware Index
  * Central export for all authentication and authorization middleware
- * 
+ *
  * Replaces:
  * - auth.js
  * - authMiddleware.js
@@ -10,10 +10,10 @@
  * - authorizeRoles.js
  * - permissionMiddleware.js
  * - permission.middleware.js
- * 
+ *
  * Usage:
  * import { authenticateToken, authorizeRoles, authorizePermissions } from '../../middleware/index.js';
- * 
+ *
  * router.get('/admin', authenticateToken, authorizeRoles('Admin'), handler);
  * router.get('/users', authenticateToken, authorizePermissions('users:view'), handler);
  */

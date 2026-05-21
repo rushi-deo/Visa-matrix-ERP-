@@ -23,13 +23,17 @@ export const logoutUser = asyncHandler(async (_req, res) => {
 
 export const getMe = asyncHandler(async (req, res) => {
   const data = await getCurrentUser(req.auth);
-  
+
   // Return user with role and permissions for frontend dynamic UI
-  return sendSuccess(res, {
-    user: data,
-    role: req.user?.role || req.auth?.role,
-    permissions: req.user?.permissions || req.auth?.permissions || [],
-  }, {
-    message: "Current user retrieved successfully.",
-  });
+  return sendSuccess(
+    res,
+    {
+      user: data,
+      role: req.user?.role || req.auth?.role,
+      permissions: req.user?.permissions || req.auth?.permissions || [],
+    },
+    {
+      message: "Current user retrieved successfully.",
+    },
+  );
 });
