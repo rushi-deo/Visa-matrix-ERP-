@@ -12,7 +12,7 @@
  * - permission.middleware.js
  *
  * Usage:
- * import { authenticateToken, authorizeRoles, authorizePermissions } from '../../middleware/index.js';
+ * import { authenticateToken, authorizeRoles, authorizePermissions } from './index.js';
  *
  * router.get('/admin', authenticateToken, authorizeRoles('Admin'), handler);
  * router.get('/users', authenticateToken, authorizePermissions('users:view'), handler);

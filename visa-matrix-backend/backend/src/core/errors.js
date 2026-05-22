@@ -25,6 +25,13 @@ export class ForbiddenError extends AppError {
   }
 }
 
+/** Alias for enterprise auth/RBAC callers expecting AuthorizationError */
+export class AuthorizationError extends ForbiddenError {
+  constructor(message = "Access denied.", details = null) {
+    super(message, details);
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(message = "Resource not found.", details = null) {
     super(message, 404, details);

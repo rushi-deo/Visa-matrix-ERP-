@@ -12,7 +12,7 @@ export default authenticateUser;
 /**
  * DEPRECATED: Use authenticateToken from rbac.middleware.js instead
  * This legacy function is kept for reference but uses undefined dependencies.
- * Use: import { authenticateToken } from "../../middleware/rbac.middleware.js";
+ * Use: import { authenticateToken } from "./rbac.middleware.js";
  */
 // export const authenticate = async (req, _res, next) => {
 //   try {

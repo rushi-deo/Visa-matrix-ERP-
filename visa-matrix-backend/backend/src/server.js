@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "node:url";
 
 dotenv.config({
-  path: path.resolve(process.cwd(), "backend/.env"),
+  path: path.resolve(process.cwd(), ".env"),
 });
 
 import cors from "cors";
@@ -38,6 +38,7 @@ import pdfRoutes from "./routes/pdf.routes.js";
 import testSecureRoutes from "./routes/testSecureRoutes.js";
 import validationRoutes from "./routes/validation.js";
 import visaFeesRoutes from "./routes/visaFees.routes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { globalRateLimiter } from "./middleware/rateLimiter.js";
 import { requestLogger } from "./middleware/requestLogger.js";
@@ -153,6 +154,9 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/pdf`, pdfRoutes);
   app.use(`${env.apiPrefix}/test`, testSecureRoutes);
   app.use(`${env.apiPrefix}/visa-fees`, visaFeesRoutes);
+  
+  // Enterprise Auth & Access Control Routes
+  app.use(`${env.apiPrefix}/employees`, employeeRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

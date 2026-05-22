@@ -1,8 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+/**
+ * Legacy Supabase client — prefer ./supabase.js for new code.
+ * Re-exports the canonical client so older services keep working.
+ */
+import supabase from "./supabase.js";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
+export { supabase };
 export default supabase;
