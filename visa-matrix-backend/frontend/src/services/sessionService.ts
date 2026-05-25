@@ -3,10 +3,30 @@
  * Handles session tracking, validation, and active session management
  */
 
-import { createClient } from "@supabase/supabase-js";
-import env from "../config/env";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
+  | string
+  | undefined;
+
+function getSupabaseClient(): SupabaseClient | null {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey);
+}
+
+const supabase = getSupabaseClient();
+
+function requireSupabase(): SupabaseClient {
+  if (!supabase) {
+    throw new Error("Supabase is not configured for session tracking.");
+  }
+
+  return supabase;
+}
 
 interface SessionData {
   id: string;
@@ -31,11 +51,12 @@ export async function createSession(
   token: string
 ): Promise<SessionData> {
   try {
+    const client = requireSupabase();
     const tokenHash = await hashToken(token);
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours
 
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("sessions")
       .insert([
         {
@@ -67,7 +88,7 @@ export async function createSession(
  */
 export async function getActiveSessions(userId: string): Promise<SessionData[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await requireSupabase()
       .from("sessions")
       .select("*")
       .eq("user_id", userId)
@@ -88,7 +109,7 @@ export async function getActiveSessions(userId: string): Promise<SessionData[]> 
  */
 export async function updateSessionActivity(sessionId: string): Promise<void> {
   try {
-    await supabase
+    await requireSupabase()
       .from("sessions")
       .update({
         last_activity_at: new Date().toISOString(),
@@ -104,7 +125,7 @@ export async function updateSessionActivity(sessionId: string): Promise<void> {
  */
 export async function invalidateSession(sessionId: string): Promise<void> {
   try {
-    await supabase
+    await requireSupabase()
       .from("sessions")
       .update({
         is_active: false,
@@ -121,7 +142,7 @@ export async function invalidateSession(sessionId: string): Promise<void> {
  */
 export async function invalidateAllSessions(userId: string): Promise<void> {
   try {
-    await supabase
+    await requireSupabase()
       .from("sessions")
       .update({
         is_active: false,
@@ -139,7 +160,7 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
  */
 export async function isSessionValid(sessionId: string): Promise<boolean> {
   try {
-    const { data } = await supabase
+    const { data } = await requireSupabase()
       .from("sessions")
       .select("*")
       .eq("id", sessionId)
@@ -162,7 +183,7 @@ export async function getLoginHistory(
   limit: number = 10
 ): Promise<any[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await requireSupabase()
       .from("login_history")
       .select("*")
       .eq("user_id", userId)
@@ -230,7 +251,7 @@ export async function logLoginAttempt(
   reason?: string
 ): Promise<void> {
   try {
-    await supabase.from("login_history").insert([
+    await requireSupabase().from("login_history").insert([
       {
         user_id: userId,
         email,
@@ -254,7 +275,7 @@ export async function logLoginAttempt(
  */
 export async function isAccountLocked(userId: string): Promise<boolean> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await requireSupabase()
       .from("profiles")
       .select("is_locked, locked_until")
       .eq("id", userId)
@@ -268,7 +289,7 @@ export async function isAccountLocked(userId: string): Promise<boolean> {
         return true;
       }
       // Unlock if time has passed
-      await supabase
+      await requireSupabase()
         .from("profiles")
         .update({ is_locked: false, locked_until: null })
         .eq("id", userId);
@@ -289,7 +310,7 @@ export async function lockAccount(userId: string, minutes: number = 30): Promise
     const lockedUntil = new Date();
     lockedUntil.setMinutes(lockedUntil.getMinutes() + minutes);
 
-    await supabase
+    await requireSupabase()
       .from("profiles")
       .update({
         is_locked: true,
@@ -308,7 +329,7 @@ export async function lockAccount(userId: string, minutes: number = 30): Promise
  */
 export async function incrementFailedLoginAttempts(userId: string): Promise<number> {
   try {
-    const { data, error } = await supabase.rpc(
+    const { data, error } = await requireSupabase().rpc(
       "increment_failed_login_attempts",
       { user_id: userId }
     );
@@ -332,7 +353,7 @@ export async function incrementFailedLoginAttempts(userId: string): Promise<numb
  */
 export async function resetFailedLoginAttempts(userId: string): Promise<void> {
   try {
-    await supabase
+    await requireSupabase()
       .from("profiles")
       .update({ failed_login_attempts: 0 })
       .eq("id", userId);

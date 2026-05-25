@@ -3,6 +3,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import LoadingState from "./components/common/LoadingState";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import { UnauthorizedPage } from "./components/common/ProtectedRouteNew";
+import RootRedirect from "./components/common/RootRedirect";
 import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
@@ -25,10 +27,11 @@ const DocumentVerification = lazy(() => import("./pages/DocumentVerification"));
 const Documents = lazy(() => import("./pages/Documents"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const HR = lazy(() => import("./pages/HR"));
+const EmployeeManagement = lazy(() => import("./pages/EmployeeManagement"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const Invoices = lazy(() => import("./pages/Invoices"));
 const Leads = lazy(() => import("./pages/Leads"));
-const Login = lazy(() => import("./pages/Login"));
+const LoginPage = lazy(() => import("./pages/LoginPageNew"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const Payments = lazy(() => import("./pages/Payments"));
@@ -51,13 +54,16 @@ function App() {
       fallback={<LoadingState label="Loading Visa Matrix workspace..." />}
     >
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<RootRedirect />} />
+
+        <Route path="/login" element={<LoginPage />} />
 
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
+
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
@@ -71,7 +77,32 @@ function App() {
               path="/applications/:referenceNo"
               element={<ApplicationDetails />}
             />
-            <Route path="/hr" element={<HR />} />
+            <Route
+              element={
+                <ProtectedRoute
+                  roles={[
+                    "Super Admin",
+                    "Admin",
+                    "HR Manager",
+                    "Visa Officer",
+                    "Finance Manager",
+                  ]}
+                  requiredPermissions={["hr:view", "manage_employees"]}
+                />
+              }
+            >
+              <Route path="/hr" element={<HR />} />
+              <Route
+                element={
+                  <ProtectedRoute
+                    roles={["Super Admin", "Admin", "HR Manager"]}
+                    requiredPermissions={["hr:edit", "manage_employees"]}
+                  />
+                }
+              >
+                <Route path="/hr/employees" element={<EmployeeManagement />} />
+              </Route>
+            </Route>
             <Route path="/leads" element={<Leads />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customers/:id" element={<CustomerProfile />} />
@@ -101,7 +132,14 @@ function App() {
             <Route path="/analytics" element={<AnalyticsDashboard />} />
             <Route path="/settings" element={<Settings />} />
 
-            <Route element={<ProtectedRoute roles={["admin", "manager"]} />}>
+            <Route
+              element={
+                <ProtectedRoute
+                  roles={["Super Admin", "Admin"]}
+                  requiredPermissions={["settings:view", "manage_users"]}
+                />
+              }
+            >
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/roles" element={<RoleManagement />} />
@@ -114,7 +152,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<RootRedirect />} />
       </Routes>
     </Suspense>
   );

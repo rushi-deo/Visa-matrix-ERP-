@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
 import supabase from "../config/supabase.js";
-
-const normalizeRole = (role = "") =>
-  String(role).trim().toLowerCase().replace(/\s+/g, "_");
+import {
+  hasPermissionAccess,
+  hasRoleAccess,
+  isGuestRole,
+  isSuperAdminRole,
+  normalizeEnterpriseRole,
+  normalizeRoleCode,
+} from "../config/rbac.js";
 
 const normalizeRequiredPermissions = (requiredPermissions = []) => {
   if (
@@ -48,6 +53,17 @@ const loadUserAccessProfile = async (userId, decoded) => {
     };
   }
 
+  const resolvedRole = normalizeEnterpriseRole(
+    profile?.user_roles?.[0]?.roles?.name || profile?.role || decoded.role,
+  );
+
+  if (isGuestRole(resolvedRole)) {
+    return {
+      blocked: true,
+      message: "Guest accounts cannot access the employee portal",
+    };
+  }
+
   const assignedRole = profile?.user_roles?.[0]?.roles || null;
   const roleId = assignedRole?.id || null;
   let permissions = [];
@@ -75,13 +91,8 @@ const loadUserAccessProfile = async (userId, decoded) => {
       userId,
       authUserId: profile?.auth_user_id || decoded.authUserId || null,
       email: profile?.email || decoded.email,
-      role:
-        assignedRole?.name ||
-        assignedRole?.code ||
-        profile?.role ||
-        decoded.role,
-      roleCode:
-        assignedRole?.code || normalizeRole(profile?.role || decoded.role),
+      role: resolvedRole,
+      roleCode: normalizeRoleCode(resolvedRole),
       roleId,
       organization_id:
         profile?.organization_id || decoded.organization_id || null,
@@ -173,11 +184,11 @@ export const authorizeRoles = (...allowedRoles) => {
         });
       }
 
-      const userRole = normalizeRole(req.user.role || req.user.roleCode);
-      const allowedRoleSet = new Set(allowedRoles.map(normalizeRole));
+      const userRole = normalizeEnterpriseRole(
+        req.user.role || req.user.roleCode,
+      );
 
-      // Check if user has one of the allowed roles
-      if (!allowedRoleSet.has(userRole)) {
+      if (!hasRoleAccess(userRole, allowedRoles)) {
         return res.status(403).json({
           success: false,
           message: `Access denied. Allowed roles: ${allowedRoles.join(", ")}. Your role: ${userRole}`,
@@ -221,16 +232,13 @@ export const authorizePermissions = (...requiredPermissions) => {
       const normalizedRequiredPermissions =
         normalizeRequiredPermissions(requiredPermissions);
 
-      if (userPermissions.includes("*")) {
-        return next();
-      }
-
-      // Check if user has at least one required permission
-      const hasPermission = normalizedRequiredPermissions.some((permission) =>
-        userPermissions.includes(permission),
-      );
-
-      if (!hasPermission) {
+      if (
+        !hasPermissionAccess(
+          req.user.role || req.user.roleCode,
+          normalizedRequiredPermissions,
+          userPermissions,
+        )
+      ) {
         return res.status(403).json({
           success: false,
           message: `Insufficient permissions. Required: ${normalizedRequiredPermissions.join(", ")}. Your permissions: ${userPermissions.join(", ")}`,
@@ -264,11 +272,7 @@ export const requireSuperAdmin = (req, res, next) => {
       });
     }
 
-    if (
-      !["super_admin", "super admin"].includes(
-        normalizeRole(req.user.role || req.user.roleCode),
-      )
-    ) {
+    if (!isSuperAdminRole(req.user.role || req.user.roleCode)) {
       return res.status(403).json({
         success: false,
         message: "Super Admin access required",

@@ -1,8 +1,26 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import AppLogo from "../components/common/AppLogo";
+import LoadingState from "../components/common/LoadingState";
+import { isAuthenticatedUser } from "../config/rbac";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AuthLayout() {
+  const location = useLocation();
+  const { user, token, isBootstrapping } = useAuth();
+  const isAuthenticated = isAuthenticatedUser(user, token);
+
+  if (isBootstrapping) {
+    return <LoadingState label="Checking your session..." />;
+  }
+
+  if (isAuthenticated) {
+    const redirectTo =
+      (location.state as { from?: { pathname?: string } } | null)?.from
+        ?.pathname || "/dashboard";
+    return <Navigate to={redirectTo} replace />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-slate-900 lg:grid lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
       <section className="relative hidden overflow-hidden bg-[#0B2E59] p-10 text-white lg:flex lg:flex-col">

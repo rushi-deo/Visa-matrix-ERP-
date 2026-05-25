@@ -1,4 +1,5 @@
 import { requestWithFallback } from "../api/apiClient";
+import { unwrapApiData } from "../api/unwrapApi";
 import type {
   ApplicationDetail,
   ApplicationListResponse,
@@ -49,12 +50,12 @@ export async function updateApplicationStatus(id: string, status: string) {
 
 // RBAC endpoints - Authentication
 export async function getCurrentUser() {
-  const response = await requestWithFallback<AuthUser>({
+  const response = await requestWithFallback({
     method: "GET",
     url: "/auth/me",
   });
 
-  return response.data;
+  return unwrapApiData(response.data);
 }
 
 // RBAC endpoints - Roles

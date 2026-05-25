@@ -1,13 +1,14 @@
 import type { LucideIcon } from "lucide-react";
 
+/** Canonical enterprise roles (aligned with Supabase `roles` seed data) */
 export type FrontendRole =
   | "Super Admin"
   | "Admin"
-  | "HR"
-  | "Finance"
-  | "Sales"
-  | "Case Manager"
-  | "Employee";
+  | "HR Manager"
+  | "Finance Manager"
+  | "Visa Officer"
+  | "Employee"
+  | "Guest";
 
 export type Permission =
   | "manage_users"
@@ -26,8 +27,11 @@ export type AuthUser = {
   name: string;
   email: string;
   role: FrontendRole;
-  permissions: Permission[];
+  /** Backend RBAC names (e.g. users:view) and legacy Permission keys */
+  permissions: string[];
   rawRole: string;
+  status?: string;
+  forcePasswordChange?: boolean;
 };
 
 export type LoginPayload = {
@@ -50,7 +54,7 @@ export type LoginResponse = {
     full_name?: string;
     email: string;
     role: string;
-    permissions?: Permission[];
+    permissions?: string[];
   };
   user?: {
     id: string;
@@ -58,7 +62,15 @@ export type LoginResponse = {
     full_name?: string;
     email: string;
     role: string;
-    permissions?: Permission[];
+    permissions?: string[];
+    status?: string;
+    force_password_change?: boolean;
+  };
+  session?: {
+    providerToken?: string | null;
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    expiresAt?: number | null;
   };
 };
 
@@ -67,8 +79,7 @@ export type NavigationItem = {
   icon: LucideIcon;
   to: string;
   roles: FrontendRole[];
-  requiredPermission?: Permission;
-  module?: string; // Added module property
+  requiredPermission?: Permission | string;
 };
 
 export type Role = {

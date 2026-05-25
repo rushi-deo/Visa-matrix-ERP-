@@ -7,12 +7,13 @@ import { z } from "zod";
 import { requestValidator } from "../middleware/requestValidator.js";
 import authenticateToken, {
   requireRole,
-  requirePermission,
   requireSuperAdmin,
 } from "../middleware/authenticationMiddleware.js";
 import {
   getEmployees,
   getEmployee,
+  getEmployeeOptions,
+  getHrDashboard,
   createEmployee,
   updateEmployee,
   changeEmployeeStatus,
@@ -23,20 +24,36 @@ import {
 
 const router = Router();
 
-// Schemas
+const HR_MANAGE_ROLES = ["Super Admin", "Admin", "HR Manager"];
+
 const createEmployeeSchema = z.object({
   email: z.string().email(),
   fullName: z.string().min(2).max(120),
-  departmentId: z.string().uuid().optional(),
-  roleId: z.string().uuid().optional(),
-  reportingManagerId: z.string().uuid().optional(),
+  phone: z.string().min(6).max(30).optional(),
+  departmentId: z.string().uuid().optional().nullable(),
+  roleId: z.string().uuid().optional().nullable(),
+  branchId: z.string().uuid().optional().nullable(),
+  reportingManagerId: z.string().uuid().optional().nullable(),
+  designation: z.string().max(120).optional(),
+  joiningDate: z.string().date().optional(),
+  employeeCode: z.string().max(40).optional(),
+  profilePhoto: z.string().url().optional(),
+  status: z
+    .enum(["pending", "active", "suspended", "inactive"])
+    .optional(),
 });
 
 const updateEmployeeSchema = z.object({
   fullName: z.string().min(2).max(120).optional(),
-  departmentId: z.string().uuid().optional(),
-  roleId: z.string().uuid().optional(),
-  reportingManagerId: z.string().uuid().optional(),
+  phone: z.string().min(6).max(30).optional().nullable(),
+  departmentId: z.string().uuid().optional().nullable(),
+  roleId: z.string().uuid().optional().nullable(),
+  branchId: z.string().uuid().optional().nullable(),
+  reportingManagerId: z.string().uuid().optional().nullable(),
+  designation: z.string().max(120).optional().nullable(),
+  joiningDate: z.string().date().optional().nullable(),
+  employeeCode: z.string().max(40).optional(),
+  profilePhoto: z.string().url().optional().nullable(),
   status: z.enum(["pending", "active", "suspended", "inactive"]).optional(),
 });
 
@@ -45,12 +62,23 @@ const assignRoleSchema = z.object({
   roleId: z.string().uuid(),
 });
 
-// Middleware
 router.use(authenticateToken);
 
-// Routes
+router.get(
+  "/dashboard",
+  requireRole(...HR_MANAGE_ROLES),
+  getHrDashboard,
+);
+
+router.get(
+  "/options",
+  requireRole(...HR_MANAGE_ROLES),
+  getEmployeeOptions,
+);
+
 router.get(
   "/",
+  requireRole(...HR_MANAGE_ROLES, "Visa Officer", "Finance Manager", "Employee"),
   requestValidator({
     query: z.object({
       page: z.coerce.number().int().positive().default(1),
@@ -64,25 +92,29 @@ router.get(
   getEmployees,
 );
 
-router.get("/:id", getEmployee);
+router.get(
+  "/:id",
+  requireRole(...HR_MANAGE_ROLES, "Visa Officer", "Finance Manager", "Employee"),
+  getEmployee,
+);
 
 router.post(
   "/",
-  requireRole("Super Admin", "Admin"),
+  requireRole(...HR_MANAGE_ROLES),
   requestValidator({ body: createEmployeeSchema }),
   createEmployee,
 );
 
 router.patch(
   "/:id",
-  requireRole("Super Admin", "Admin"),
+  requireRole(...HR_MANAGE_ROLES),
   requestValidator({ body: updateEmployeeSchema }),
   updateEmployee,
 );
 
 router.patch(
   "/:id/status",
-  requireRole("Super Admin", "Admin"),
+  requireRole(...HR_MANAGE_ROLES),
   requestValidator({
     body: z.object({
       status: z.enum(["pending", "active", "suspended", "inactive"]),
@@ -100,7 +132,7 @@ router.post(
 
 router.patch(
   "/:id/lock",
-  requireRole("Super Admin", "Admin"),
+  requireRole(...HR_MANAGE_ROLES),
   requestValidator({
     body: z.object({
       isLocked: z.boolean(),
@@ -109,6 +141,10 @@ router.patch(
   toggleAccountLock,
 );
 
-router.get("/:userId/permissions", getEmployeePermissions);
+router.get(
+  "/:userId/permissions",
+  requireRole(...HR_MANAGE_ROLES),
+  getEmployeePermissions,
+);
 
 export default router;

@@ -10,40 +10,13 @@ import type {
   ResourceItem,
 } from "../types";
 
+import {
+  expandGrantedPermissions,
+  normalizeEnterpriseRole,
+} from "../config/rbac";
+
 export function normalizeRole(role?: string | null): FrontendRole {
-  const normalized = String(role || "").trim();
-
-  // Check for exact matches first
-  if (
-    normalized === "Super Admin" ||
-    normalized === "super_admin" ||
-    normalized === "Admin" ||
-    normalized === "admin"
-  ) {
-    return normalized === "Super Admin" ? "Super Admin" : "Admin";
-  }
-
-  if (normalized === "HR" || normalized === "hr") {
-    return "HR";
-  }
-
-  if (normalized === "Finance" || normalized === "finance") {
-    return "Finance";
-  }
-
-  if (normalized === "Sales" || normalized === "sales") {
-    return "Sales";
-  }
-
-  if (
-    normalized === "Case Manager" ||
-    normalized === "case_manager" ||
-    normalized === "visa_officer"
-  ) {
-    return "Case Manager";
-  }
-
-  return "Employee";
+  return normalizeEnterpriseRole(role);
 }
 
 export function normalizeAuthUser(record: {
@@ -53,33 +26,30 @@ export function normalizeAuthUser(record: {
   email?: string;
   role?: string;
   permissions?: Permission[] | string[];
+  status?: string;
+  force_password_change?: boolean;
+  forcePasswordChange?: boolean;
 }): AuthUser {
-  // Filter and validate permissions
-  const validPermissions = Array.isArray(record.permissions)
-    ? (record.permissions.filter((p): p is Permission => {
-        const validPerms: Permission[] = [
-          "manage_users",
-          "manage_roles",
-          "assign_roles",
-          "manage_employees",
-          "manage_visas",
-          "manage_documents",
-          "manage_payments",
-          "view_reports",
-          "manage_crm",
-          "edit_applications",
-        ];
-        return validPerms.includes(p as Permission);
-      }) as Permission[])
-    : [];
+  const permissions = new Set<string>();
+
+  if (Array.isArray(record.permissions)) {
+    for (const value of expandGrantedPermissions(
+      record.permissions.map(String)
+    )) {
+      permissions.add(value);
+    }
+  }
 
   return {
     id: String(record.id || record.email || crypto.randomUUID()),
     name: record.full_name || record.name || record.email || "Visa Matrix User",
     email: record.email || "",
     role: normalizeRole(record.role),
-    permissions: validPermissions,
+    permissions: Array.from(permissions),
     rawRole: record.role || "Employee",
+    status: record.status,
+    forcePasswordChange:
+      record.forcePasswordChange ?? record.force_password_change ?? false,
   };
 }
 

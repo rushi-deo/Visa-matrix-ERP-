@@ -1,48 +1,47 @@
+import {
+  hasPermissionAccess,
+  hasRoleAccess,
+  isSuperAdmin,
+} from "../config/rbac";
 import { useAuth } from "./useAuth";
-import type { Permission } from "../types";
+import type { FrontendRole, Permission } from "../types";
 
 /**
- * Hook to check user permissions
- * Usage:
- * const { can, canAny, canAll } = usePermissions();
- * if (can("manage_users")) { ... }
+ * Centralized permission checks for UI components.
  */
 export function usePermissions() {
   const auth = useAuth();
 
-  const can = (permission: Permission): boolean => {
-    if (!auth.user) {
-      return false;
-    }
-
-    // Super Admin has all permissions
-    if (auth.user.role === "Super Admin") {
-      return true;
-    }
-
-    return auth.user.permissions?.includes(permission) ?? false;
+  const can = (permission: Permission | string): boolean => {
+    return hasPermissionAccess(auth.user, permission);
   };
 
-  const canAny = (permissions: Permission[]): boolean => {
-    if (!permissions || permissions.length === 0) {
+  const canAny = (permissions: (Permission | string)[]): boolean => {
+    if (!permissions?.length) {
       return false;
     }
 
-    return permissions.some((p) => can(p));
+    return permissions.some((permission) => can(permission));
   };
 
-  const canAll = (permissions: Permission[]): boolean => {
-    if (!permissions || permissions.length === 0) {
+  const canAll = (permissions: (Permission | string)[]): boolean => {
+    if (!permissions?.length) {
       return false;
     }
 
-    return permissions.every((p) => can(p));
+    return permissions.every((permission) => can(permission));
+  };
+
+  const hasRole = (roles: FrontendRole[]): boolean => {
+    return hasRoleAccess(auth.user?.role, roles);
   };
 
   return {
     can,
     canAny,
     canAll,
+    hasRole,
+    isSuperAdmin: isSuperAdmin(auth.user?.role),
     permissions: auth.user?.permissions || [],
     role: auth.user?.role,
   };

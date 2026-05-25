@@ -23,6 +23,12 @@ const apiClient = axios.create({
   },
 });
 
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem(STORAGE_KEYS.token);
 
@@ -32,6 +38,24 @@ apiClient.interceptors.request.use((config) => {
 
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      const requestUrl = String(error.config?.url || "");
+      const isAuthRequest = /\/auth\/(login|register|forgot-password)/.test(
+        requestUrl
+      );
+
+      if (!isAuthRequest) {
+        unauthorizedHandler?.();
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 function shouldRetry(error: AxiosError) {
   return !error.response || error.response.status === 404;

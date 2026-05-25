@@ -1,12 +1,18 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
+import {
+  canAccessRoute,
+  hasPermissionAccess,
+  hasRoleAccess,
+  isAuthenticatedUser,
+} from "../../config/rbac";
 import type { FrontendRole, Permission } from "../../types";
 import { useAuth } from "../../hooks/useAuth";
 import LoadingState from "./LoadingState";
 
 type ProtectedRouteProps = {
   roles?: FrontendRole[];
-  requiredPermissions?: Permission[];
+  requiredPermissions?: (Permission | string)[];
   requireAllPermissions?: boolean;
 };
 
@@ -22,42 +28,25 @@ export default function ProtectedRoute({
     return <LoadingState label="Restoring your Visa Matrix session..." />;
   }
 
-  if (!auth.isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!isAuthenticatedUser(auth.user, auth.token)) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // Check role access
-  if (!auth.hasAnyRole(roles)) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-          <p className="text-gray-600 mt-2">
-            Your role does not have access to this resource.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const explicitRoleOk = hasRoleAccess(auth.user?.role, roles);
+  const explicitPermOk =
+    !requiredPermissions?.length ||
+    (requireAllPermissions
+      ? requiredPermissions.every((permission) =>
+          hasPermissionAccess(auth.user, permission)
+        )
+      : requiredPermissions.some((permission) =>
+          hasPermissionAccess(auth.user, permission)
+        ));
 
-  // Check permission access
-  if (requiredPermissions && requiredPermissions.length > 0) {
-    const hasPermission = requireAllPermissions
-      ? requiredPermissions.every((p) => auth.hasPermission(p))
-      : requiredPermissions.some((p) => auth.hasPermission(p));
+  const routeOk = canAccessRoute(auth.user, location.pathname);
 
-    if (!hasPermission) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-            <p className="text-gray-600 mt-2">
-              You do not have the required permissions to access this resource.
-            </p>
-          </div>
-        </div>
-      );
-    }
+  if (!explicitRoleOk || !explicitPermOk || !routeOk) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return <Outlet />;

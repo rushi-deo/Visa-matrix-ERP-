@@ -6,6 +6,11 @@
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
 import supabase from "../config/supabase.js";
+import {
+  hasRoleAccess,
+  isSuperAdminRole,
+  normalizeEnterpriseRole,
+} from "../config/rbac.js";
 
 export async function authenticateToken(req, res, next) {
   try {
@@ -98,7 +103,7 @@ export function requireRole(...roles) {
       });
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (!hasRoleAccess(normalizeEnterpriseRole(req.user.role), roles)) {
       return res.status(403).json({
         success: false,
         error: "Insufficient permissions",
@@ -121,8 +126,7 @@ export function requirePermission(...permissions) {
       });
     }
 
-    // Super Admin has all permissions
-    if (req.user.role === "Super Admin") {
+    if (isSuperAdminRole(req.user.role)) {
       return next();
     }
 
@@ -153,7 +157,7 @@ export function requireSuperAdmin(req, res, next) {
     });
   }
 
-  if (req.user.role !== "Super Admin") {
+  if (!isSuperAdminRole(req.user.role)) {
     return res.status(403).json({
       success: false,
       error: "Super Admin access required",

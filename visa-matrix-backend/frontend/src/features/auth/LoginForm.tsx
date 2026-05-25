@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import AuthFormCard from "./AuthFormCard";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +20,10 @@ export default function LoginForm() {
 
     try {
       await login({ email, password });
-      navigate("/dashboard");
+      const redirectTo =
+        (location.state as { from?: { pathname?: string } } | null)?.from
+          ?.pathname || "/dashboard";
+      navigate(redirectTo, { replace: true });
     } catch (submissionError) {
       const message =
         submissionError instanceof Error

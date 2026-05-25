@@ -15,6 +15,10 @@ import {
 } from "./auth.repository.js";
 import { getUserRole, getRoleByName } from "../admin/role.repository.js";
 import { getRolePermissionNames } from "../admin/permission.repository.js";
+import {
+  isGuestRole,
+  normalizeEnterpriseRole,
+} from "../../config/rbac.js";
 
 const signToken = async (user) => {
   try {
@@ -35,7 +39,8 @@ const signToken = async (user) => {
       }
     }
 
-    // Super Admin gets all permissions
+    userRole = normalizeEnterpriseRole(userRole);
+
     if (userRole === "Super Admin") {
       permissions = ["*"];
     }
@@ -63,7 +68,7 @@ const signToken = async (user) => {
         userId: user.id,
         authUserId: user.auth_user_id || null,
         email: user.email,
-        role: user.role || "Employee",
+        role: normalizeEnterpriseRole(user.role) || "Employee",
         permissions: [],
       },
       env.jwtSecret,
@@ -139,6 +144,10 @@ export const login = async (payload) => {
 
   if (!userProfile) {
     throw new NotFoundError("User profile not found.");
+  }
+
+  if (isGuestRole(normalizeEnterpriseRole(userProfile.role))) {
+    throw new ForbiddenError("Guest accounts cannot access the employee portal.");
   }
 
   const token = await signToken(userProfile);

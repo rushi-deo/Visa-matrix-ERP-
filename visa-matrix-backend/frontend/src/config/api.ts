@@ -12,8 +12,18 @@ export const API_FALLBACK_BASE_URLS = [
   "http://127.0.0.1:5000/api",
 ] as const;
 
+export const EMPLOYEE_ENDPOINTS = {
+  base: "/employees",
+  dashboard: "/employees/dashboard",
+  options: "/employees/options",
+} as const;
+
 export const AUTH_ENDPOINTS = {
   login: "/auth/login",
   register: "/auth/register",
+  logout: "/auth/logout",
+  me: "/auth/me",
   forgotPassword: "/auth/forgot-password",
+  resetPassword: "/auth/reset-password",
+  changePassword: "/auth/change-password",
 } as const;

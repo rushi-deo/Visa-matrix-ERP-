@@ -1,5 +1,5 @@
 import { Bell, LogOut, Menu, Search } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { APP_NAME, SIDEBAR_NAVIGATION } from "../../config/appConfig";
 import { useAuth } from "../../hooks/useAuth";
@@ -11,7 +11,13 @@ type TopBarProps = {
 
 export default function TopBar({ onOpenSidebar }: TopBarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout, user } = useAuth();
+
+  async function handleLogout() {
+    await logout();
+    navigate("/login", { replace: true });
+  }
 
   const matchedNavItem = SIDEBAR_NAVIGATION.find((item) =>
     location.pathname.startsWith(item.to)
@@ -63,7 +69,7 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
         <button
           type="button"
           className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-600 shadow-sm"
-          onClick={logout}
+          onClick={() => void handleLogout()}
         >
           <LogOut size={18} />
         </button>

@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 
 import AppLogo from "../common/AppLogo";
 import { SIDEBAR_NAVIGATION } from "../../config/appConfig";
+import { canAccessNavItem } from "../../config/rbac";
 import { useAuth } from "../../hooks/useAuth";
-import { usePermissions } from "../../hooks/usePermissions";
 
 type SidebarNavProps = {
   open: boolean;
@@ -12,33 +12,11 @@ type SidebarNavProps = {
 };
 
 export default function SidebarNav({ open, onClose }: SidebarNavProps) {
-  const { hasAnyRole, user } = useAuth();
-  const { can } = usePermissions();
+  const { user } = useAuth();
 
-  console.log("User Role:", user?.role || "No user");
-  console.log("User Permissions:", user?.permissions || "No permissions");
-
-  // Filter navigation items based on role and permissions
-  const visibleItems = SIDEBAR_NAVIGATION.filter((item) => {
-    if (!user) {
-      console.warn("User is null, skipping filtering.");
-      return false;
-    }
-
-    if (item.module === "hr") return true; // Temporary bypass for HR
-
-    if (!hasAnyRole(item.roles)) {
-      return false;
-    }
-
-    if (item.requiredPermission && !can(item.requiredPermission)) {
-      return false;
-    }
-
-    return true;
-  });
-
-  console.log("Filtered Navigation Items:", visibleItems);
+  const visibleItems = SIDEBAR_NAVIGATION.filter((item) =>
+    canAccessNavItem(user, item)
+  );
 
   return (
     <>

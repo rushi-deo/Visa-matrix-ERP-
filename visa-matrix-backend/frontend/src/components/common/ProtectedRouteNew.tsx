@@ -1,5 +1,6 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { isAuthenticatedUser } from "../../config/rbac";
 import { useAuth } from "../../hooks/useAuth";
 import type { FrontendRole, Permission } from "../../types";
 
@@ -20,8 +21,8 @@ export default function ProtectedRoute({
   requiredPermissions,
   fallback,
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isBootstrapping, user, hasPermission, hasAnyRole } =
-    useAuth();
+  const { user, token, isBootstrapping, hasPermission, hasAnyRole } = useAuth();
+  const isAuthenticated = isAuthenticatedUser(user, token);
   const location = useLocation();
 
   // Show nothing while bootstrapping
@@ -119,12 +120,12 @@ export function UnauthorizedPage() {
         <p className="text-gray-500 mb-8">
           You don't have permission to access this resource.
         </p>
-        <a
-          href="/dashboard"
+        <Link
+          to="/dashboard"
           className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
         >
           Back to Dashboard
-        </a>
+        </Link>
       </div>
     </div>
   );

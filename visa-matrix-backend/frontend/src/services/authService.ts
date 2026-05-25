@@ -1,82 +1,106 @@
 import { requestWithFallback } from "../api/apiClient";
+import { unwrapApiData } from "../api/unwrapApi";
 import { AUTH_ENDPOINTS } from "../config/api";
-import type { LoginPayload, LoginResponse, RegisterPayload, AuthUser, Permission, FrontendRole } from "../types";
+import type {
+  AuthUser,
+  FrontendRole,
+  LoginPayload,
+  LoginResponse,
+  Permission,
+  RegisterPayload,
+} from "../types";
+
+export type MeResponse = {
+  user: AuthUser & {
+    full_name?: string;
+    organization_id?: string | null;
+  };
+  role?: string;
+  permissions?: string[];
+};
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  const response = await requestWithFallback<LoginResponse>({
+  const response = await requestWithFallback({
     method: "POST",
     url: AUTH_ENDPOINTS.login,
     data: payload,
   });
 
-  return response.data;
+  return unwrapApiData<LoginResponse>(response.data);
 }
 
 export async function register(payload: RegisterPayload) {
-  const response = await requestWithFallback<Record<string, unknown>>({
+  const response = await requestWithFallback({
     method: "POST",
     url: AUTH_ENDPOINTS.register,
     data: payload,
   });
 
-  return response.data;
+  return unwrapApiData<Record<string, unknown>>(response.data);
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await requestWithFallback({
+      method: "POST",
+      url: AUTH_ENDPOINTS.logout,
+    });
+  } catch {
+    // Always clear local session even if the server call fails.
+  }
+}
+
+export async function getCurrentUser(): Promise<MeResponse> {
+  const response = await requestWithFallback({
+    method: "GET",
+    url: AUTH_ENDPOINTS.me,
+  });
+
+  return unwrapApiData<MeResponse>(response.data);
 }
 
 export async function forgotPassword(email: string) {
-  const response = await requestWithFallback<Record<string, unknown>>({
+  const response = await requestWithFallback({
     method: "POST",
     url: AUTH_ENDPOINTS.forgotPassword,
     data: { email },
   });
 
-  return response.data;
+  return unwrapApiData<Record<string, unknown>>(response.data);
 }
 
-/**
- * Reset password with token
- */
 export async function resetPassword(token: string, newPassword: string) {
-  const response = await requestWithFallback<Record<string, unknown>>({
+  const response = await requestWithFallback({
     method: "POST",
-    url: `${AUTH_ENDPOINTS.resetPassword}`,
+    url: AUTH_ENDPOINTS.resetPassword,
     data: { token, newPassword },
   });
 
-  return response.data;
+  return unwrapApiData<Record<string, unknown>>(response.data);
 }
 
-/**
- * Change password
- */
 export async function changePassword(oldPassword: string, newPassword: string) {
-  const response = await requestWithFallback<Record<string, unknown>>({
+  const response = await requestWithFallback({
     method: "POST",
-    url: `${AUTH_ENDPOINTS.changePassword}`,
+    url: AUTH_ENDPOINTS.changePassword,
     data: { oldPassword, newPassword },
   });
 
-  return response.data;
+  return unwrapApiData<Record<string, unknown>>(response.data);
 }
 
-/**
- * Check if user has permission
- */
 export function hasPermission(
   user: AuthUser | null,
-  permission: Permission | Permission[]
+  permission: Permission | Permission[] | string
 ): boolean {
   if (!user) return false;
 
-  // Super Admin has all permissions
   if (user.role === "Super Admin") return true;
 
   const permissions = Array.isArray(permission) ? permission : [permission];
-  return permissions.some((p) => user.permissions?.includes(p));
+  return permissions.some((p) => user.permissions?.includes(String(p)));
 }
 
-/**
- * Check if user has any role
- */
 export function hasRole(user: AuthUser | null, roles: FrontendRole[]): boolean {
   if (!user || !roles || roles.length === 0) return false;
   return roles.includes(user.role as FrontendRole);
