@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Landmark } from "lucide-react";
 import { navigationItems } from "../data/navigation";
 import { useAuth } from "../context/AuthContext";
 
@@ -84,6 +84,7 @@ const menuIcons = {
     </svg>
   ),
   "/hr": <Briefcase size={20} />,
+  "Accounts": <Landmark size={20} />,
   "/communication": (
     <svg viewBox="0 0 20 20" fill="none">
       <path d="M4 5.5h12v8H8l-4 3z" />

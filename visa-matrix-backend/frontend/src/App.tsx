@@ -9,6 +9,15 @@ import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
 const AccessLogs = lazy(() => import("./pages/AccessLogs"));
+const AccountsDashboard = lazy(
+  () => import("./pages/accounts/AccountsDashboard"),
+);
+const AccountsExpenses = lazy(() => import("./pages/accounts/Expenses"));
+const AccountsInvoices = lazy(() => import("./pages/accounts/Invoices"));
+const AccountsReports = lazy(() => import("./pages/accounts/Reports"));
+const AccountsTransactions = lazy(
+  () => import("./pages/accounts/Transactions"),
+);
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const ApplicationDetails = lazy(() => import("./pages/ApplicationDetails"));
@@ -116,6 +125,14 @@ function App() {
               element={<DocumentVerification />}
             />
             <Route path="/payments" element={<Payments />} />
+            <Route path="/accounts/dashboard" element={<AccountsDashboard />} />
+            <Route path="/accounts/invoices" element={<AccountsInvoices />} />
+            <Route
+              path="/accounts/transactions"
+              element={<AccountsTransactions />}
+            />
+            <Route path="/accounts/expenses" element={<AccountsExpenses />} />
+            <Route path="/accounts/reports" element={<AccountsReports />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />

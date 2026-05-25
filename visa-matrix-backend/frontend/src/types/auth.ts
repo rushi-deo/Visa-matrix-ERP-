@@ -74,12 +74,20 @@ export type LoginResponse = {
   };
 };
 
+export type NavigationSubItem = {
+  label: string;
+  to: string;
+  roles: FrontendRole[];
+  requiredPermission?: Permission | string;
+};
+
 export type NavigationItem = {
   label: string;
   icon: LucideIcon;
   to: string;
   roles: FrontendRole[];
   requiredPermission?: Permission | string;
+  children?: NavigationSubItem[];
 };
 
 export type Role = {

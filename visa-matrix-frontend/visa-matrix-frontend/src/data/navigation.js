@@ -72,6 +72,34 @@ export const navigationItems = [
         module: "invoicing",
       },
     ],
+    shortLabel: "Accounts",
+    children: [
+      {
+        path: "/accounts/dashboard",
+        shortLabel: "Dashboard",
+        label: "Dashboard",
+      },
+      {
+        path: "/accounts/invoices",
+        shortLabel: "Invoices",
+        label: "Invoices",
+      },
+      {
+        path: "/accounts/transactions",
+        shortLabel: "Transactions",
+        label: "Transactions",
+      },
+      {
+        path: "/accounts/expenses",
+        shortLabel: "Expenses",
+        label: "Expenses",
+      },
+      {
+        path: "/accounts/reports",
+        shortLabel: "Reports",
+        label: "Reports",
+      },
+    ],
   },
   {
     label: "Notifications",
