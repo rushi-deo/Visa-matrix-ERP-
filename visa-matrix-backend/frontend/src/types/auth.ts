@@ -20,7 +20,11 @@ export type Permission =
   | "manage_payments"
   | "view_reports"
   | "manage_crm"
-  | "edit_applications";
+  | "edit_applications"
+  | "accounts:view"
+  | "accounts:create"
+  | "accounts:edit"
+  | "accounts:delete";
 
 export type AuthUser = {
   id: string;

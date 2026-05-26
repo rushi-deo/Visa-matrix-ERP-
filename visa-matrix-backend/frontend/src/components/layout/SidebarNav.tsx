@@ -17,7 +17,9 @@ export default function SidebarNav({ open, onClose }: SidebarNavProps) {
   const location = useLocation();
 
   // State to track expanded menus
-  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const toggleMenu = (label: string) => {
     setExpandedMenus((prev) => ({
@@ -27,15 +29,29 @@ export default function SidebarNav({ open, onClose }: SidebarNavProps) {
   };
 
   const visibleItems = SIDEBAR_NAVIGATION.filter((item) =>
-    canAccessNavItem(user, item)
+    canAccessNavItem(user, item),
   );
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.debug("[RBAC][Sidebar] filter", {
+        userRole: user?.role,
+        permissions: user?.permissions,
+        visibleItems: visibleItems.map((item) => ({
+          label: item.label,
+          to: item.to,
+          requiredPermission: item.requiredPermission,
+        })),
+      });
+    }
+  }, [user?.permissions, user?.role, visibleItems]);
 
   // Auto-expand menu if active path is a child of the menu
   useEffect(() => {
     visibleItems.forEach((item) => {
       if (item.children) {
         const hasActiveChild = item.children.some((child) =>
-          location.pathname.startsWith(child.to)
+          location.pathname.startsWith(child.to),
         );
         if (hasActiveChild) {
           setExpandedMenus((prev) => ({
@@ -82,7 +98,7 @@ export default function SidebarNav({ open, onClose }: SidebarNavProps) {
             if (hasChildren) {
               const isExpanded = !!expandedMenus[item.label];
               const hasActiveChild = item.children?.some((child) =>
-                location.pathname.startsWith(child.to)
+                location.pathname.startsWith(child.to),
               );
 
               return (

@@ -125,6 +125,10 @@ function App() {
               element={<DocumentVerification />}
             />
             <Route path="/payments" element={<Payments />} />
+            <Route
+              path="/accounts"
+              element={<Navigate to="/accounts/dashboard" replace />}
+            />
             <Route path="/accounts/dashboard" element={<AccountsDashboard />} />
             <Route path="/accounts/invoices" element={<AccountsInvoices />} />
             <Route

@@ -1,6 +1,8 @@
 import { authorizePermissions } from "./rbac.middleware.js";
 
 const moduleAliases = {
+  account: "accounts",
+  accounts: "accounts",
   application: "applications",
   applications: "applications",
   countries: "countries",

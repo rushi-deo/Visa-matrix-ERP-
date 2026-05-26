@@ -52,7 +52,16 @@ export const ROLE_ALIASES: Record<string, FrontendRole> = {
   guest: "Guest",
 };
 
-/** Legacy UI permission keys → API module:action names */
+export const MODULE_PERMISSION_KEYS = {
+  accounts: {
+    view: "accounts:view",
+    create: "accounts:create",
+    edit: "accounts:edit",
+    delete: "accounts:delete",
+  },
+} as const;
+
+/** Canonical key aliases used by the UI and API permission layer. */
 export const PERMISSION_ALIASES: Record<Permission, string[]> = {
   manage_users: [
     "manage_users",
@@ -80,6 +89,10 @@ export const PERMISSION_ALIASES: Record<Permission, string[]> = {
     "payments:view",
     "payments:edit",
     "invoicing:view",
+    MODULE_PERMISSION_KEYS.accounts.view,
+    MODULE_PERMISSION_KEYS.accounts.create,
+    MODULE_PERMISSION_KEYS.accounts.edit,
+    MODULE_PERMISSION_KEYS.accounts.delete,
   ],
   view_reports: ["view_reports", "reports:view", "dashboard:view"],
   manage_crm: ["manage_crm", "crm:view", "crm:edit", "customers:view"],
@@ -88,6 +101,23 @@ export const PERMISSION_ALIASES: Record<Permission, string[]> = {
     "applications:view",
     "applications:edit",
     "applications:create",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.view]: [
+    MODULE_PERMISSION_KEYS.accounts.view,
+    "payments:view",
+    "manage_payments",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.create]: [
+    MODULE_PERMISSION_KEYS.accounts.create,
+    "payments:create",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.edit]: [
+    MODULE_PERMISSION_KEYS.accounts.edit,
+    "payments:edit",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.delete]: [
+    MODULE_PERMISSION_KEYS.accounts.delete,
+    "payments:delete",
   ],
 };
 
@@ -99,7 +129,20 @@ export const API_TO_LEGACY: Record<string, string[]> = {
   "crm:view": ["crm:view", "manage_crm"],
   "customers:view": ["customers:view", "manage_crm"],
   "documents:view": ["documents:view", "manage_documents"],
-  "payments:view": ["payments:view", "manage_payments"],
+  "payments:view": [
+    "payments:view",
+    "manage_payments",
+    MODULE_PERMISSION_KEYS.accounts.view,
+  ],
+  "payments:create": [
+    "payments:create",
+    MODULE_PERMISSION_KEYS.accounts.create,
+  ],
+  "payments:edit": ["payments:edit", MODULE_PERMISSION_KEYS.accounts.edit],
+  "payments:delete": [
+    "payments:delete",
+    MODULE_PERMISSION_KEYS.accounts.delete,
+  ],
   "reports:view": ["reports:view", "view_reports"],
   "settings:view": ["settings:view", "manage_users"],
   "settings:edit": ["settings:edit", "manage_roles", "assign_roles"],
@@ -184,12 +227,7 @@ export const ROUTE_ACCESS: Record<
   },
   "/accounts": {
     roles: ["Super Admin", "Admin", "Finance Manager"],
-    permissions: [
-      "payments:view",
-      "manage_payments",
-      "reports:view",
-      "view_reports",
-    ],
+    permissions: [MODULE_PERMISSION_KEYS.accounts.view],
   },
   "/analytics": {
     roles: ["Super Admin", "Admin", "Finance Manager"],
@@ -266,7 +304,7 @@ export function hasRoleAccess(
 
 export function hasPermissionAccess(
   user: Pick<AuthUser, "role" | "permissions"> | null,
-  permission: Permission | Permission[] | string,
+  permission: Permission | Permission[] | string | string[],
 ): boolean {
   if (!user) {
     return false;

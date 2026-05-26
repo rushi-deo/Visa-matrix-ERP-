@@ -20,6 +20,7 @@ import {
   API_FALLBACK_BASE_URLS as API_BASE_URL_FALLBACKS,
   API_ROOT_URL,
 } from "./api";
+import { MODULE_PERMISSION_KEYS } from "./rbac";
 import type { FrontendRole, NavigationItem, Permission } from "../types";
 
 export const APP_NAME = "Visa Matrix";
@@ -130,37 +131,37 @@ export const SIDEBAR_NAVIGATION: NavigationItem[] = [
     icon: Landmark,
     to: "/accounts/dashboard",
     roles: ["Super Admin", "Admin", "Finance Manager"],
-    requiredPermission: "manage_payments",
+    requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
     children: [
       {
         label: "Dashboard",
         to: "/accounts/dashboard",
         roles: ["Super Admin", "Admin", "Finance Manager"],
-        requiredPermission: "manage_payments",
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
       },
       {
         label: "Invoices",
         to: "/accounts/invoices",
         roles: ["Super Admin", "Admin", "Finance Manager"],
-        requiredPermission: "manage_payments",
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
       },
       {
         label: "Transactions",
         to: "/accounts/transactions",
         roles: ["Super Admin", "Admin", "Finance Manager"],
-        requiredPermission: "manage_payments",
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
       },
       {
         label: "Expenses",
         to: "/accounts/expenses",
         roles: ["Super Admin", "Admin", "Finance Manager"],
-        requiredPermission: "manage_payments",
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
       },
       {
         label: "Reports",
         to: "/accounts/reports",
         roles: ["Super Admin", "Admin", "Finance Manager"],
-        requiredPermission: "manage_payments",
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
       },
     ],
   },
