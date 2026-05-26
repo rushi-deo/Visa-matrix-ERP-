@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import LoadingState from "./components/common/LoadingState";
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -125,10 +125,7 @@ function App() {
               element={<DocumentVerification />}
             />
             <Route path="/payments" element={<Payments />} />
-            <Route
-              path="/accounts"
-              element={<Navigate to="/accounts/dashboard" replace />}
-            />
+            <Route path="/accounts" element={<AccountsDashboard />} />
             <Route path="/accounts/dashboard" element={<AccountsDashboard />} />
             <Route path="/accounts/invoices" element={<AccountsInvoices />} />
             <Route

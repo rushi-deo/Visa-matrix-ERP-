@@ -127,9 +127,9 @@ export const SIDEBAR_NAVIGATION: NavigationItem[] = [
     requiredPermission: "manage_documents",
   },
   {
-    label: "Accounts",
+    label: "Accounts Dashboard",
     icon: Landmark,
-    to: "/accounts/dashboard",
+    to: "/accounts",
     roles: ["Super Admin", "Admin", "Finance Manager"],
     requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
     children: [
