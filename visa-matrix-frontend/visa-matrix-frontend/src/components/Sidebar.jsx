@@ -11,7 +11,7 @@ const primaryPaths = [
   "/applications",
   "/countries",
   "/documents",
-  "/payments",
+  "/accounts",
   "/communication",
   "/workflow",
   "/visa-question-flow",
@@ -29,7 +29,7 @@ const sidebarLabels = {
   "/applications": "Applications",
   "/countries": "Countries",
   "/documents": "Documents",
-  "/payments": "Payments",
+  "/accounts": "Accounts",
   "/hr": "HR",
   "/communication": "Notifications",
   "/audit-logs": "Audit Logs",
@@ -84,7 +84,7 @@ const menuIcons = {
     </svg>
   ),
   "/hr": <Briefcase size={20} />,
-  "Accounts": <Landmark size={20} />,
+  Accounts: <Landmark size={20} />,
   "/communication": (
     <svg viewBox="0 0 20 20" fill="none">
       <path d="M4 5.5h12v8H8l-4 3z" />
