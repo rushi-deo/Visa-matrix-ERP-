@@ -10,7 +10,11 @@ const formatCurrency = (value) => currencyFormatter.format(Number(value) || 0);
 
 const placeholders = {
   customerName: ["{{customerName}}", "{{customer_name}}", "{customerName}"],
-  passportNumber: ["{{passportNumber}}", "{{passport_number}}", "{passportNumber}"],
+  passportNumber: [
+    "{{passportNumber}}",
+    "{{passport_number}}",
+    "{passportNumber}",
+  ],
   destinationCountry: [
     "{{destinationCountry}}",
     "{{destination_country}}",
@@ -23,7 +27,8 @@ const replacePlaceholders = (templateContent = "", application = {}) => {
   let content = templateContent;
   const values = {
     customerName: application.customerName ?? application.customer_name ?? "",
-    passportNumber: application.passportNumber ?? application.passport_number ?? "",
+    passportNumber:
+      application.passportNumber ?? application.passport_number ?? "",
     destinationCountry:
       application.destinationCountry ?? application.destination_country ?? "",
     visaType: application.visaType ?? application.visa_type ?? "",
@@ -63,7 +68,9 @@ export default function QuotationLayout({
         key === "totalAmount"
           ? value
           : Number(key === "visaFee" ? value : pricing.visaFee || 0) +
-            Number(key === "serviceCharges" ? value : pricing.serviceCharges || 0),
+            Number(
+              key === "serviceCharges" ? value : pricing.serviceCharges || 0,
+            ),
     });
   };
 
@@ -72,7 +79,10 @@ export default function QuotationLayout({
       <header className="quotation-header">
         <div className="quotation-brand">
           {company.logoUrl ? (
-            <img alt={`${company.name ?? "Company"} logo`} src={company.logoUrl} />
+            <img
+              alt={`${company.name ?? "Company"} logo`}
+              src={company.logoUrl}
+            />
           ) : null}
           <div>
             <h1>{company.name ?? "Visa Matrix"}</h1>
@@ -132,7 +142,9 @@ export default function QuotationLayout({
             {editMode ? (
               <input
                 min="0"
-                onChange={(event) => updatePricing("visaFee", event.target.value)}
+                onChange={(event) =>
+                  updatePricing("visaFee", event.target.value)
+                }
                 type="number"
                 value={pricing.visaFee}
               />
@@ -145,7 +157,9 @@ export default function QuotationLayout({
             {editMode ? (
               <input
                 min="0"
-                onChange={(event) => updatePricing("serviceCharges", event.target.value)}
+                onChange={(event) =>
+                  updatePricing("serviceCharges", event.target.value)
+                }
                 type="number"
                 value={pricing.serviceCharges}
               />
@@ -158,7 +172,9 @@ export default function QuotationLayout({
             {editMode ? (
               <input
                 min="0"
-                onChange={(event) => updatePricing("totalAmount", event.target.value)}
+                onChange={(event) =>
+                  updatePricing("totalAmount", event.target.value)
+                }
                 type="number"
                 value={totalAmount}
               />
