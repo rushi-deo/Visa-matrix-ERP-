@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 const primaryPaths = [
   "/dashboard",
+  "/accounts",
   "/customers",
   "/applications",
   "/countries",
@@ -23,6 +24,7 @@ const primaryPaths = [
 
 const sidebarLabels = {
   "/dashboard": "Home",
+  "/accounts": "Accounts",
   "/customers": "Customers",
   "/applications": "Applications",
   "/countries": "Countries",
@@ -73,6 +75,12 @@ const menuIcons = {
     <svg viewBox="0 0 20 20" fill="none">
       <path d="M3.5 6.5h13v7h-13z" />
       <path d="M3.5 8.5h13M6 11h3" />
+    </svg>
+  ),
+  "/accounts": (
+    <svg viewBox="0 0 20 20" fill="none">
+      <path d="M4 4.5h12v11H4z" />
+      <path d="M4 8.5h12M7 12h6" />
     </svg>
   ),
   "/hr": <Briefcase size={20} />,
@@ -226,6 +234,10 @@ export default function Sidebar() {
                         <Link
                           key={child.path}
                           to={child.path}
+                          onClick={() => {
+                            // eslint-disable-next-line no-console
+                            console.log("Sidebar click ->", child.path);
+                          }}
                           className={`sidebar__submenu-link ${
                             isActive ? "sidebar__submenu-link--active" : ""
                           }`}

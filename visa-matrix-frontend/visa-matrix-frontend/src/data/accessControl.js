@@ -36,6 +36,7 @@ export const ROLE_PERMISSIONS = {
     permissions[moduleName] = ALL_ACTIONS;
     return permissions;
   }, {}),
+
   admin: {
     dashboard: VIEW_ONLY,
     customers: STANDARD_WRITE,
@@ -43,6 +44,10 @@ export const ROLE_PERMISSIONS = {
     countries: STANDARD_WRITE,
     documents: STANDARD_WRITE,
     invoicing: APPROVAL_WRITE,
+
+    // HR permission added here
+    hr: STANDARD_WRITE,
+
     notifications: STANDARD_WRITE,
     workflow: APPROVAL_WRITE,
     visa_questions: STANDARD_WRITE,
@@ -50,6 +55,7 @@ export const ROLE_PERMISSIONS = {
     reports: VIEW_ONLY,
     settings: VIEW_ONLY,
   },
+
   counselor: {
     dashboard: VIEW_ONLY,
     customers: STANDARD_WRITE,
@@ -62,6 +68,7 @@ export const ROLE_PERMISSIONS = {
     tasks: STANDARD_WRITE,
     reports: VIEW_ONLY,
   },
+
   finance: {
     dashboard: VIEW_ONLY,
     customers: VIEW_ONLY,
@@ -72,12 +79,14 @@ export const ROLE_PERMISSIONS = {
     notifications: VIEW_ONLY,
     reports: VIEW_ONLY,
   },
+
   hr: {
     dashboard: VIEW_ONLY,
     hr: STANDARD_WRITE,
     notifications: VIEW_ONLY,
     reports: VIEW_ONLY,
   },
+
   operations: {
     dashboard: VIEW_ONLY,
     customers: VIEW_ONLY,
@@ -92,7 +101,12 @@ export const ROLE_PERMISSIONS = {
   },
 };
 
-export function hasModulePermission(role, moduleName, action = "view", permissionMap = ROLE_PERMISSIONS) {
+export function hasModulePermission(
+  role,
+  moduleName,
+  action = "view",
+  permissionMap = ROLE_PERMISSIONS,
+) {
   if (!role || !moduleName) {
     return false;
   }

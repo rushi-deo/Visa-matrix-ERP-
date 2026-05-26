@@ -1,75 +1,103 @@
 import React from "react";
-import { useState } from "react";
-import DataTable from "../components/DataTable";
+import { Link } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
+import StatCard from "../components/StatCard";
 import DashboardLayout from "../layout/DashboardLayout";
-import { useAuth } from "../context/AuthContext";
 
 export default function HR() {
-  const { users, roles, currentUser, assignUserRole, canAccess } = useAuth();
-  const [message, setMessage] = useState("");
-
-  const columns = [
-    { key: "name", label: "User" },
-    { key: "email", label: "Email" },
-    { key: "organization_name", label: "Organization" },
-    { key: "role", label: "Role" },
-    {
-      key: "actions",
-      label: "Assignment",
-      render: (row) =>
-        canAccess("hr", "edit") ? (
-          <select
-            defaultValue={row.role}
-            onChange={(event) => {
-              assignUserRole(row.id, event.target.value, row.organization_id);
-              setMessage(`Role updated for ${row.name}.`);
-            }}
-          >
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-        ) : (
-          row.role
-        ),
-    },
-  ];
-
   return (
     <DashboardLayout>
       <PageHeader
-        title="HR & User Access"
-        description="Assign ERP roles to employees and keep organization ownership aligned with access rules."
+        title="HR"
+        description="Human Resources management dashboard. Manage employees, leave requests, payroll, and attendance tracking."
       />
 
-      {message ? (
-        <article className="alert-card alert-card--info">
-          <span className="alert-card__eyebrow">HR Update</span>
-          <strong>{message}</strong>
-        </article>
-      ) : null}
+      <section className="summary-grid">
+        <StatCard
+          title="Total Employees"
+          value={0}
+          icon="EM"
+          color="#3B82F6"
+        />
+        <StatCard
+          title="Pending Leave Requests"
+          value={0}
+          icon="LR"
+          color="#F59E0B"
+        />
+        <StatCard
+          title="Payroll Status"
+          value="Current"
+          icon="PY"
+          color="#10B981"
+        />
+        <StatCard
+          title="Attendance Rate"
+          value="—"
+          icon="AT"
+          color="#8B5CF6"
+        />
+      </section>
 
       <section className="workflow-grid">
         <article className="panel">
           <div className="panel__header">
             <div>
-              <h3>User Role Assignments</h3>
-              <p>Internal users and agency accounts inherit module permissions from their assigned roles.</p>
+              <h3>Employees</h3>
+              <p>View and manage employee profiles, contact information, and employment details.</p>
             </div>
           </div>
-
-          <DataTable caption="HR access control table" columns={columns} rowKey="id" rows={users} />
+          <div style={{ padding: "2rem", textAlign: "center", color: "#6B7280" }}>
+            <p>Employee management coming soon</p>
+            <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+              Manage employee records, departments, and organizational structure
+            </p>
+          </div>
         </article>
 
-        <article className="settings-card">
-          <span className="profile-card__eyebrow">Signed-in User</span>
-          <strong>{currentUser?.name}</strong>
-          <p>{currentUser?.email}</p>
-          <p>Role: {currentUser?.role}</p>
-          <p>Organization: {currentUser?.organization_name}</p>
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <h3>Leave Requests</h3>
+              <p>Track and approve employee leave requests, absences, and time-off management.</p>
+            </div>
+          </div>
+          <div style={{ padding: "2rem", textAlign: "center", color: "#6B7280" }}>
+            <p>Leave request management coming soon</p>
+            <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+              Process vacation, sick leave, and other leave types
+            </p>
+          </div>
+        </article>
+
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <h3>Payroll</h3>
+              <p>Process payroll, manage compensation, and generate salary statements.</p>
+            </div>
+          </div>
+          <div style={{ padding: "2rem", textAlign: "center", color: "#6B7280" }}>
+            <p>Payroll management coming soon</p>
+            <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+              Handle salary processing and payment records
+            </p>
+          </div>
+        </article>
+
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <h3>Attendance</h3>
+              <p>Monitor employee attendance, check-ins, and time tracking records.</p>
+            </div>
+          </div>
+          <div style={{ padding: "2rem", textAlign: "center", color: "#6B7280" }}>
+            <p>Attendance tracking coming soon</p>
+            <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+              Track daily attendance and work hours
+            </p>
+          </div>
         </article>
       </section>
     </DashboardLayout>

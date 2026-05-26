@@ -26,6 +26,11 @@ import HRSettingsWorkspace from "./Pages/HRSettingsWorkspace";
 import HRWorkflowWorkspace from "./Pages/HRWorkflowWorkspace";
 import Payments from "./Pages/Payments";
 import Reports from "./Pages/Reports";
+import AccountsDashboard from "./Pages/AccountsDashboard";
+import AccountsInvoice from "./Pages/AccountsInvoice";
+import AccountsTransactions from "./Pages/AccountsTransactions";
+import AccountsExpenses from "./Pages/AccountsExpenses";
+import AccountsReports from "./Pages/AccountsReports";
 import ApplicationDetail from "./Pages/ApplicationDetail";
 import Login from "./pages/Login";
 import QuotationPage from "./Pages/QuotationPage";
@@ -122,6 +127,47 @@ export default function App() {
             element={
               <ProtectedRoute module="invoicing">
                 <Payments />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/accounts"
+            element={
+              <ProtectedRoute module="invoicing">
+                <AccountsDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts/invoice"
+            element={
+              <ProtectedRoute module="invoicing">
+                <AccountsInvoice />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts/transactions"
+            element={
+              <ProtectedRoute module="invoicing">
+                <AccountsTransactions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts/expenses"
+            element={
+              <ProtectedRoute module="invoicing">
+                <AccountsExpenses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts/reports"
+            element={
+              <ProtectedRoute module="invoicing">
+                <AccountsReports />
               </ProtectedRoute>
             }
           />
