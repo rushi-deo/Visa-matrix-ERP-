@@ -29,7 +29,6 @@ const sidebarLabels = {
   "/applications": "Applications",
   "/countries": "Countries",
   "/documents": "Documents",
-  "/accounts": "Accounts",
   "/hr": "HR",
   "/communication": "Notifications",
   "/audit-logs": "Audit Logs",
@@ -181,6 +180,16 @@ export default function Sidebar() {
               (child) => child.path && location.pathname.startsWith(child.path),
             );
             const isExpanded = expandedMenus[item.shortLabel] || hasActiveChild;
+            const fallbackSubmenuIcon = (
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M7 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm6 1a2 2 0 100-4 2 2 0 000 4z" />
+                <path d="M2.5 15a4.5 4.5 0 019 0m1.5 0a3.5 3.5 0 014.5-3.3" />
+              </svg>
+            );
+            const submenuIcon =
+              menuIcons[item.path] ||
+              menuIcons[item.shortLabel] ||
+              fallbackSubmenuIcon;
 
             return (
               <div key={item.shortLabel} className="sidebar__menu-group">
@@ -192,12 +201,7 @@ export default function Sidebar() {
                   aria-expanded={isExpanded}
                 >
                   <span className="sidebar__icon" aria-hidden="true">
-                    {menuIcons[item.shortLabel] || (
-                      <svg viewBox="0 0 20 20" fill="none">
-                        <path d="M7 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm6 1a2 2 0 100-4 2 2 0 000 4z" />
-                        <path d="M2.5 15a4.5 4.5 0 019 0m1.5 0a3.5 3.5 0 014.5-3.3" />
-                      </svg>
-                    )}
+                    {submenuIcon}
                   </span>
                   <span className="sidebar__label">{item.shortLabel}</span>
                   <span className="sidebar__chevron" aria-hidden="true">
