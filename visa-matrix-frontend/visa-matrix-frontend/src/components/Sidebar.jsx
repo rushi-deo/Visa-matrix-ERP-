@@ -135,12 +135,6 @@ const menuIcons = {
 export default function Sidebar() {
   const location = useLocation();
   const { canAccess } = useAuth();
-  // DEBUG: temporary logs to diagnose HR visibility
-  // Remove these after verification
-  // eslint-disable-next-line no-console
-  console.log("nav items:", navigationItems);
-  // eslint-disable-next-line no-console
-  console.log("canAccess(hr):", canAccess && canAccess("hr", "view"));
   const [expandedMenus, setExpandedMenus] = useState({});
 
   const toggleMenu = (key) => {

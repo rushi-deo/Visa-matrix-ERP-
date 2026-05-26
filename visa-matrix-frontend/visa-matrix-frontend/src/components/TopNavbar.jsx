@@ -13,6 +13,7 @@ const pageTitles = {
   "/countries": "Countries",
   "/documents": "Documents",
   "/payments": "Payments",
+  "/accounts": "Accounts",
   "/hr": "HR",
   "/communication": "Notifications",
   "/audit-logs": "Audit Logs",

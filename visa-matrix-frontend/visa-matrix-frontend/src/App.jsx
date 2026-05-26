@@ -131,8 +131,9 @@ export default function App() {
             }
           />
 
+          <Route path="/accounts" element={<Navigate replace to="/accounts/dashboard" />} />
           <Route
-            path="/accounts"
+            path="/accounts/dashboard"
             element={
               <ProtectedRoute module="invoicing">
                 <AccountsDashboard />

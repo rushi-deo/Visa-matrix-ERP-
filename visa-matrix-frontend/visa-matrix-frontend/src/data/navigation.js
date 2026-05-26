@@ -43,7 +43,7 @@ export const navigationItems = [
     children: [
       {
         label: "Dashboard",
-        path: "/accounts",
+        path: "/accounts/dashboard",
         shortLabel: "Dashboard",
         module: "invoicing",
       },
