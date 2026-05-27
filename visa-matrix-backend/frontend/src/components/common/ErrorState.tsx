@@ -8,9 +8,13 @@ export default function ErrorState({
   description,
 }: ErrorStateProps) {
   return (
-    <div className="rounded-[28px] border border-rose-200 bg-rose-50 p-6">
-      <h3 className="text-base font-semibold text-rose-700">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-rose-600">{description}</p>
+    <div className={[
+      "rounded-premium border border-premium-rose/30",
+      "bg-gradient-to-br from-premium-rose/10 to-premium-rose/5",
+      "p-6 transition-all duration-300 hover:shadow-sm",
+    ].join(" ")}>
+      <h3 className="text-base font-semibold text-premium-rose">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-premium-rose/80">{description}</p>
     </div>
   );
 }

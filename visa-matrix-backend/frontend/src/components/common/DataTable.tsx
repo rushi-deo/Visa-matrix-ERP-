@@ -27,15 +27,17 @@ export default function DataTable<T>({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-separate border-spacing-y-3">
+    <div className="overflow-x-auto rounded-premium border border-premium-silver-200/60 bg-gradient-to-br from-white to-premium-platinum-50">
+      <table className="w-full border-collapse">
         <thead>
-          <tr>
+          <tr className="border-b border-premium-silver-200/50 bg-gradient-to-r from-premium-platinum-100 to-premium-platinum-50">
             {columns.map((column) => (
               <th
                 key={column.key}
                 className={[
-                  "px-4 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400",
+                  "px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider",
+                  "text-premium-silver-500 bg-transparent",
+                  "transition-colors duration-300",
                   column.className || "",
                 ].join(" ")}
               >
@@ -46,12 +48,21 @@ export default function DataTable<T>({
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className="rounded-2xl bg-slate-50">
+            <tr
+              key={index}
+              className={[
+                "group border-b border-premium-silver-200/30 transition-all duration-300",
+                "hover:bg-gradient-to-r hover:from-premium-blue-500/5 hover:to-premium-blue-600/5",
+                "hover:shadow-sm",
+                index === rows.length - 1 ? "border-b-0" : "",
+              ].join(" ")}
+            >
               {columns.map((column) => (
                 <td
                   key={`${column.key}-${index}`}
                   className={[
-                    "border-y border-slate-200 px-4 py-4 text-sm text-slate-600 first:rounded-l-2xl first:border-l last:rounded-r-2xl last:border-r",
+                    "px-6 py-4 text-sm text-premium-navy-700",
+                    "transition-colors duration-300 group-hover:text-premium-navy-950",
                     column.className || "",
                   ].join(" ")}
                 >

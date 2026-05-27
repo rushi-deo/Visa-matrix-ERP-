@@ -8,7 +8,7 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] text-slate-900 md:grid md:grid-cols-[304px_minmax(0,1fr)]">
+    <div className="min-h-screen bg-gradient-to-br from-premium-platinum-50 via-premium-platinum-100 to-premium-platinum-50 text-premium-navy-950 md:grid md:grid-cols-[304px_minmax(0,1fr)]">
       <SidebarNav open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="min-w-0">
         <TopBar onOpenSidebar={() => setSidebarOpen(true)} />

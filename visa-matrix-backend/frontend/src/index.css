@@ -2,9 +2,42 @@
 
 :root {
   color-scheme: light;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background-color: #f5f7fa;
-  color: #0f172a;
+  font-family: "Inter", system-ui, sans-serif;
+  
+  /* Premium Color Tokens */
+  --color-navy-950: #0a1628;
+  --color-navy-900: #0d1f3c;
+  --color-navy-800: #0f2854;
+  --color-navy-700: #122d5c;
+  --color-navy-600: #1a3a78;
+  --color-navy-500: #2a4fa3;
+  
+  --color-blue-50: #f0f6fe;
+  --color-blue-500: #5a9eef;
+  --color-blue-950: #0d3a7d;
+  
+  --color-silver-50: #f9fafb;
+  --color-silver-100: #f3f4f6;
+  --color-silver-200: #e5e7eb;
+  --color-silver-400: #9ca3af;
+  
+  --color-platinum-50: #fafbfc;
+  --color-platinum-100: #f5f6f8;
+  --color-platinum-200: #e8eaef;
+  
+  /* Premium Shadow Tokens */
+  --shadow-xs: 0 1px 2px rgba(10, 22, 40, 0.05);
+  --shadow-sm: 0 2px 4px rgba(10, 22, 40, 0.08);
+  --shadow-card: 0 4px 12px rgba(10, 22, 40, 0.12), 0 1px 3px rgba(10, 22, 40, 0.08);
+  --shadow-card-hover: 0 12px 28px rgba(42, 79, 163, 0.18), 0 2px 6px rgba(10, 22, 40, 0.12);
+  --shadow-glow: 0 0 20px rgba(90, 158, 239, 0.15);
+  
+  /* Premium Transition Tokens */
+  --transition-smooth: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  background-color: #fafbfc;
+  color: #0f2854;
 }
 
 * {
@@ -12,17 +45,18 @@
 }
 
 html {
-  background: #f5f7fa;
+  background: linear-gradient(135deg, #fafbfc 0%, #f5f6f8 50%, #eef0f3 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  color: #0f172a;
-  background:
-    radial-gradient(circle at top left, rgba(47, 128, 237, 0.15), transparent 30%),
-    radial-gradient(circle at top right, rgba(11, 46, 89, 0.08), transparent 25%),
-    #f5f7fa;
+  color: #0f2854;
+  background: linear-gradient(135deg, #fafbfc 0%, #f5f6f8 50%, #eef0f3 100%);
+  font-weight: 400;
+  letter-spacing: 0.025em;
 }
 
 #root {
@@ -39,4 +73,35 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+/* Premium Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: #0a1628;
+}
+
+p {
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bcc2cc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
