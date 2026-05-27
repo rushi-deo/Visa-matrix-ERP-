@@ -91,6 +91,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const storedUser = getStoredUser();
 
       if (!storedToken) {
+        // Development-only bypass: automatically create a temporary admin session
+        // when no stored token exists. THIS IS TEMPORARY — remove before production.
+        // TODO REMOVE_DEV_BYPASS: remove this dev-only auto-login before merging to main.
+        if (import.meta.env.DEV) {
+          if (!cancelled) {
+            const devUser = normalizeAuthUser({
+              id: "dev-admin",
+              email: "dev@local",
+              full_name: "Dev Admin",
+              role: "Admin",
+              permissions: ["*"],
+            });
+
+            // Use a non-sensitive placeholder token for frontend-only session
+            const devToken = "dev-token";
+
+            applySession(devToken, devUser);
+            setIsBootstrapping(false);
+          }
+          return;
+        }
+
         if (!cancelled) {
           setIsBootstrapping(false);
         }
