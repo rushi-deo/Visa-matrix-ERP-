@@ -1,6 +1,16 @@
 const API_BASE_URL = "http://localhost:5000/api";
+const DEV_MODE = typeof import.meta !== "undefined" ? import.meta.env?.DEV : false;
+
+const devCountries = [
+  { id: "us", name: "United States", country_name: "United States", code: "US", region: "Americas" },
+];
 
 export const validateApplication = async (data) => {
+  if (DEV_MODE) {
+    // TODO_REMOVE_DEV_BYPASS: return a development-only safe validation result.
+    return { valid: true, errors: [] };
+  }
+
   const response = await fetch(`${API_BASE_URL}/validate`, {
     method: "POST",
     headers: {
@@ -13,6 +23,15 @@ export const validateApplication = async (data) => {
 };
 
 export const getFormConfig = async (country_id, visa_type_id) => {
+  if (DEV_MODE) {
+    return {
+      fields: [
+        { name: "full_name", label: "Full Name", type: "text", required: true },
+        { name: "email", label: "Email", type: "email", required: true },
+      ],
+    };
+  }
+
   const response = await fetch(
     `${API_BASE_URL}/form-config?country_id=${country_id}&visa_type_id=${visa_type_id}`
   );
@@ -21,6 +40,10 @@ export const getFormConfig = async (country_id, visa_type_id) => {
 };
 
 export async function getCountries() {
+  if (DEV_MODE) {
+    return devCountries;
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/countries`);
     const payload = await response.json().catch(() => null);

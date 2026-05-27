@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "../services/api";
+import { requestWithFallback } from "../api/apiClient";
 import type { Role, PermissionDef } from "../types";
 
 /**
@@ -9,8 +9,11 @@ export function useRoles() {
   return useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
-      const response = await apiClient.get("/admin/roles");
-      return response.data.data?.items || [];
+      const response = await requestWithFallback<{ items: Role[] }>({
+        method: "GET",
+        url: "/admin/roles",
+      });
+      return response.data.items || [];
     },
   });
 }
@@ -23,8 +26,11 @@ export function useRole(roleId: string | null) {
     queryKey: ["role", roleId],
     queryFn: async () => {
       if (!roleId) return null;
-      const response = await apiClient.get(`/admin/roles/${roleId}`);
-      return response.data.data;
+      const response = await requestWithFallback<Role>({
+        method: "GET",
+        url: `/admin/roles/${roleId}`,
+      });
+      return response.data;
     },
     enabled: !!roleId,
   });
@@ -37,8 +43,11 @@ export function usePermissions() {
   return useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
-      const response = await apiClient.get("/admin/permissions");
-      return response.data.data?.items || [];
+      const response = await requestWithFallback<{ items: PermissionDef[] }>({
+        method: "GET",
+        url: "/admin/permissions",
+      });
+      return response.data.items || [];
     },
   });
 }
@@ -51,10 +60,11 @@ export function useRolePermissions(roleId: string | null) {
     queryKey: ["role-permissions", roleId],
     queryFn: async () => {
       if (!roleId) return { role: null, permissions: [] };
-      const response = await apiClient.get(
-        `/admin/roles/${roleId}/permissions`,
-      );
-      return response.data.data;
+      const response = await requestWithFallback<{ role: Role; permissions: PermissionDef[] }>({
+        method: "GET",
+        url: `/admin/roles/${roleId}/permissions`,
+      });
+      return response.data;
     },
     enabled: !!roleId,
   });
@@ -74,11 +84,12 @@ export function useAssignPermission() {
       roleId: string;
       permissionId: string;
     }) => {
-      const response = await apiClient.post(
-        `/admin/roles/${roleId}/permissions`,
-        { permissionId },
-      );
-      return response.data.data;
+      const response = await requestWithFallback<{ message?: string }>({
+        method: "POST",
+        url: `/admin/roles/${roleId}/permissions`,
+        data: { permissionId },
+      });
+      return response.data;
     },
     onSuccess: (_data, variables) => {
       // Invalidate role permissions cache
@@ -104,10 +115,11 @@ export function useRemovePermission() {
       roleId: string;
       permissionId: string;
     }) => {
-      const response = await apiClient.delete(
-        `/admin/roles/${roleId}/permissions/${permissionId}`,
-      );
-      return response.data.data;
+      const response = await requestWithFallback<{ message?: string }>({
+        method: "DELETE",
+        url: `/admin/roles/${roleId}/permissions/${permissionId}`,
+      });
+      return response.data;
     },
     onSuccess: (_data, variables) => {
       // Invalidate role permissions cache
