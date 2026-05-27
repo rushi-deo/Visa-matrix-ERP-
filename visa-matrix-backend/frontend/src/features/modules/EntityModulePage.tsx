@@ -89,24 +89,24 @@ export default function EntityModulePage({ moduleKey }: EntityModulePageProps) {
   return (
     <div className="space-y-6">
       <SectionCard title={config.title} description={config.description}>
-        <div className="mb-6 grid gap-4 lg:grid-cols-[1fr_300px]">
-          <div className="rounded-3xl bg-slate-50 p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+        <div className="mb-6 grid gap-4 lg:grid-cols-[1fr_320px]">
+          <div className="rounded-3xl border border-premium-silver-200/70 bg-premium-navy-950/5 p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-premium-blue-200">
               Backend endpoint
             </p>
-            <p className="mt-3 text-lg font-semibold text-slate-900">
+            <p className="mt-3 text-lg font-semibold text-premium-navy-950">
               {config.endpoint}
             </p>
-            <p className="mt-3 text-sm leading-6 text-slate-500">
+            <p className="mt-3 text-sm leading-6 text-premium-silver-500">
               {config.helperText}
             </p>
           </div>
-          <label className="block rounded-3xl bg-slate-50 p-5">
-            <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+          <label className="block rounded-3xl border border-premium-silver-200/70 bg-premium-platinum-100 p-5 shadow-sm">
+            <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.25em] text-premium-blue-200">
               Search records
             </span>
             <input
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-[#1E5BB8]"
+              className="w-full rounded-2xl border border-premium-silver-200 bg-white px-4 py-3 text-premium-navy-950 outline-none transition focus:border-premium-blue-400 focus:ring-premium"
               placeholder={`Search ${config.title.toLowerCase()}...`}
               value={search}
               onChange={(event) => setSearch(event.target.value)}

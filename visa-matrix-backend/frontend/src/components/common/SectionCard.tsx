@@ -17,12 +17,10 @@ export default function SectionCard({
   return (
     <section
       className={[
-        "group rounded-premium border bg-gradient-to-br from-white to-premium-platinum-50",
-        "border-premium-silver-200/60 p-6 shadow-card",
-        "transition-all duration-300 hover:shadow-card-hover hover:border-premium-blue-300/40",
-        "relative overflow-hidden",
-        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-premium-blue-500/0 before:to-premium-blue-500/0",
-        "hover:before:from-premium-blue-500/5 hover:before:to-premium-blue-500/5 before:transition-all before:duration-300",
+        "group relative overflow-hidden rounded-premium border border-premium-blue-500/10 bg-gradient-to-br from-white/95 to-premium-platinum-100",
+        "p-6 shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-premium-blue-300/50",
+        "before:absolute before:-right-16 before:-top-16 before:h-56 before:w-56 before:rounded-full before:bg-gradient-to-br before:from-premium-blue-500/10 before:to-premium-blue-600/5 before:blur-3xl before:opacity-90 before:transition-transform before:duration-300",
+        "group-hover:before:scale-110",
         className,
       ].join(" ")}
     >

@@ -94,6 +94,19 @@ export const moduleConfigs: Record<string, ModuleConfig> = {
       { key: "created_at", header: "Issued" },
     ],
   },
+  accounts: {
+    title: "Accounts",
+    description: "Financial account ledgers, revenue centers, and client billing balances.",
+    endpoint: "/accounts",
+    helperText: "Accounts group invoices, payments, and customer ledger activity for finance teams.",
+    columns: [
+      { key: "account_name", header: "Account" },
+      { key: "customer", header: "Customer" },
+      { key: "balance", header: "Balance" },
+      { key: "status", header: "Status" },
+      { key: "updated_at", header: "Updated" },
+    ],
+  },
   transactions: {
     title: "Transactions",
     description: "Operational settlement and provider transaction audit view.",

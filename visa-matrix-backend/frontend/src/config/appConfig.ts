@@ -1,5 +1,6 @@
 import {
   Activity,
+  Banknote,
   Briefcase,
   BriefcaseBusiness,
   ChartColumnBig,
@@ -112,6 +113,27 @@ export const SIDEBAR_NAVIGATION: NavigationItem[] = [
     to: "/payments",
     roles: ["Super Admin", "Admin", "Finance Manager"],
     requiredPermission: "manage_payments",
+  },
+  {
+    label: "Invoices",
+    icon: Banknote,
+    to: "/invoices",
+    roles: ["Super Admin", "Admin", "Finance Manager"],
+    requiredPermission: "manage_payments",
+  },
+  {
+    label: "Transactions",
+    icon: ChartColumnBig,
+    to: "/transactions",
+    roles: ["Super Admin", "Admin", "Finance Manager"],
+    requiredPermission: "view_reports",
+  },
+  {
+    label: "Accounts",
+    icon: Banknote,
+    to: "/accounts",
+    roles: ["Super Admin", "Admin", "Finance Manager"],
+    requiredPermission: "manage_accounts",
   },
   {
     label: "Analytics",

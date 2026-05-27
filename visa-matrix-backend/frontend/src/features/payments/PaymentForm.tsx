@@ -53,11 +53,11 @@ export default function PaymentForm() {
         }}
       >
         <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-premium-silver-300">
             Application ID
           </span>
           <input
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#1E5BB8] focus:bg-white"
+            className="w-full rounded-2xl border border-premium-blue-500/20 bg-premium-navy-950/10 px-4 py-3 text-white outline-none transition focus:border-premium-blue-300 focus:ring-premium focus:ring-opacity-70"
             value={form.application_id}
             onChange={(event) =>
               setForm((current) => ({
@@ -69,11 +69,11 @@ export default function PaymentForm() {
           />
         </label>
         <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-premium-silver-300">
             Amount
           </span>
           <input
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#1E5BB8] focus:bg-white"
+            className="w-full rounded-2xl border border-premium-blue-500/20 bg-premium-navy-950/10 px-4 py-3 text-white outline-none transition focus:border-premium-blue-300 focus:ring-premium focus:ring-opacity-70"
             type="number"
             min="1"
             step="0.01"
@@ -88,11 +88,11 @@ export default function PaymentForm() {
           />
         </label>
         <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-premium-silver-300">
             Currency
           </span>
           <input
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#1E5BB8] focus:bg-white"
+            className="w-full rounded-2xl border border-premium-blue-500/20 bg-premium-navy-950/10 px-4 py-3 text-white outline-none transition focus:border-premium-blue-300 focus:ring-premium focus:ring-opacity-70"
             value={form.currency}
             onChange={(event) =>
               setForm((current) => ({
@@ -104,11 +104,11 @@ export default function PaymentForm() {
           />
         </label>
         <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-premium-silver-300">
             Payment status
           </span>
           <select
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#1E5BB8] focus:bg-white"
+            className="w-full rounded-2xl border border-premium-blue-500/20 bg-premium-navy-950/10 px-4 py-3 text-white outline-none transition focus:border-premium-blue-300 focus:ring-premium focus:ring-opacity-70"
             value={form.payment_status}
             onChange={(event) =>
               setForm((current) => ({
@@ -124,11 +124,11 @@ export default function PaymentForm() {
           </select>
         </label>
         <label className="block lg:col-span-2">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-premium-silver-300">
             Provider reference
           </span>
           <input
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#1E5BB8] focus:bg-white"
+            className="w-full rounded-2xl border border-premium-blue-500/20 bg-premium-navy-950/10 px-4 py-3 text-white outline-none transition focus:border-premium-blue-300 focus:ring-premium focus:ring-opacity-70"
             value={form.provider_ref}
             onChange={(event) =>
               setForm((current) => ({

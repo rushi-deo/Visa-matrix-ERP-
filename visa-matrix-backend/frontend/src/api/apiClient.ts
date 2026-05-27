@@ -60,15 +60,15 @@ apiClient.interceptors.response.use(
 const DEV_MODE = import.meta.env.DEV;
 
 function createMockResponse<T>(
-  data: T,
+  data: unknown,
   config: AxiosRequestConfig
 ): AxiosResponse<T> {
   return {
-    data,
+    data: data as T,
     status: 200,
     statusText: "OK",
     headers: {},
-    config,
+    config: config as any,
     request: {},
   };
 }
@@ -123,6 +123,205 @@ function getDevMockResponse<T>(config: AxiosRequestConfig): AxiosResponse<T> | n
   const permissionsList = [
     { id: "manage_users", name: "manage_users", description: "Manage users" },
     { id: "edit_applications", name: "edit_applications", description: "Edit applications" },
+  ];
+
+  const leadItems = [
+    {
+      id: "lead-001",
+      name: "Regal Horizons",
+      email: "enterprise@regalhorizons.com",
+      status: "Qualified",
+      country: "United Kingdom",
+      created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    },
+    {
+      id: "lead-002",
+      name: "Noble Passage",
+      email: "contact@noblep.com",
+      status: "Contacted",
+      country: "United States",
+      created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+    },
+  ];
+
+  const customerItems = [
+    {
+      id: "cust-001",
+      name: "Luxe Travel Partners",
+      email: "info@luxetravel.com",
+      phone: "+1 212-555-0198",
+      country: "Canada",
+      status: "Active",
+    },
+    {
+      id: "cust-002",
+      name: "Summit Visa Services",
+      email: "sales@summitvisa.com",
+      phone: "+44 20 7946 0958",
+      country: "United Kingdom",
+      status: "Active",
+    },
+  ];
+
+  const visaRequirements = [
+    {
+      id: "req-001",
+      country: "United States",
+      visa_type: "Business",
+      requirement: "Invitation letter, passport valid 6+ months",
+      status: "Published",
+    },
+    {
+      id: "req-002",
+      country: "Germany",
+      visa_type: "Tourist",
+      requirement: "Proof of accommodation, travel itinerary",
+      status: "Published",
+    },
+  ];
+
+  const documentItems = [
+    {
+      id: "doc-001",
+      document_name: "Passport copy",
+      application_id: "DEV-1001",
+      status: "Verified",
+      uploaded_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    },
+  ];
+
+  const invoiceItems = [
+    {
+      id: "inv-001",
+      invoice_no: "INV-2026-001",
+      customer: "Luxe Travel Partners",
+      amount: 14250,
+      status: "Paid",
+      created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    },
+  ];
+
+  const transactionItems = [
+    {
+      id: "txn-001",
+      provider_ref: "TXN-1001",
+      application_id: "DEV-1001",
+      amount: 14250,
+      payment_status: "Completed",
+      created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+    },
+  ];
+
+  const accountItems = [
+    {
+      id: "acct-001",
+      account_name: "Corporate Travel Ledger",
+      customer: "Luxe Travel Partners",
+      balance: 28500,
+      status: "Open",
+      updated_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+    },
+  ];
+
+  const taskItems = [
+    {
+      id: "task-001",
+      title: "Review Visa application DEV-1001",
+      assignee: "Dev Officer",
+      priority: "High",
+      status: "In Progress",
+      due_date: new Date(Date.now() + 86400000 * 2).toISOString(),
+    },
+  ];
+
+  const messageItems = [
+    {
+      id: "msg-001",
+      subject: "Visa case update required",
+      sender: "operations@visamatrix.com",
+      status: "Unread",
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+  ];
+
+  const notificationItems = [
+    {
+      id: "note-001",
+      title: "New document uploaded for DEV-1001",
+      type: "Document",
+      status: "New",
+      created_at: new Date(Date.now() - 3600000).toISOString(),
+    },
+  ];
+
+  const reportItems = [
+    {
+      id: "report-001",
+      name: "Executive visa performance summary",
+      type: "Dashboard",
+      status: "Ready",
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    },
+  ];
+
+  const workflowItems = [
+    {
+      id: "workflow-001",
+      name: "Standard visa approval flow",
+      trigger: "Application submission",
+      status: "Active",
+      updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    },
+  ];
+
+  const auditLogs = [
+    {
+      id: "audit-001",
+      actor: "Dev Admin",
+      action: "Updated user permissions",
+      target: "HR Manager",
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+    },
+  ];
+
+  const accessLogs = [
+    {
+      id: "access-001",
+      actor: "Dev Admin",
+      ip_address: "127.0.0.1",
+      status: "Success",
+      created_at: new Date(Date.now() - 3600000).toISOString(),
+    },
+  ];
+
+  const complianceItems = [
+    {
+      id: "compliance-001",
+      rule: "KYC Document Retention",
+      owner: "Compliance Team",
+      status: "Compliant",
+      updated_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    },
+  ];
+
+  const apiKeys = [
+    {
+      id: "key-001",
+      name: "Integration Key A",
+      scope: "Payments",
+      status: "Active",
+      updated_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+    },
+  ];
+
+  const systemLogs = [
+    {
+      id: "log-001",
+      level: "info",
+      message: "Dev environment loaded for UI testing.",
+      service: "frontend",
+      created_at: new Date(Date.now() - 600000).toISOString(),
+    },
   ];
 
   if (pathname.endsWith("/auth/login") && method === "post") {
@@ -251,6 +450,74 @@ function getDevMockResponse<T>(config: AxiosRequestConfig): AxiosResponse<T> | n
       ] as unknown as T,
       config,
     );
+  }
+
+  if (pathname.endsWith("/leads") && method === "get") {
+    return createMockResponse({ items: leadItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/customers") && method === "get") {
+    return createMockResponse({ items: customerItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/visa-requirements") && method === "get") {
+    return createMockResponse({ items: visaRequirements } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/documents") && method === "get") {
+    return createMockResponse({ items: documentItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/invoices") && method === "get") {
+    return createMockResponse({ items: invoiceItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/transactions") && method === "get") {
+    return createMockResponse({ items: transactionItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/accounts") && method === "get") {
+    return createMockResponse({ items: accountItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/tasks") && method === "get") {
+    return createMockResponse({ items: taskItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/messages") && method === "get") {
+    return createMockResponse({ items: messageItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/notifications") && method === "get") {
+    return createMockResponse({ items: notificationItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/reports") && method === "get") {
+    return createMockResponse({ items: reportItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/workflows") && method === "get") {
+    return createMockResponse({ items: workflowItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/audit-logs") && method === "get") {
+    return createMockResponse({ items: auditLogs } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/access-logs") && method === "get") {
+    return createMockResponse({ items: accessLogs } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/compliance") && method === "get") {
+    return createMockResponse({ items: complianceItems } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/admin/api-keys") && method === "get") {
+    return createMockResponse({ items: apiKeys } as unknown as T, config);
+  }
+
+  if (pathname.endsWith("/admin/logs") && method === "get") {
+    return createMockResponse({ items: systemLogs } as unknown as T, config);
   }
 
   if (pathname.endsWith("/application") && method === "post") {

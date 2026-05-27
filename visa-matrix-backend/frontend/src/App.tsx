@@ -31,6 +31,7 @@ const EmployeeManagement = lazy(() => import("./pages/EmployeeManagement"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const Invoices = lazy(() => import("./pages/Invoices"));
 const Leads = lazy(() => import("./pages/Leads"));
+const Accounts = lazy(() => import("./pages/Accounts"));
 const LoginPage = lazy(() => import("./pages/LoginPageNew"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Notifications = lazy(() => import("./pages/Notifications"));
@@ -118,6 +119,7 @@ function App() {
             <Route path="/payments" element={<Payments />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/accounts" element={<Accounts />} />
             <Route path="/workflows/builder" element={<WorkflowBuilder />} />
             <Route
               path="/workflows/pipeline"

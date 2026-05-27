@@ -29,16 +29,16 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
     APP_NAME;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-premium-silver-200/50 bg-white/80 backdrop-blur-md transition-all duration-300">
+    <header className="sticky top-0 z-20 border-b border-premium-blue-500/20 bg-premium-navy-950/95 backdrop-blur-xl transition-all duration-300">
       <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
         {/* Left Section */}
         <div className="flex items-center gap-4">
           <button
             type="button"
             className={[
-              "rounded-premium border border-premium-silver-200 bg-white p-3",
-              "text-premium-navy-700 shadow-sm transition-all duration-300",
-              "hover:bg-premium-platinum-100 hover:shadow-card-hover",
+              "rounded-premium border border-premium-blue-500/20 bg-premium-navy-900/90 p-3",
+              "text-premium-silver-100 shadow-sm transition-all duration-300",
+              "hover:bg-premium-navy-900 hover:shadow-glow-sm",
               "focus:ring-premium md:hidden",
             ].join(" ")}
             onClick={onOpenSidebar}
@@ -46,10 +46,10 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
             <Menu size={18} />
           </button>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-premium-silver-400">
-              Workspace
+            <p className="text-xs font-semibold uppercase tracking-widest text-premium-blue-200/80">
+              Executive workspace
             </p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-premium-navy-950">
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">
               {title}
             </h1>
           </div>
@@ -58,10 +58,10 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
         {/* Right Section */}
         <div className="flex flex-1 items-center justify-end gap-3">
           {/* Search Bar */}
-          <div className="hidden min-w-[280px] items-center gap-3 rounded-premium border border-premium-silver-200 bg-premium-platinum-100 px-4 py-3 transition-all duration-300 hover:border-premium-blue-300/50 hover:bg-white hover:shadow-sm focus-within:ring-premium lg:flex">
+          <div className="hidden min-w-[280px] items-center gap-3 rounded-premium border border-premium-blue-500/20 bg-premium-navy-950/80 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-premium-navy-950 focus-within:ring-premium lg:flex">
             <Search size={16} className="text-premium-silver-400" />
             <input
-              className="w-full bg-transparent text-sm outline-none placeholder:text-premium-silver-400"
+              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-premium-blue-200/70"
               placeholder="Search applications, customers, messages..."
             />
           </div>
@@ -70,10 +70,10 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
           <button
             type="button"
             className={[
-              "rounded-premium border border-premium-silver-200 bg-white p-3",
-              "text-premium-navy-700 shadow-sm transition-all duration-300",
-              "hover:bg-premium-platinum-100 hover:shadow-card",
-              "focus:ring-premium relative",
+              "relative rounded-premium border border-premium-blue-500/20 bg-premium-navy-900/90 p-3",
+              "text-premium-silver-100 shadow-sm transition-all duration-300",
+              "hover:bg-premium-navy-900 hover:shadow-glow-sm",
+              "focus:ring-premium",
               "before:absolute before:-top-1 before:-right-1 before:h-2 before:w-2 before:rounded-full before:bg-premium-emerald before:opacity-0 hover:before:opacity-100",
             ].join(" ")}
           >
@@ -81,9 +81,9 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
           </button>
 
           {/* User Info */}
-          <div className="hidden rounded-premium border border-premium-silver-200 bg-white px-4 py-3 shadow-sm transition-all duration-300 hover:shadow-card sm:block">
-            <p className="text-sm font-semibold text-premium-navy-950">{user?.name}</p>
-            <p className="text-xs uppercase tracking-widest text-premium-silver-400">
+          <div className="hidden rounded-premium border border-premium-blue-500/20 bg-premium-navy-900/85 px-4 py-3 shadow-sm transition-all duration-300 hover:shadow-glow-sm sm:block">
+            <p className="text-sm font-semibold text-white">{user?.name}</p>
+            <p className="text-xs uppercase tracking-widest text-premium-blue-200/70">
               {user?.rawRole || user?.role}
             </p>
           </div>
@@ -92,9 +92,9 @@ export default function TopBar({ onOpenSidebar }: TopBarProps) {
           <button
             type="button"
             className={[
-              "rounded-premium border border-premium-silver-200 bg-white p-3",
-              "text-premium-navy-700 shadow-sm transition-all duration-300",
-              "hover:bg-premium-platinum-100 hover:shadow-card hover:text-premium-rose",
+              "rounded-premium border border-premium-blue-500/20 bg-premium-navy-900/90 p-3",
+              "text-premium-silver-100 shadow-sm transition-all duration-300",
+              "hover:bg-premium-navy-900 hover:shadow-glow-sm hover:text-premium-rose",
               "focus:ring-premium active:scale-95",
             ].join(" ")}
             onClick={() => void handleLogout()}
