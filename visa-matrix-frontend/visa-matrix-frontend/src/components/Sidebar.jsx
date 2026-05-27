@@ -209,7 +209,7 @@ export default function Sidebar() {
                       viewBox="0 0 20 20"
                       fill="none"
                       className={`transition-transform ${
-                        !isExpanded ? "rotate-180" : ""
+                        isExpanded ? "rotate-180" : ""
                       }`}
                     >
                       <path
