@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: "Segoe UI", "Trebuchet MS", sans-serif;
   line-height: 1.5;

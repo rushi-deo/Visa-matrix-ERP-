@@ -1,51 +1,9 @@
-import React from "react";
-import { useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import "./App.css";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext";
-import Admin from "./Pages/Admin";
-import Applications from "./Pages/Applications";
-import AuditLogs from "./Pages/AuditLogs";
-import Communication from "./Pages/Communication";
-import Countries from "./Pages/Countries";
-import Customers from "./Pages/Customers";
-import Dashboard from "./Pages/Dashboard";
-import Documents from "./Pages/Documents";
-import HR from "./Pages/HR";
-import HRAuditLogsWorkspace from "./Pages/HRAuditLogsWorkspace";
-import HRDashboardWorkspace from "./Pages/HRDashboardWorkspace";
-import HRDepartmentSetupWorkspace from "./Pages/HRDepartmentSetupWorkspace";
-import HREmployeesWorkspace from "./Pages/HREmployeesWorkspace";
-import HREmployeeProfileWorkspace from "./Pages/HREmployeeProfileWorkspace";
-import HRPayrollWorkspace from "./Pages/HRPayrollWorkspace";
-import HRPerformanceWorkspace from "./Pages/HRPerformanceWorkspace";
-import HRRecruitmentWorkspace from "./Pages/HRRecruitmentWorkspace";
-import HRRolesPermissionsWorkspace from "./Pages/HRRolesPermissionsWorkspace";
-import HRSettingsWorkspace from "./Pages/HRSettingsWorkspace";
-import HRWorkflowWorkspace from "./Pages/HRWorkflowWorkspace";
-import Payments from "./Pages/Payments";
-import Reports from "./Pages/Reports";
-import AccountsDashboard from "./Pages/AccountsDashboard";
-import AccountsInvoice from "./Pages/AccountsInvoice";
-import AccountsTransactions from "./Pages/AccountsTransactions";
-import AccountsExpenses from "./Pages/AccountsExpenses";
-import AccountsReports from "./Pages/AccountsReports";
-import ApplicationDetail from "./Pages/ApplicationDetail";
-import Login from "./pages/Login";
-import QuotationPage from "./Pages/QuotationPage";
-import Signup from "./pages/Signup";
-import Tasks from "./Pages/Tasks";
-import VisaQuestionFlow from "./Pages/VisaQuestionFlow";
-import Workflow from "./Pages/Workflow";
-import { applyTheme } from "./theme/theme";
+return (
+  <>
+    <div className="bg-red-500 text-white p-4 text-2xl">
+      Tailwind Working
+    </div>
 
-export default function App() {
-  useEffect(() => {
-    applyTheme();
-  }, []);
-
-  return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -132,6 +90,7 @@ export default function App() {
           />
 
           <Route path="/accounts" element={<Navigate replace to="/accounts/dashboard" />} />
+
           <Route
             path="/accounts/dashboard"
             element={
@@ -140,6 +99,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/accounts/invoice"
             element={
@@ -148,6 +108,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/accounts/transactions"
             element={
@@ -156,6 +117,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/accounts/expenses"
             element={
@@ -164,6 +126,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/accounts/reports"
             element={
@@ -172,6 +135,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr"
             element={
@@ -183,6 +147,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/dashboard"
             element={
@@ -194,6 +159,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/employees"
             element={
@@ -205,6 +171,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/employees/:employeeId"
             element={
@@ -216,6 +183,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/employee-profile"
             element={
@@ -227,6 +195,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/payroll"
             element={
@@ -238,6 +207,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/roles-permissions"
             element={
@@ -249,6 +219,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/departments"
             element={
@@ -260,6 +231,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/audit-logs"
             element={
@@ -271,6 +243,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/settings"
             element={
@@ -282,6 +255,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/workflow"
             element={
@@ -293,6 +267,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/recruitment"
             element={
@@ -304,6 +279,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/hr/performance"
             element={
@@ -315,6 +291,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/workflow"
             element={
@@ -323,6 +300,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/visa-question-flow"
             element={
@@ -331,6 +309,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/tasks"
             element={
@@ -339,6 +318,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/communication"
             element={
@@ -347,6 +327,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/audit-logs"
             element={
@@ -355,6 +336,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/reports"
             element={
@@ -363,7 +345,9 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route path="/login" element={<Login />} />
+
           <Route
             path="/admin"
             element={
@@ -375,6 +359,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/settings"
             element={
@@ -386,10 +371,12 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route path="/signup" element={<Signup />} />
+
           <Route path="*" element={<Navigate replace to="/dashboard" />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  );
-}
+  </>
+);
