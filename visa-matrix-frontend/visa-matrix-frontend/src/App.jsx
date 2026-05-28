@@ -1,9 +1,13 @@
 import React from "react";
 
+import { RouterProvider } from "@tanstack/react-router";
+import { getRouter } from "./loveable/router";
+
+import "./index.css";
+import "./loveable/styles.css";
+
+const router = getRouter();
+
 export default function App() {
-  return (
-    <div className="min-h-screen bg-black text-white text-4xl p-10">
-      LOVEABLE IS LOADING
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
