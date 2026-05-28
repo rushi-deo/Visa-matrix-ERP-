@@ -1,18 +1,33 @@
 import React from "react";
-import Sidebar from "../components/Sidebar";
-import TopNavbar from "../components/TopNavbar";
 import { useAuth } from "../context/AuthContext";
+
+import { SidebarProvider } from "../loveable/ui/sidebar";
+import AppSidebar from "../loveable/layout/AppSidebar";
+import TopBar from "../loveable/layout/TopBar";
+import AppShell from "../loveable/layout/AppShell";
 
 export default function DashboardLayout({ children }) {
   const { loading } = useAuth();
 
   return (
-    <div className="dashboard-shell">
-      <Sidebar />
-      <div className="dashboard-main">
-        <TopNavbar />
-        <main className="dashboard-content">{loading ? <section className="panel"><p>Loading workspace access...</p></section> : children}</main>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-slate-50">
+        <AppSidebar />
+
+        <AppShell>
+          <TopBar />
+
+          <main className="flex-1 p-6 overflow-auto">
+            {loading ? (
+              <section className="rounded-xl border bg-white p-6 shadow-sm">
+                <p>Loading workspace...</p>
+              </section>
+            ) : (
+              children
+            )}
+          </main>
+        </AppShell>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
