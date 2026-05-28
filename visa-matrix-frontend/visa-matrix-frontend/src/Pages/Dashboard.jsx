@@ -3,7 +3,6 @@ import DataTable from "../components/DataTable";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
 import StatusPill from "../components/StatusPill";
-import DashboardLayout from "../layout/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import {
   formatCurrency,
@@ -20,77 +19,165 @@ import { getAutomationAlerts } from "../services/erpService";
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
+
   const applications = getApplications();
   const payments = getPayments();
   const documents = getDocuments();
   const checklistCatalog = getChecklistCatalog();
   const checklists = getVisaDocumentChecklists();
-  const metrics = getDashboardMetrics(applications, payments, [], documents);
+
+  const metrics = getDashboardMetrics(
+    applications,
+    payments,
+    [],
+    documents
+  );
+
   const recentApplications = getRecentApplications(applications);
   const recentPayments = getRecentPayments(payments);
-  const automationAlerts = getAutomationAlerts(applications, documents, payments, checklists);
+
+  const automationAlerts = getAutomationAlerts(
+    applications,
+    documents,
+    payments,
+    checklists
+  );
+
   const openApplications = applications.filter(
-    (application) => !["Approved", "Rejected"].includes(application.status),
+    (application) =>
+      !["Approved", "Rejected"].includes(application.status)
   ).length;
 
   return (
-    <DashboardLayout>
+    <div className="space-y-6">
       <PageHeader
         title="Home"
         description="Modern visa consultancy dashboard"
       />
 
-      <section className="hero-banner bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition mb-6">
-        <div className="hero-banner__copy">
-          <span className="page-header__eyebrow">SaaS ERP Overview</span>
-          <h3>The workspace now supports roles, permissions, organizations, notifications, and audit visibility.</h3>
-          <p className="text-sm text-gray-500">
-            Signed in as {currentUser?.name} from {currentUser?.organization_name}. Access is enforced
-            per role, module, action, and organization boundary.
-          </p>
-        </div>
+      <section className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div>
+            <span className="text-xs uppercase tracking-wider text-primary font-medium">
+              SaaS ERP Overview
+            </span>
 
-        <div className="hero-banner__stats">
-          <article className="mini-stat bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-            <span className="text-sm text-gray-500">Checklist Templates</span>
-            <strong className="text-xl font-semibold">{checklistCatalog.length}</strong>
-          </article>
-          <article className="mini-stat bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-            <span className="text-sm text-gray-500">Automation Alerts</span>
-            <strong className="text-xl font-semibold">{automationAlerts.length}</strong>
-          </article>
-          <article className="mini-stat bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-            <span className="text-sm text-gray-500">Pending Finance Follow-up</span>
-            <strong className="text-xl font-semibold">
-              {payments.filter((payment) => payment.paymentStatus !== "Paid").length}
-            </strong>
-          </article>
-          <article className="mini-stat bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-            <span className="text-sm text-gray-500">Visible Modules</span>
-            <strong className="text-xl font-semibold">
-              {["settings", "hr", "invoicing", "notifications", "audit_logs"].length}
-            </strong>
-          </article>
-        </div>
-      </section>
+            <h3 className="text-2xl font-semibold mt-2">
+              The workspace now supports roles, permissions,
+              organizations, notifications, and audit visibility.
+            </h3>
 
-      <section className="stats-grid gap-6 mb-6">
-        <StatCard title="Total Applications" value={metrics.totalApplications} icon="TA" color="#2563EB" />
-        <StatCard title="Pending Applications" value={metrics.pendingApplications} icon="PA" color="#F59E0B" />
-        <StatCard title="Approved Visas" value={metrics.approvedVisas} icon="AV" color="#22C55E" />
-        <StatCard title="Total Revenue" value={formatCurrency(metrics.totalRevenue)} icon="RV" color="#0F172A" />
-        <StatCard title="Open Applications" value={openApplications} icon="OA" color="#2563EB" />
-        <StatCard title="Documents Pending" value={metrics.documentsPending} icon="DP" color="#F97316" />
-      </section>
-
-      <section className="page-grid page-grid--two gap-6 mb-6">
-        <article className="panel bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-          <div className="panel__header">
-            <div>
-              <h3>Recent Applications</h3>
-              <p className="text-sm text-gray-500">Latest files moving through counseling, filing, and embassy processing.</p>
-            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Signed in as {currentUser?.name} from{" "}
+              {currentUser?.organization_name}.
+            </p>
           </div>
+
+          <div className="grid grid-cols-2 gap-3 min-w-[320px]">
+            <article className="rounded-lg border p-4">
+              <span className="text-sm text-gray-500">
+                Checklist Templates
+              </span>
+
+              <strong className="block text-2xl font-semibold mt-1">
+                {checklistCatalog.length}
+              </strong>
+            </article>
+
+            <article className="rounded-lg border p-4">
+              <span className="text-sm text-gray-500">
+                Automation Alerts
+              </span>
+
+              <strong className="block text-2xl font-semibold mt-1">
+                {automationAlerts.length}
+              </strong>
+            </article>
+
+            <article className="rounded-lg border p-4">
+              <span className="text-sm text-gray-500">
+                Pending Finance
+              </span>
+
+              <strong className="block text-2xl font-semibold mt-1">
+                {
+                  payments.filter(
+                    (payment) =>
+                      payment.paymentStatus !== "Paid"
+                  ).length
+                }
+              </strong>
+            </article>
+
+            <article className="rounded-lg border p-4">
+              <span className="text-sm text-gray-500">
+                Visible Modules
+              </span>
+
+              <strong className="block text-2xl font-semibold mt-1">
+                5
+              </strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
+        <StatCard
+          title="Total Applications"
+          value={metrics.totalApplications}
+          icon="TA"
+          color="#2563EB"
+        />
+
+        <StatCard
+          title="Pending Applications"
+          value={metrics.pendingApplications}
+          icon="PA"
+          color="#F59E0B"
+        />
+
+        <StatCard
+          title="Approved Visas"
+          value={metrics.approvedVisas}
+          icon="AV"
+          color="#22C55E"
+        />
+
+        <StatCard
+          title="Total Revenue"
+          value={formatCurrency(metrics.totalRevenue)}
+          icon="RV"
+          color="#0F172A"
+        />
+
+        <StatCard
+          title="Open Applications"
+          value={openApplications}
+          icon="OA"
+          color="#2563EB"
+        />
+
+        <StatCard
+          title="Documents Pending"
+          value={metrics.documentsPending}
+          icon="DP"
+          color="#F97316"
+        />
+      </section>
+
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <article className="bg-white rounded-xl border p-5 shadow-sm">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">
+              Recent Applications
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              Latest files moving through counseling and processing.
+            </p>
+          </div>
+
           <DataTable
             caption="Recent applications"
             columns={[
@@ -101,42 +188,57 @@ export default function Dashboard() {
               {
                 key: "status",
                 label: "Status",
-                render: (row) => <StatusPill label={row.status} />,
+                render: (row) => (
+                  <StatusPill label={row.status} />
+                ),
               },
             ]}
             rows={recentApplications}
           />
         </article>
 
-        <article className="panel bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-          <div className="panel__header">
-            <div>
-              <h3>Automation Highlights</h3>
-              <p className="text-sm text-gray-500">Reminders generated from applications, documents, and invoices.</p>
-            </div>
+        <article className="bg-white rounded-xl border p-5 shadow-sm">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">
+              Automation Highlights
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              Reminders generated from applications and invoices.
+            </p>
           </div>
-          <div className="alert-stack">
+
+          <div className="space-y-3">
             {automationAlerts.map((alert) => (
               <article
-                className={`alert-card alert-card--${alert.type} bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition`}
                 key={alert.id}
+                className="border rounded-lg p-4"
               >
-                <span className="alert-card__eyebrow">{alert.title}</span>
-                <strong>{alert.description}</strong>
+                <span className="text-xs font-medium text-primary uppercase">
+                  {alert.title}
+                </span>
+
+                <p className="mt-1 text-sm">
+                  {alert.description}
+                </p>
               </article>
             ))}
           </div>
         </article>
       </section>
 
-      <section className="page-grid page-grid--two gap-6">
-        <article className="panel bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-          <div className="panel__header">
-            <div>
-              <h3>Recent Payments</h3>
-              <p className="text-sm text-gray-500">Outstanding and collected invoices across active cases.</p>
-            </div>
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <article className="bg-white rounded-xl border p-5 shadow-sm">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">
+              Recent Payments
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              Outstanding and collected invoices.
+            </p>
           </div>
+
           <DataTable
             caption="Recent payments"
             columns={[
@@ -146,12 +248,17 @@ export default function Dashboard() {
               {
                 key: "amount",
                 label: "Amount",
-                render: (row) => formatCurrency(row.amount),
+                render: (row) =>
+                  formatCurrency(row.amount),
               },
               {
                 key: "paymentStatus",
                 label: "Payment Status",
-                render: (row) => <StatusPill label={row.paymentStatus} />,
+                render: (row) => (
+                  <StatusPill
+                    label={row.paymentStatus}
+                  />
+                ),
               },
             ]}
             rowKey="invoiceId"
@@ -159,15 +266,17 @@ export default function Dashboard() {
           />
         </article>
 
-        <article className="panel bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition">
-          <div className="panel__header">
-            <div>
-              <h3>Application Activity</h3>
-              <p className="text-sm text-gray-500">
-                Latest application records moving through intake, review, and filing.
-              </p>
-            </div>
+        <article className="bg-white rounded-xl border p-5 shadow-sm">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">
+              Application Activity
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              Latest application records.
+            </p>
           </div>
+
           <DataTable
             caption="Application activity"
             columns={[
@@ -177,15 +286,20 @@ export default function Dashboard() {
               {
                 key: "status",
                 label: "Status",
-                render: (row) => <StatusPill label={row.status} />,
+                render: (row) => (
+                  <StatusPill label={row.status} />
+                ),
               },
-              { key: "assignedAgent", label: "Assigned Agent" },
+              {
+                key: "assignedAgent",
+                label: "Assigned Agent",
+              },
             ]}
             rowKey="id"
             rows={recentApplications.slice(0, 5)}
           />
         </article>
       </section>
-    </DashboardLayout>
+    </div>
   );
 }
