@@ -4,12 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import * as React from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useAuth, type Role } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
@@ -19,22 +16,32 @@ function LoginPage() {
   const navigate = useNavigate();
   const [show, setShow] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [email, setEmail] = React.useState("admin@visamatrix.io");
-  const [password, setPassword] = React.useState("password");
-  const [role, setRole] = React.useState<Role>("super_admin");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     if (!email.includes("@")) { setError("Enter a valid email"); return; }
-    if (password.length < 4) { setError("Password is too short"); return; }
+    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
     setLoading(true);
-    setTimeout(() => {
-      login(email, role);
+
+    try {
+      await login({ email, password });
       toast.success("Welcome back!");
       navigate({ to: "/dashboard" });
-    }, 700);
+    } catch (authError) {
+      const message =
+        authError?.response?.data?.message ??
+        authError?.response?.data?.error ??
+        authError?.message ??
+        "Unable to sign in with those credentials.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -56,19 +63,6 @@ function LoginPage() {
               {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </div>
-        </div>
-        <div className="space-y-2">
-          <Label>Sign in as</Label>
-          <Select value={role} onValueChange={(v) => setRole(v as Role)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="super_admin">Super Admin</SelectItem>
-              <SelectItem value="hr">HR Manager</SelectItem>
-              <SelectItem value="finance">Finance</SelectItem>
-              <SelectItem value="crm">CRM Executive</SelectItem>
-              <SelectItem value="employee">Employee</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         <label className="flex items-center gap-2 text-sm"><Checkbox defaultChecked /> Remember me on this device</label>
         {error && <p className="text-sm text-destructive">{error}</p>}

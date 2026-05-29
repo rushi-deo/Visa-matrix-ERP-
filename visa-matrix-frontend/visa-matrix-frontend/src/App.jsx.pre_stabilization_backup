@@ -1,0 +1,28 @@
+import React from "react";
+
+import { RouterProvider } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { getRouter } from "./loveable/router";
+
+import "./index.css";
+import "./loveable/styles.fixed.css";
+
+const queryClient = new QueryClient();
+
+export default function App() {
+  const [router] = React.useState(() => getRouter());
+
+  console.log("Router created:", router);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <div style={{ padding: 20 }}>
+        <h1>Before RouterProvider</h1>
+
+        <RouterProvider router={router} />
+
+        <h1>After RouterProvider</h1>
+      </div>
+    </QueryClientProvider>
+  );
+}

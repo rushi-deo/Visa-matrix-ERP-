@@ -7,6 +7,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { user } = useAuth();
+  const { user, isHydrated } = useAuth();
+
+  if (!isHydrated) {
+    return null;
+  }
+
   return <Navigate to={user ? "/dashboard" : "/login"} />;
 }
