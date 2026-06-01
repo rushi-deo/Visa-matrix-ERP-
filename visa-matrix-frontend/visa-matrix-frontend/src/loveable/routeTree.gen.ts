@@ -38,11 +38,14 @@ import { Route as AppSettingsAuditRouteImport } from './routes/_app.settings.aud
 import { Route as AppSettingsApiRouteImport } from './routes/_app.settings.api'
 import { Route as AppHrPayrollRouteImport } from './routes/_app.hr.payroll'
 import { Route as AppHrLeaveRouteImport } from './routes/_app.hr.leave'
+import { Route as AppHrEmployeesIdRouteImport } from './routes/_app.hr.employees.$id'
 import { Route as AppHrEmployeesRouteImport } from './routes/_app.hr.employees'
 import { Route as AppHrDepartmentsRouteImport } from './routes/_app.hr.departments'
 import { Route as AppHrAttendanceRouteImport } from './routes/_app.hr.attendance'
 import { Route as AppFinanceTransactionsRouteImport } from './routes/_app.finance.transactions'
+import { Route as AppFinancePaymentsIdRouteImport } from './routes/_app.finance.payments.$id'
 import { Route as AppFinancePaymentsRouteImport } from './routes/_app.finance.payments'
+import { Route as AppFinanceInvoicesIdRouteImport } from './routes/_app.finance.invoices.$id'
 import { Route as AppFinanceInvoicesRouteImport } from './routes/_app.finance.invoices'
 import { Route as AppFinanceExpensesRouteImport } from './routes/_app.finance.expenses'
 import { Route as AppDashboardHrRouteImport } from './routes/_app.dashboard.hr'
@@ -51,7 +54,9 @@ import { Route as AppDashboardEmployeeRouteImport } from './routes/_app.dashboar
 import { Route as AppDashboardCrmRouteImport } from './routes/_app.dashboard.crm'
 import { Route as AppCrmTasksRouteImport } from './routes/_app.crm.tasks'
 import { Route as AppCrmPipelineRouteImport } from './routes/_app.crm.pipeline'
+import { Route as AppCrmLeadsIdRouteImport } from './routes/_app.crm.leads.$id'
 import { Route as AppCrmLeadsRouteImport } from './routes/_app.crm.leads'
+import { Route as AppCrmCustomersIdRouteImport } from './routes/_app.crm.customers.$id'
 import { Route as AppCrmCustomersRouteImport } from './routes/_app.crm.customers'
 import { Route as AppCountriesCategoriesRouteImport } from './routes/_app.countries.categories'
 import { Route as AppVisaApplicationsNewRouteImport } from './routes/_app.visa.applications.new'
@@ -206,6 +211,11 @@ const AppHrEmployeesRoute = AppHrEmployeesRouteImport.update({
   path: '/hr/employees',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHrEmployeesIdRoute = AppHrEmployeesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppHrEmployeesRoute,
+} as any)
 const AppHrDepartmentsRoute = AppHrDepartmentsRouteImport.update({
   id: '/hr/departments',
   path: '/hr/departments',
@@ -226,10 +236,20 @@ const AppFinancePaymentsRoute = AppFinancePaymentsRouteImport.update({
   path: '/finance/payments',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFinancePaymentsIdRoute = AppFinancePaymentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppFinancePaymentsRoute,
+} as any)
 const AppFinanceInvoicesRoute = AppFinanceInvoicesRouteImport.update({
   id: '/finance/invoices',
   path: '/finance/invoices',
   getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceInvoicesIdRoute = AppFinanceInvoicesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppFinanceInvoicesRoute,
 } as any)
 const AppFinanceExpensesRoute = AppFinanceExpensesRouteImport.update({
   id: '/finance/expenses',
@@ -271,10 +291,20 @@ const AppCrmLeadsRoute = AppCrmLeadsRouteImport.update({
   path: '/crm/leads',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCrmLeadsIdRoute = AppCrmLeadsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppCrmLeadsRoute,
+} as any)
 const AppCrmCustomersRoute = AppCrmCustomersRouteImport.update({
   id: '/crm/customers',
   path: '/crm/customers',
   getParentRoute: () => AppRoute,
+} as any)
+const AppCrmCustomersIdRoute = AppCrmCustomersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppCrmCustomersRoute,
 } as any)
 const AppCountriesCategoriesRoute = AppCountriesCategoriesRouteImport.update({
   id: '/categories',
@@ -310,8 +340,10 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AppReportsRoute
   '/settings': typeof AppSettingsRouteWithChildren
   '/countries/categories': typeof AppCountriesCategoriesRoute
-  '/crm/customers': typeof AppCrmCustomersRoute
-  '/crm/leads': typeof AppCrmLeadsRoute
+  '/crm/customers': typeof AppCrmCustomersRouteWithChildren
+  '/crm/customers/$id': typeof AppCrmCustomersIdRoute
+  '/crm/leads': typeof AppCrmLeadsRouteWithChildren
+  '/crm/leads/$id': typeof AppCrmLeadsIdRoute
   '/crm/pipeline': typeof AppCrmPipelineRoute
   '/crm/tasks': typeof AppCrmTasksRoute
   '/dashboard/crm': typeof AppDashboardCrmRoute
@@ -319,12 +351,15 @@ export interface FileRoutesByFullPath {
   '/dashboard/finance': typeof AppDashboardFinanceRoute
   '/dashboard/hr': typeof AppDashboardHrRoute
   '/finance/expenses': typeof AppFinanceExpensesRoute
-  '/finance/invoices': typeof AppFinanceInvoicesRoute
-  '/finance/payments': typeof AppFinancePaymentsRoute
+  '/finance/invoices': typeof AppFinanceInvoicesRouteWithChildren
+  '/finance/invoices/$id': typeof AppFinanceInvoicesIdRoute
+  '/finance/payments': typeof AppFinancePaymentsRouteWithChildren
+  '/finance/payments/$id': typeof AppFinancePaymentsIdRoute
   '/finance/transactions': typeof AppFinanceTransactionsRoute
   '/hr/attendance': typeof AppHrAttendanceRoute
   '/hr/departments': typeof AppHrDepartmentsRoute
-  '/hr/employees': typeof AppHrEmployeesRoute
+  '/hr/employees': typeof AppHrEmployeesRouteWithChildren
+  '/hr/employees/$id': typeof AppHrEmployeesIdRoute
   '/hr/leave': typeof AppHrLeaveRoute
   '/hr/payroll': typeof AppHrPayrollRoute
   '/settings/api': typeof AppSettingsApiRoute
@@ -358,8 +393,10 @@ export interface FileRoutesByTo {
   '/reports': typeof AppReportsRoute
   '/settings': typeof AppSettingsRouteWithChildren
   '/countries/categories': typeof AppCountriesCategoriesRoute
-  '/crm/customers': typeof AppCrmCustomersRoute
-  '/crm/leads': typeof AppCrmLeadsRoute
+  '/crm/customers': typeof AppCrmCustomersRouteWithChildren
+  '/crm/customers/$id': typeof AppCrmCustomersIdRoute
+  '/crm/leads': typeof AppCrmLeadsRouteWithChildren
+  '/crm/leads/$id': typeof AppCrmLeadsIdRoute
   '/crm/pipeline': typeof AppCrmPipelineRoute
   '/crm/tasks': typeof AppCrmTasksRoute
   '/dashboard/crm': typeof AppDashboardCrmRoute
@@ -367,12 +404,15 @@ export interface FileRoutesByTo {
   '/dashboard/finance': typeof AppDashboardFinanceRoute
   '/dashboard/hr': typeof AppDashboardHrRoute
   '/finance/expenses': typeof AppFinanceExpensesRoute
-  '/finance/invoices': typeof AppFinanceInvoicesRoute
-  '/finance/payments': typeof AppFinancePaymentsRoute
+  '/finance/invoices': typeof AppFinanceInvoicesRouteWithChildren
+  '/finance/invoices/$id': typeof AppFinanceInvoicesIdRoute
+  '/finance/payments': typeof AppFinancePaymentsRouteWithChildren
+  '/finance/payments/$id': typeof AppFinancePaymentsIdRoute
   '/finance/transactions': typeof AppFinanceTransactionsRoute
   '/hr/attendance': typeof AppHrAttendanceRoute
   '/hr/departments': typeof AppHrDepartmentsRoute
-  '/hr/employees': typeof AppHrEmployeesRoute
+  '/hr/employees': typeof AppHrEmployeesRouteWithChildren
+  '/hr/employees/$id': typeof AppHrEmployeesIdRoute
   '/hr/leave': typeof AppHrLeaveRoute
   '/hr/payroll': typeof AppHrPayrollRoute
   '/settings/api': typeof AppSettingsApiRoute
@@ -408,8 +448,10 @@ export interface FileRoutesById {
   '/_app/reports': typeof AppReportsRoute
   '/_app/settings': typeof AppSettingsRouteWithChildren
   '/_app/countries/categories': typeof AppCountriesCategoriesRoute
-  '/_app/crm/customers': typeof AppCrmCustomersRoute
-  '/_app/crm/leads': typeof AppCrmLeadsRoute
+  '/_app/crm/customers': typeof AppCrmCustomersRouteWithChildren
+  '/_app/crm/customers/$id': typeof AppCrmCustomersIdRoute
+  '/_app/crm/leads': typeof AppCrmLeadsRouteWithChildren
+  '/_app/crm/leads/$id': typeof AppCrmLeadsIdRoute
   '/_app/crm/pipeline': typeof AppCrmPipelineRoute
   '/_app/crm/tasks': typeof AppCrmTasksRoute
   '/_app/dashboard/crm': typeof AppDashboardCrmRoute
@@ -417,12 +459,15 @@ export interface FileRoutesById {
   '/_app/dashboard/finance': typeof AppDashboardFinanceRoute
   '/_app/dashboard/hr': typeof AppDashboardHrRoute
   '/_app/finance/expenses': typeof AppFinanceExpensesRoute
-  '/_app/finance/invoices': typeof AppFinanceInvoicesRoute
-  '/_app/finance/payments': typeof AppFinancePaymentsRoute
+  '/_app/finance/invoices': typeof AppFinanceInvoicesRouteWithChildren
+  '/_app/finance/invoices/$id': typeof AppFinanceInvoicesIdRoute
+  '/_app/finance/payments': typeof AppFinancePaymentsRouteWithChildren
+  '/_app/finance/payments/$id': typeof AppFinancePaymentsIdRoute
   '/_app/finance/transactions': typeof AppFinanceTransactionsRoute
   '/_app/hr/attendance': typeof AppHrAttendanceRoute
   '/_app/hr/departments': typeof AppHrDepartmentsRoute
-  '/_app/hr/employees': typeof AppHrEmployeesRoute
+  '/_app/hr/employees': typeof AppHrEmployeesRouteWithChildren
+  '/_app/hr/employees/$id': typeof AppHrEmployeesIdRoute
   '/_app/hr/leave': typeof AppHrLeaveRoute
   '/_app/hr/payroll': typeof AppHrPayrollRoute
   '/_app/settings/api': typeof AppSettingsApiRoute
@@ -459,7 +504,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/countries/categories'
     | '/crm/customers'
+    | '/crm/customers/$id'
     | '/crm/leads'
+    | '/crm/leads/$id'
     | '/crm/pipeline'
     | '/crm/tasks'
     | '/dashboard/crm'
@@ -468,11 +515,14 @@ export interface FileRouteTypes {
     | '/dashboard/hr'
     | '/finance/expenses'
     | '/finance/invoices'
+    | '/finance/invoices/$id'
     | '/finance/payments'
+    | '/finance/payments/$id'
     | '/finance/transactions'
     | '/hr/attendance'
     | '/hr/departments'
     | '/hr/employees'
+    | '/hr/employees/$id'
     | '/hr/leave'
     | '/hr/payroll'
     | '/settings/api'
@@ -507,7 +557,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/countries/categories'
     | '/crm/customers'
+    | '/crm/customers/$id'
     | '/crm/leads'
+    | '/crm/leads/$id'
     | '/crm/pipeline'
     | '/crm/tasks'
     | '/dashboard/crm'
@@ -516,11 +568,14 @@ export interface FileRouteTypes {
     | '/dashboard/hr'
     | '/finance/expenses'
     | '/finance/invoices'
+    | '/finance/invoices/$id'
     | '/finance/payments'
+    | '/finance/payments/$id'
     | '/finance/transactions'
     | '/hr/attendance'
     | '/hr/departments'
     | '/hr/employees'
+    | '/hr/employees/$id'
     | '/hr/leave'
     | '/hr/payroll'
     | '/settings/api'
@@ -556,7 +611,9 @@ export interface FileRouteTypes {
     | '/_app/settings'
     | '/_app/countries/categories'
     | '/_app/crm/customers'
+    | '/_app/crm/customers/$id'
     | '/_app/crm/leads'
+    | '/_app/crm/leads/$id'
     | '/_app/crm/pipeline'
     | '/_app/crm/tasks'
     | '/_app/dashboard/crm'
@@ -565,11 +622,14 @@ export interface FileRouteTypes {
     | '/_app/dashboard/hr'
     | '/_app/finance/expenses'
     | '/_app/finance/invoices'
+    | '/_app/finance/invoices/$id'
     | '/_app/finance/payments'
+    | '/_app/finance/payments/$id'
     | '/_app/finance/transactions'
     | '/_app/hr/attendance'
     | '/_app/hr/departments'
     | '/_app/hr/employees'
+    | '/_app/hr/employees/$id'
     | '/_app/hr/leave'
     | '/_app/hr/payroll'
     | '/_app/settings/api'
@@ -809,6 +869,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHrEmployeesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/hr/employees/$id': {
+      id: '/_app/hr/employees/$id'
+      path: '/$id'
+      fullPath: '/hr/employees/$id'
+      preLoaderRoute: typeof AppHrEmployeesIdRouteImport
+      parentRoute: typeof AppHrEmployeesRoute
+    }
     '/_app/hr/departments': {
       id: '/_app/hr/departments'
       path: '/hr/departments'
@@ -837,12 +904,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinancePaymentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/finance/payments/$id': {
+      id: '/_app/finance/payments/$id'
+      path: '/$id'
+      fullPath: '/finance/payments/$id'
+      preLoaderRoute: typeof AppFinancePaymentsIdRouteImport
+      parentRoute: typeof AppFinancePaymentsRoute
+    }
     '/_app/finance/invoices': {
       id: '/_app/finance/invoices'
       path: '/finance/invoices'
       fullPath: '/finance/invoices'
       preLoaderRoute: typeof AppFinanceInvoicesRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/finance/invoices/$id': {
+      id: '/_app/finance/invoices/$id'
+      path: '/$id'
+      fullPath: '/finance/invoices/$id'
+      preLoaderRoute: typeof AppFinanceInvoicesIdRouteImport
+      parentRoute: typeof AppFinanceInvoicesRoute
     }
     '/_app/finance/expenses': {
       id: '/_app/finance/expenses'
@@ -900,12 +981,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCrmLeadsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/crm/leads/$id': {
+      id: '/_app/crm/leads/$id'
+      path: '/$id'
+      fullPath: '/crm/leads/$id'
+      preLoaderRoute: typeof AppCrmLeadsIdRouteImport
+      parentRoute: typeof AppCrmLeadsRoute
+    }
     '/_app/crm/customers': {
       id: '/_app/crm/customers'
       path: '/crm/customers'
       fullPath: '/crm/customers'
       preLoaderRoute: typeof AppCrmCustomersRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/crm/customers/$id': {
+      id: '/_app/crm/customers/$id'
+      path: '/$id'
+      fullPath: '/crm/customers/$id'
+      preLoaderRoute: typeof AppCrmCustomersIdRouteImport
+      parentRoute: typeof AppCrmCustomersRoute
     }
     '/_app/countries/categories': {
       id: '/_app/countries/categories'
@@ -994,6 +1089,61 @@ const AppVisaApplicationsRouteChildren: AppVisaApplicationsRouteChildren = {
 const AppVisaApplicationsRouteWithChildren =
   AppVisaApplicationsRoute._addFileChildren(AppVisaApplicationsRouteChildren)
 
+interface AppCrmCustomersRouteChildren {
+  AppCrmCustomersIdRoute: typeof AppCrmCustomersIdRoute
+}
+
+const AppCrmCustomersRouteChildren: AppCrmCustomersRouteChildren = {
+  AppCrmCustomersIdRoute: AppCrmCustomersIdRoute,
+}
+
+const AppCrmCustomersRouteWithChildren =
+  AppCrmCustomersRoute._addFileChildren(AppCrmCustomersRouteChildren)
+
+interface AppCrmLeadsRouteChildren {
+  AppCrmLeadsIdRoute: typeof AppCrmLeadsIdRoute
+}
+
+const AppCrmLeadsRouteChildren: AppCrmLeadsRouteChildren = {
+  AppCrmLeadsIdRoute: AppCrmLeadsIdRoute,
+}
+
+const AppCrmLeadsRouteWithChildren =
+  AppCrmLeadsRoute._addFileChildren(AppCrmLeadsRouteChildren)
+
+interface AppFinanceInvoicesRouteChildren {
+  AppFinanceInvoicesIdRoute: typeof AppFinanceInvoicesIdRoute
+}
+
+const AppFinanceInvoicesRouteChildren: AppFinanceInvoicesRouteChildren = {
+  AppFinanceInvoicesIdRoute: AppFinanceInvoicesIdRoute,
+}
+
+const AppFinanceInvoicesRouteWithChildren =
+  AppFinanceInvoicesRoute._addFileChildren(AppFinanceInvoicesRouteChildren)
+
+interface AppFinancePaymentsRouteChildren {
+  AppFinancePaymentsIdRoute: typeof AppFinancePaymentsIdRoute
+}
+
+const AppFinancePaymentsRouteChildren: AppFinancePaymentsRouteChildren = {
+  AppFinancePaymentsIdRoute: AppFinancePaymentsIdRoute,
+}
+
+const AppFinancePaymentsRouteWithChildren =
+  AppFinancePaymentsRoute._addFileChildren(AppFinancePaymentsRouteChildren)
+
+interface AppHrEmployeesRouteChildren {
+  AppHrEmployeesIdRoute: typeof AppHrEmployeesIdRoute
+}
+
+const AppHrEmployeesRouteChildren: AppHrEmployeesRouteChildren = {
+  AppHrEmployeesIdRoute: AppHrEmployeesIdRoute,
+}
+
+const AppHrEmployeesRouteWithChildren =
+  AppHrEmployeesRoute._addFileChildren(AppHrEmployeesRouteChildren)
+
 interface AppRouteChildren {
   AppAnnouncementsRoute: typeof AppAnnouncementsRoute
   AppChatRoute: typeof AppChatRoute
@@ -1004,17 +1154,17 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppReportsRoute: typeof AppReportsRoute
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
-  AppCrmCustomersRoute: typeof AppCrmCustomersRoute
-  AppCrmLeadsRoute: typeof AppCrmLeadsRoute
+  AppCrmCustomersRoute: typeof AppCrmCustomersRouteWithChildren
+  AppCrmLeadsRoute: typeof AppCrmLeadsRouteWithChildren
   AppCrmPipelineRoute: typeof AppCrmPipelineRoute
   AppCrmTasksRoute: typeof AppCrmTasksRoute
   AppFinanceExpensesRoute: typeof AppFinanceExpensesRoute
-  AppFinanceInvoicesRoute: typeof AppFinanceInvoicesRoute
-  AppFinancePaymentsRoute: typeof AppFinancePaymentsRoute
+  AppFinanceInvoicesRoute: typeof AppFinanceInvoicesRouteWithChildren
+  AppFinancePaymentsRoute: typeof AppFinancePaymentsRouteWithChildren
   AppFinanceTransactionsRoute: typeof AppFinanceTransactionsRoute
   AppHrAttendanceRoute: typeof AppHrAttendanceRoute
   AppHrDepartmentsRoute: typeof AppHrDepartmentsRoute
-  AppHrEmployeesRoute: typeof AppHrEmployeesRoute
+  AppHrEmployeesRoute: typeof AppHrEmployeesRouteWithChildren
   AppHrLeaveRoute: typeof AppHrLeaveRoute
   AppHrPayrollRoute: typeof AppHrPayrollRoute
   AppTasksApprovalsRoute: typeof AppTasksApprovalsRoute
@@ -1034,17 +1184,17 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppReportsRoute: AppReportsRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
-  AppCrmCustomersRoute: AppCrmCustomersRoute,
-  AppCrmLeadsRoute: AppCrmLeadsRoute,
+  AppCrmCustomersRoute: AppCrmCustomersRouteWithChildren,
+  AppCrmLeadsRoute: AppCrmLeadsRouteWithChildren,
   AppCrmPipelineRoute: AppCrmPipelineRoute,
   AppCrmTasksRoute: AppCrmTasksRoute,
   AppFinanceExpensesRoute: AppFinanceExpensesRoute,
-  AppFinanceInvoicesRoute: AppFinanceInvoicesRoute,
-  AppFinancePaymentsRoute: AppFinancePaymentsRoute,
+  AppFinanceInvoicesRoute: AppFinanceInvoicesRouteWithChildren,
+  AppFinancePaymentsRoute: AppFinancePaymentsRouteWithChildren,
   AppFinanceTransactionsRoute: AppFinanceTransactionsRoute,
   AppHrAttendanceRoute: AppHrAttendanceRoute,
   AppHrDepartmentsRoute: AppHrDepartmentsRoute,
-  AppHrEmployeesRoute: AppHrEmployeesRoute,
+  AppHrEmployeesRoute: AppHrEmployeesRouteWithChildren,
   AppHrLeaveRoute: AppHrLeaveRoute,
   AppHrPayrollRoute: AppHrPayrollRoute,
   AppTasksApprovalsRoute: AppTasksApprovalsRoute,

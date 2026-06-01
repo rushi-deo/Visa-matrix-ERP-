@@ -11,8 +11,9 @@ interface Props<T extends { id: string }> {
   searchKeys?: (keyof T)[];
   primaryAction?: string;
   rowAction?: (row: T) => React.ReactNode;
+  onRowClick?: (row: T) => void;
 }
-export function ModulePage<T extends { id: string }>({ title, description, data, columns, searchKeys, primaryAction = "Add new", rowAction }: Props<T>) {
+export function ModulePage<T extends { id: string }>({ title, description, data, columns, searchKeys, primaryAction = "Add new", rowAction, onRowClick }: Props<T>) {
   return (
     <>
       <PageHeader title={title} description={description}
@@ -21,7 +22,7 @@ export function ModulePage<T extends { id: string }>({ title, description, data,
           <Button variant="outline"><Download className="size-4 mr-2" />Export</Button>
           <Button><Plus className="size-4 mr-2" />{primaryAction}</Button>
         </>} />
-      <DataTable data={data} columns={columns} searchKeys={searchKeys} rowAction={rowAction} />
+      <DataTable data={data} columns={columns} searchKeys={searchKeys} rowAction={rowAction} onRowClick={onRowClick} />
     </>
   );
 }
