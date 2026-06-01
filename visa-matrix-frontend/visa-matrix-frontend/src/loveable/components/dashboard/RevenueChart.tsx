@@ -5,7 +5,7 @@ import { monthlyRevenue } from "@/lib/mock-data";
 export function RevenueChart() {
   return (
     <Card className="col-span-full lg:col-span-2">
-      <CardHeader><CardTitle className="text-base">Revenue & Applications</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-base">Revenue Trend</CardTitle></CardHeader>
       <CardContent className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={monthlyRevenue}>

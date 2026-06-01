@@ -7,20 +7,29 @@ import * as React from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 export function AppShell() {
-  const { user } = useAuth();
+  const { user, isHydrated, loading } = useAuth();
   const navigate = useNavigate();
+
   React.useEffect(() => {
-    const t = setTimeout(() => { if (!user) navigate({ to: "/login" }); }, 0);
-    return () => clearTimeout(t);
-  }, [user, navigate]);
+    if (!isHydrated) return;
+    if (!user) {
+      navigate({ to: "/login" });
+    }
+  }, [user, isHydrated, navigate]);
+
+  if (!isHydrated || loading || !user) {
+    return null;
+  }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="bg-background text-foreground">
       <AppSidebar />
-      <SidebarInset className="bg-background">
+      <SidebarInset className="min-h-svh overflow-x-hidden bg-background">
         <TopBar />
-        <main className="flex-1 p-4 sm:p-6 max-w-[1600px] w-full mx-auto">
-          <Outlet />
+        <main className="w-full min-w-0 flex-1 px-4 py-5 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1500px] min-w-0">
+            <Outlet />
+          </div>
         </main>
         <Toaster richColors position="top-right" />
       </SidebarInset>

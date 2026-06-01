@@ -41,7 +41,7 @@ export function UserMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
       <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Log out?" description="You'll need to sign in again to access the dashboard."
-        confirmLabel="Log out" destructive onConfirm={() => { logout(); navigate({ to: "/login" }); }} />
+        confirmLabel="Log out" destructive onConfirm={async () => { await logout(); navigate({ to: "/login" }); }} />
     </>
   );
 }

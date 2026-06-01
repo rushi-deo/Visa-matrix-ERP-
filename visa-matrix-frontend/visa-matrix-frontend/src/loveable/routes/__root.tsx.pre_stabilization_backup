@@ -91,16 +91,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  // Client-rendered SPA should not render <html>/<head>/<body> inside the app root.
-  // Use a normal container element so the app mounts correctly in the existing
-  // document produced by Vite (index.html). Keep HeadContent and Scripts so
-  // TanStack Router can still inject head/scripts content if necessary.
   return (
-    <div id="root-shell">
-      <HeadContent />
-      {children}
-      <Scripts />
-    </div>
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
   );
 }
 

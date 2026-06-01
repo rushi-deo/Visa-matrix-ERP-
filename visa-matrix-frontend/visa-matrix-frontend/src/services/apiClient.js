@@ -16,18 +16,38 @@ export const API_ENDPOINTS = {
   invoiceStatus: (invoiceId) => `/invoices/${invoiceId}/status`,
 };
 
+export function getStoredAuthSession() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawSession = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    return rawSession ? JSON.parse(rawSession) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function storeAuthSession(session) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (!session?.token || !session?.user) {
+    clearStoredAuthSession();
+    return;
+  }
+
+  window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+}
+
 function getStoredToken() {
   if (typeof window === "undefined") {
     return "";
   }
 
-  try {
-    const rawSession = window.localStorage.getItem(AUTH_STORAGE_KEY);
-    const session = rawSession ? JSON.parse(rawSession) : null;
-    return session?.token ?? "";
-  } catch {
-    return "";
-  }
+  return getStoredAuthSession()?.token ?? "";
 }
 
 export function clearStoredAuthSession() {
@@ -40,6 +60,36 @@ export function clearStoredAuthSession() {
 
 export function extractResponseData(response) {
   return response?.data?.data ?? response?.data ?? null;
+}
+
+function decodeJwtPayload(token = "") {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload || typeof window === "undefined") {
+      return null;
+    }
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+    return JSON.parse(window.atob(padded));
+  } catch {
+    return null;
+  }
+}
+
+function isTokenExpired(token = "") {
+  const payload = decodeJwtPayload(token);
+  if (!payload?.exp) {
+    return false;
+  }
+
+  return payload.exp * 1000 <= Date.now();
+}
+
+function dispatchSessionExpired() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("visa-matrix:auth-expired"));
+  }
 }
 
 const apiClient = axios.create({
@@ -58,6 +108,12 @@ apiClient.interceptors.request.use((config) => {
     },
   };
   const token = getStoredToken();
+
+  if (token && isTokenExpired(token)) {
+    clearStoredAuthSession();
+    dispatchSessionExpired();
+    return Promise.reject(new Error("Authentication session has expired."));
+  }
 
   if (token && !nextConfig.headers.Authorization) {
     nextConfig.headers.Authorization = `Bearer ${token}`;
@@ -86,10 +142,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error?.response?.status === 401) {
       clearStoredAuthSession();
-
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("visa-matrix:auth-expired"));
-      }
+      dispatchSessionExpired();
     }
 
     return Promise.reject(error);

@@ -1,0 +1,53 @@
+/* Simplified Loveable theme variables (extracted from original styles.css).
+   This file removes custom at-rules so PostCSS/Tailwind can process it
+   while preserving the CSS variables used by the dashboard.
+   
+   NOTE: @tailwind directives are in src/index.css - do NOT duplicate here
+   as it breaks PostCSS processing. This file provides only the theme variables. */
+
+:root {
+  --radius: 0.5rem;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #eef2ff;
+  --accent-foreground: #1e293b;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #059669;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+  --info: #0284c7;
+  --info-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: rgba(37, 99, 235, 0.28);
+  --chart-1: #2563eb;
+  --chart-2: #0f766e;
+  --chart-3: #d97706;
+  --chart-4: #7c3aed;
+  --chart-5: #059669;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #e5edf7;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(37, 99, 235, 0.18);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(148, 163, 184, 0.18);
+  --sidebar-ring: rgba(147, 197, 253, 0.45);
+}
+
+.dark {
+  --background: #0b1220;
+  --foreground: #e6eef8;
+  --card: #0f172a;
+  --card-foreground: #e6eef8;
+}
