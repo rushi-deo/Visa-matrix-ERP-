@@ -36,7 +36,7 @@ export function UserMenu() {
           <DropdownMenuItem><HelpCircle className="size-4 mr-2" /> Help & Support</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setConfirm(true)}>
-            <LogOut className="size-4 mr-2" /> Log out
+            <LogOut className="size-4 mr-2" /> Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

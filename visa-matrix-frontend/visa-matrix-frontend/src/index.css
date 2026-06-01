@@ -63,6 +63,28 @@ a {
   min-height: 100vh;
 }
 
+.vm-overlay-surface {
+  z-index: var(--vm-z-overlay);
+  background-color: var(--vm-overlay-background);
+  border: 1px solid var(--vm-overlay-border);
+  border-radius: 8px;
+  box-shadow: var(--vm-overlay-shadow);
+  color: var(--popover-foreground, #0f172a);
+  opacity: 1;
+  isolation: isolate;
+}
+
+.vm-dialog-surface {
+  z-index: var(--vm-z-modal);
+  background-color: var(--vm-overlay-background);
+  border: 1px solid var(--vm-overlay-border);
+  border-radius: 8px;
+  box-shadow: var(--vm-overlay-shadow);
+  color: var(--foreground, #0f172a);
+  opacity: 1;
+  isolation: isolate;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

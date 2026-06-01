@@ -17,6 +17,8 @@
   --secondary-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
   --accent: #eef2ff;
   --accent-foreground: #1e293b;
   --destructive: #dc2626;
@@ -43,6 +45,11 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(148, 163, 184, 0.18);
   --sidebar-ring: rgba(147, 197, 253, 0.45);
+  --vm-overlay-background: #ffffff;
+  --vm-overlay-border: #E5E7EB;
+  --vm-overlay-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  --vm-z-overlay: 100;
+  --vm-z-modal: 110;
 }
 
 .dark {
@@ -50,4 +57,6 @@
   --foreground: #e6eef8;
   --card: #0f172a;
   --card-foreground: #e6eef8;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
 }

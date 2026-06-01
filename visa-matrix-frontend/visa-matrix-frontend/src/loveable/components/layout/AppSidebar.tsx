@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/sidebar";
 import { navGroups } from "@/lib/nav-config";
 import { useAuth } from "@/lib/auth";
-import { Plane } from "lucide-react";
 
 export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
@@ -16,15 +15,28 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="grid size-9 shrink-0 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-            <Plane className="size-5" />
-          </div>
+      <SidebarHeader className="border-b border-sidebar-border px-3 py-3.5">
+        <div
+          className={`flex min-w-0 items-center ${collapsed ? "justify-center" : "gap-3"}`}
+          aria-label="Visa Matrix Immigration ERP"
+        >
+          <svg
+            className="h-9 w-9 shrink-0"
+            viewBox="0 0 36 36"
+            fill="none"
+            role="img"
+            aria-hidden="true"
+          >
+            <rect width="36" height="36" rx="8" fill="#2563EB" />
+            <path d="M10 10.5h16" stroke="#BFDBFE" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10 25.5h16" stroke="#BFDBFE" strokeWidth="2" strokeLinecap="round" />
+            <path d="M11 14l5 9 5-9h-3.3l-1.7 4.3L14.3 14H11z" fill="#FFFFFF" />
+            <path d="M22 14h3v9h-3z" fill="#FFFFFF" />
+          </svg>
           {!collapsed && (
             <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-sm font-semibold text-sidebar-foreground">Visa Matrix</span>
-              <span className="truncate text-[10px] font-medium uppercase tracking-wider text-sidebar-foreground/60">Immigration ERP</span>
+              <span className="truncate text-[15px] font-semibold text-sidebar-foreground">Visa Matrix</span>
+              <span className="truncate text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/65">Immigration ERP</span>
             </div>
           )}
         </div>
