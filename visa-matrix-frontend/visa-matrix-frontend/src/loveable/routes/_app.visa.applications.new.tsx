@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { countries, visaCategories } from "@/lib/mock-data";
 import * as React from "react";
-import apiClient, { API_ENDPOINTS } from "@/services/apiClient";
+import apiClient, { API_ENDPOINTS } from "@erp/services/apiClient";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

@@ -12,12 +12,38 @@ import { Link } from "@tanstack/react-router";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -51,7 +77,10 @@ interface DrawerState {
   errors: Record<string, string>;
 }
 
-function canSeeAction(action: ProfileAction, canAccess: (moduleName: string, action?: string) => boolean) {
+function canSeeAction(
+  action: ProfileAction,
+  canAccess: (moduleName: string, action?: string) => boolean,
+) {
   return canAccess(action.module, action.permission);
 }
 
@@ -62,7 +91,10 @@ function makeInitialValues(fields: ProfileActionField[] = []) {
   }, {});
 }
 
-function validateFields(fields: ProfileActionField[] = [], values: Record<string, string>) {
+function validateFields(
+  fields: ProfileActionField[] = [],
+  values: Record<string, string>,
+) {
   const errors: Record<string, string> = {};
 
   fields.forEach((field) => {
@@ -72,7 +104,11 @@ function validateFields(fields: ProfileActionField[] = [], values: Record<string
       return;
     }
 
-    if (field.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (
+      field.type === "email" &&
+      value &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    ) {
       errors[field.name] = "Enter a valid email address";
     }
   });
@@ -112,7 +148,11 @@ function MetricGrid({ metrics }: { metrics?: ProfileMetric[] }) {
             <CardDescription>{metric.label}</CardDescription>
             <CardTitle className="text-2xl">{metric.value}</CardTitle>
           </CardHeader>
-          {metric.description && <CardContent className="text-sm text-muted-foreground">{metric.description}</CardContent>}
+          {metric.description && (
+            <CardContent className="text-sm text-muted-foreground">
+              {metric.description}
+            </CardContent>
+          )}
         </Card>
       ))}
     </div>
@@ -128,14 +168,23 @@ function SectionGrid({ sections }: { sections?: ProfileSection[] }) {
         <Card key={section.title} className="shadow-sm">
           <CardHeader>
             <CardTitle>{section.title}</CardTitle>
-            {section.description && <CardDescription>{section.description}</CardDescription>}
+            {section.description && (
+              <CardDescription>{section.description}</CardDescription>
+            )}
           </CardHeader>
           <CardContent>
             <dl className="grid gap-4 sm:grid-cols-2">
               {section.fields.map((field) => (
-                <div key={`${section.title}-${field.label}`} className="min-w-0">
-                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{field.label}</dt>
-                  <dd className="mt-1 break-words text-sm font-medium">{field.value}</dd>
+                <div
+                  key={`${section.title}-${field.label}`}
+                  className="min-w-0"
+                >
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    {field.label}
+                  </dt>
+                  <dd className="mt-1 break-words text-sm font-medium">
+                    {field.value}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -151,7 +200,9 @@ function DetailTable({ table }: { table: ProfileTable }) {
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>{table.title}</CardTitle>
-        {table.description && <CardDescription>{table.description}</CardDescription>}
+        {table.description && (
+          <CardDescription>{table.description}</CardDescription>
+        )}
       </CardHeader>
       <CardContent>
         {table.rows.length === 0 ? (
@@ -175,7 +226,9 @@ function DetailTable({ table }: { table: ProfileTable }) {
                   <TableRow key={`${table.title}-${index}`}>
                     {table.columns.map((column) => {
                       const value = row[column.key] ?? "";
-                      const isStatus = column.key.toLowerCase().includes("status");
+                      const isStatus = column.key
+                        .toLowerCase()
+                        .includes("status");
                       return (
                         <TableCell key={`${column.key}-${index}`}>
                           {isStatus ? <StatusBadge value={value} /> : value}
@@ -195,14 +248,22 @@ function DetailTable({ table }: { table: ProfileTable }) {
 
 function Timeline({ items }: { items?: ProfileTimelineItem[] }) {
   if (!items?.length) {
-    return <EmptyState icon={Clock3} title="No activity yet" description="Activity will appear here as the record changes." />;
+    return (
+      <EmptyState
+        icon={Clock3}
+        title="No activity yet"
+        description="Activity will appear here as the record changes."
+      />
+    );
   }
 
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Activity Timeline</CardTitle>
-        <CardDescription>Operational and audit events for this profile.</CardDescription>
+        <CardDescription>
+          Operational and audit events for this profile.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-5">
@@ -219,10 +280,16 @@ function Timeline({ items }: { items?: ProfileTimelineItem[] }) {
               <div className="min-w-0 border-b pb-4 last:border-b-0 last:pb-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium">{item.title}</p>
-                  <span className="text-xs text-muted-foreground">{item.time}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {item.time}
+                  </span>
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
-                <p className="mt-2 text-xs font-medium text-muted-foreground">By {item.actor}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {item.description}
+                </p>
+                <p className="mt-2 text-xs font-medium text-muted-foreground">
+                  By {item.actor}
+                </p>
               </div>
             </div>
           ))}
@@ -232,9 +299,18 @@ function Timeline({ items }: { items?: ProfileTimelineItem[] }) {
   );
 }
 
-function Notes({ notes }: { notes?: { id: string; author: string; body: string; createdAt: string }[] }) {
+function Notes({
+  notes,
+}: {
+  notes?: { id: string; author: string; body: string; createdAt: string }[];
+}) {
   if (!notes?.length) {
-    return <EmptyState title="No notes yet" description="Team notes will appear here." />;
+    return (
+      <EmptyState
+        title="No notes yet"
+        description="Team notes will appear here."
+      />
+    );
   }
 
   return (
@@ -244,7 +320,9 @@ function Notes({ notes }: { notes?: { id: string; author: string; body: string; 
           <CardContent className="p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="font-medium">{note.author}</p>
-              <span className="text-xs text-muted-foreground">{note.createdAt}</span>
+              <span className="text-xs text-muted-foreground">
+                {note.createdAt}
+              </span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">{note.body}</p>
           </CardContent>
@@ -274,7 +352,12 @@ function ActionInput({
         {field.required && <span className="text-destructive"> *</span>}
       </label>
       {field.type === "textarea" ? (
-        <Textarea id={inputId} value={value} placeholder={field.placeholder} onChange={(event) => onChange(event.target.value)} />
+        <Textarea
+          id={inputId}
+          value={value}
+          placeholder={field.placeholder}
+          onChange={(event) => onChange(event.target.value)}
+        />
       ) : field.type === "select" ? (
         <Select value={value} onValueChange={onChange}>
           <SelectTrigger id={inputId}>
@@ -302,13 +385,19 @@ function ActionInput({
   );
 }
 
-export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDetailPageProps) {
+export function ProfileDetailPage({
+  entity,
+  id,
+  backTo,
+  backLabel,
+}: ProfileDetailPageProps) {
   const { canAccess } = useAuth();
   const [profile, setProfile] = React.useState<ProfileDetail | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [drawer, setDrawer] = React.useState<DrawerState | null>(null);
-  const [confirmAction, setConfirmAction] = React.useState<ProfileAction | null>(null);
+  const [confirmAction, setConfirmAction] =
+    React.useState<ProfileAction | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
 
   React.useEffect(() => {
@@ -324,7 +413,9 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Unable to load profile.");
+          setError(
+            err instanceof Error ? err.message : "Unable to load profile.",
+          );
           setProfile(null);
         }
       } finally {
@@ -341,7 +432,11 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
 
   const runAction = async (action: ProfileAction) => {
     if (action.kind === "drawer") {
-      setDrawer({ action, values: makeInitialValues(action.fields), errors: {} });
+      setDrawer({
+        action,
+        values: makeInitialValues(action.fields),
+        errors: {},
+      });
       return;
     }
 
@@ -371,7 +466,8 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
     toast.success(`${drawer.action.label} saved`);
   };
 
-  const visibleActions = profile?.actions.filter((action) => canSeeAction(action, canAccess)) ?? [];
+  const visibleActions =
+    profile?.actions.filter((action) => canSeeAction(action, canAccess)) ?? [];
 
   if (loading) return <ProfileSkeleton />;
 
@@ -421,7 +517,11 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
                   onClick={() => runAction(action)}
                   disabled={submitting}
                 >
-                  {submitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Icon className="mr-2 size-4" />}
+                  {submitting ? (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : (
+                    <Icon className="mr-2 size-4" />
+                  )}
                   {action.label}
                 </Button>
               );
@@ -438,14 +538,23 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
               <AvatarFallback>{profile.initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{profile.eyebrow}</p>
-              <h2 className="truncate text-xl font-semibold">{profile.title}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">{profile.subtitle}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {profile.eyebrow}
+              </p>
+              <h2 className="truncate text-xl font-semibold">
+                {profile.title}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {profile.subtitle}
+              </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {profile.badges.map((badge) => (
-              <StatusBadge key={`${badge.label}-${badge.value}`} value={badge.value} />
+              <StatusBadge
+                key={`${badge.label}-${badge.value}`}
+                value={badge.value}
+              />
             ))}
           </div>
         </CardContent>
@@ -453,7 +562,10 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
 
       <MetricGrid metrics={profile.metrics} />
 
-      <Tabs defaultValue={profile.tabs[0]?.value ?? "overview"} className="space-y-4">
+      <Tabs
+        defaultValue={profile.tabs[0]?.value ?? "overview"}
+        className="space-y-4"
+      >
         <div className="overflow-x-auto pb-1">
           <TabsList className="h-auto min-w-max justify-start">
             {profile.tabs.map((tab) => (
@@ -468,7 +580,9 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
           <TabsContent key={tab.value} value={tab.value} className="space-y-4">
             <MetricGrid metrics={tab.metrics} />
             <SectionGrid sections={tab.sections} />
-            {tab.tables?.map((table) => <DetailTable key={table.title} table={table} />)}
+            {tab.tables?.map((table) => (
+              <DetailTable key={table.title} table={table} />
+            ))}
             {tab.notes && <Notes notes={tab.notes} />}
             {tab.timeline && <Timeline items={tab.timeline} />}
           </TabsContent>
@@ -477,13 +591,19 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
 
       <Timeline items={profile.auditLog} />
 
-      <Sheet open={Boolean(drawer)} onOpenChange={(open) => !open && setDrawer(null)}>
+      <Sheet
+        open={Boolean(drawer)}
+        onOpenChange={(open) => !open && setDrawer(null)}
+      >
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
           {drawer && (
             <>
               <SheetHeader>
                 <SheetTitle>{drawer.action.label}</SheetTitle>
-                <SheetDescription>{drawer.action.description ?? "Complete the required fields to continue."}</SheetDescription>
+                <SheetDescription>
+                  {drawer.action.description ??
+                    "Complete the required fields to continue."}
+                </SheetDescription>
               </SheetHeader>
               <div className="mt-6 grid gap-4">
                 {(drawer.action.fields ?? []).map((field) => (
@@ -507,7 +627,9 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
                   Cancel
                 </Button>
                 <Button onClick={submitDrawer} disabled={submitting}>
-                  {submitting && <Loader2 className="mr-2 size-4 animate-spin" />}
+                  {submitting && (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  )}
                   Save
                 </Button>
               </SheetFooter>
@@ -520,7 +642,10 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
         open={Boolean(confirmAction)}
         onOpenChange={(open) => !open && setConfirmAction(null)}
         title={confirmAction?.label ?? "Confirm action"}
-        description={confirmAction?.description ?? "This action will be recorded in the audit log."}
+        description={
+          confirmAction?.description ??
+          "This action will be recorded in the audit log."
+        }
         confirmLabel={confirmAction?.confirmLabel ?? "Confirm"}
         destructive={confirmAction?.destructive}
         onConfirm={() => {
@@ -529,7 +654,6 @@ export function ProfileDetailPage({ entity, id, backTo, backLabel }: ProfileDeta
           setConfirmAction(null);
         }}
       />
-
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { ModulePage } from "@/components/common/ModulePage";
 import apiClient, {
   extractResponseData,
   API_ENDPOINTS,
-} from "@/services/apiClient";
+} from "@erp/services/apiClient";
 import * as React from "react";
 import type { Application } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/common/StatusBadge";
