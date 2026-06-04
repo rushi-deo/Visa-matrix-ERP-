@@ -18,7 +18,9 @@ import applicationRoutes from "./modules/applications/application.routes.js";
 import countryRoutes from "./modules/countries/country.routes.js";
 import visaCatalogRoutes from "./modules/visa-catalog/visaCatalog.routes.js";
 import visaRuleRoutes from "./modules/visaRules/visaRule.routes.js";
+import visaTypeRoutes from "./routes/visaTypeRoutes.js";
 import documentRoutes from "./modules/documents/document.routes.js";
+import departmentRoutes from "./modules/departments/department.routes.js";
 import existingInvoiceRoutes from "./modules/invoices/invoice.routes.js";
 import invoiceRoutes from "./routes/invoice.routes.js";
 import paymentRoutes from "./modules/payments/payment.routes.js";
@@ -48,10 +50,7 @@ import { startWorkflowWorker } from "./jobs/workflowJob.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const activeWorkers = [];
-const allowedCorsOrigins = [
-  "http://localhost:5173",
-  ...env.corsOrigins,
-];
+const allowedCorsOrigins = ["http://localhost:5173", ...env.corsOrigins];
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -134,6 +133,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/countries`, countryRoutes);
   app.use(`${env.apiPrefix}/visa-catalog`, visaCatalogRoutes);
   app.use(`${env.apiPrefix}`, visaCatalogRoutes);
+  app.use(`${env.apiPrefix}/visa-types`, visaTypeRoutes);
   app.use(`${env.apiPrefix}/visa-rules`, visaRuleRoutes);
   app.use(`${env.apiPrefix}/documents`, documentRoutes);
   app.use(`${env.apiPrefix}/form-config`, formConfigRoutes);
@@ -154,7 +154,9 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/pdf`, pdfRoutes);
   app.use(`${env.apiPrefix}/test`, testSecureRoutes);
   app.use(`${env.apiPrefix}/visa-fees`, visaFeesRoutes);
-  
+
+  app.use(`${env.apiPrefix}/departments`, departmentRoutes);
+
   // Enterprise Auth & Access Control Routes
   app.use(`${env.apiPrefix}/employees`, employeeRoutes);
 

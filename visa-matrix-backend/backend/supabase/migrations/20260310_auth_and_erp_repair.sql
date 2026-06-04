@@ -87,7 +87,7 @@ alter table public.users add column if not exists updated_at timestamptz not nul
 create unique index if not exists users_email_key on public.users (email);
 select public.add_constraint_if_absent(
   'users_role_fk',
-  'alter table public.users add constraint users_role_fk foreign key (role) references public.roles(code) on update cascade'
+  'alter table public.users add constraint users_role_fk foreign key (role) references public.roles(name) on update cascade'
 );
 select public.ensure_updated_at_trigger('set_users_updated_at', 'public.users');
 

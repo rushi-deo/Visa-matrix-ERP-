@@ -17,12 +17,14 @@ const countTableRows = async (tableName) => {
   return count || 0;
 };
 
-export const listAdminUsers = async ({ page = 1, limit = 20, search = "" } = {}) => {
+export const listAdminUsers = async ({
+  page = 1,
+  limit = 20,
+  search = "",
+} = {}) => {
   const pagination = getPaginationOptions(page, limit);
-  let query = supabase
-    .from("profiles")
-    .select(
-      `
+  let query = supabase.from("profiles").select(
+    `
         id,
         auth_user_id,
         full_name,
@@ -34,10 +36,10 @@ export const listAdminUsers = async ({ page = 1, limit = 20, search = "" } = {})
         status,
         created_at,
         organizations(id, name),
-        user_roles(role_id, roles(id, code, name, description))
+        user_roles(role_id, roles(id, name, description))
       `,
-      { count: "exact" },
-    );
+    { count: "exact" },
+  );
 
   if (search) {
     query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
@@ -66,15 +68,20 @@ export const listAdminUsers = async ({ page = 1, limit = 20, search = "" } = {})
         phone: user.phone,
         role: assignedRole?.name || user.role,
         roleId: assignedRole?.id || null,
-        roleCode: assignedRole?.code || user.role,
+        roleCode: assignedRole?.name || user.role,
         organization_id: user.organization_id,
         organization_name: user.organizations?.name || "Visa Matrix",
         is_active: user.is_active !== false && user.status !== "inactive",
-        status: user.status || (user.is_active === false ? "inactive" : "active"),
+        status:
+          user.status || (user.is_active === false ? "inactive" : "active"),
         created_at: user.created_at,
       };
     }),
-    pagination: buildPaginationMeta(count || 0, pagination.page, pagination.limit),
+    pagination: buildPaginationMeta(
+      count || 0,
+      pagination.page,
+      pagination.limit,
+    ),
   };
 };
 
@@ -100,7 +107,7 @@ export const updateAdminUserRole = async (userId, roleId) => {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, full_name, email, role, organization_id, is_active, status, organizations(id, name), user_roles(role_id, roles(id, code, name, description))",
+      "id, full_name, email, role, organization_id, is_active, status, organizations(id, name), user_roles(role_id, roles(id, name, description))",
     )
     .eq("id", userId)
     .maybeSingle();
@@ -117,7 +124,7 @@ export const updateAdminUserRole = async (userId, roleId) => {
     email: data.email,
     role: assignedRole?.name || data.role,
     roleId: assignedRole?.id || null,
-    roleCode: assignedRole?.code || data.role,
+    roleCode: assignedRole?.name || data.role,
     organization_id: data.organization_id,
     organization_name: data.organizations?.name || "Visa Matrix",
     is_active: data.is_active !== false && data.status !== "inactive",
@@ -132,7 +139,7 @@ export const updateAdminUserStatus = async (userId, isActive) => {
     .update({ is_active: isActive, status: nextStatus })
     .eq("id", userId)
     .select(
-      "id, full_name, email, role, organization_id, is_active, status, organizations(id, name), user_roles(role_id, roles(id, code, name, description))",
+      "id, full_name, email, role, organization_id, is_active, status, organizations(id, name), user_roles(role_id, roles(id, name, description))",
     )
     .maybeSingle();
 
@@ -148,7 +155,7 @@ export const updateAdminUserStatus = async (userId, isActive) => {
     email: data.email,
     role: assignedRole?.name || data.role,
     roleId: assignedRole?.id || null,
-    roleCode: assignedRole?.code || data.role,
+    roleCode: assignedRole?.name || data.role,
     organization_id: data.organization_id,
     organization_name: data.organizations?.name || "Visa Matrix",
     is_active: data.is_active !== false && data.status !== "inactive",
@@ -185,7 +192,11 @@ export const listAuditLogs = async ({
 
   return {
     items: data || [],
-    pagination: buildPaginationMeta(count || 0, pagination.page, pagination.limit),
+    pagination: buildPaginationMeta(
+      count || 0,
+      pagination.page,
+      pagination.limit,
+    ),
   };
 };
 

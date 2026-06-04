@@ -33,7 +33,7 @@ const loadUserAccessProfile = async (userId, decoded) => {
         organization_id,
         is_active,
         status,
-        user_roles(role_id, roles(id, code, name, description))
+        user_roles(role_id, roles(id, name, description))
       `,
     )
     .eq("id", userId)
