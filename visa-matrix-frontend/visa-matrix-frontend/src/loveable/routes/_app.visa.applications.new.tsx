@@ -28,6 +28,18 @@ function Page() {
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  // form state
+  const [fullName, setFullName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [passportNumber, setPassportNumber] = React.useState("");
+  const [address, setAddress] = React.useState("");
+  const [country, setCountry] = React.useState("");
+  const [visaType, setVisaType] = React.useState("");
+  const [travelDate, setTravelDate] = React.useState<string | null>(null);
+  const [duration, setDuration] = React.useState("");
+  const [purpose, setPurpose] = React.useState("");
+
   const formRef = React.useRef<HTMLDivElement | null>(null);
   return (
     <>
@@ -71,23 +83,44 @@ function Page() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Full name</Label>
-                  <Input />
+                  <Input
+                    name="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Email</Label>
-                  <Input type="email" />
+                  <Input
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Phone</Label>
-                  <Input />
+                  <Input
+                    name="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Passport number</Label>
-                  <Input />
+                  <Input
+                    name="passportNumber"
+                    value={passportNumber}
+                    onChange={(e) => setPassportNumber(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label>Address</Label>
-                  <Textarea />
+                  <Textarea
+                    name="address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
                 </div>
               </div>
             </>
@@ -103,7 +136,11 @@ function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       {countries.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>
+                        <SelectItem
+                          key={c.code}
+                          value={c.code}
+                          onSelect={() => setCountry(c.code)}
+                        >
                           {c.flag} {c.name}
                         </SelectItem>
                       ))}
@@ -118,7 +155,11 @@ function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       {visaCategories.map((v) => (
-                        <SelectItem key={v.code} value={v.code}>
+                        <SelectItem
+                          key={v.code}
+                          value={v.code}
+                          onSelect={() => setVisaType(v.code)}
+                        >
                           {v.name}
                         </SelectItem>
                       ))}
@@ -127,15 +168,29 @@ function Page() {
                 </div>
                 <div className="space-y-2">
                   <Label>Travel date</Label>
-                  <Input type="date" />
+                  <Input
+                    type="date"
+                    name="travelDate"
+                    value={travelDate ?? ""}
+                    onChange={(e) => setTravelDate(e.target.value || null)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Duration of stay</Label>
-                  <Input placeholder="e.g. 30 days" />
+                  <Input
+                    name="duration"
+                    placeholder="e.g. 30 days"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label>Purpose</Label>
-                  <Textarea />
+                  <Textarea
+                    name="purpose"
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                  />
                 </div>
               </div>
             </>
@@ -193,56 +248,61 @@ function Page() {
                   setError(null);
                   setSubmitting(true);
                   try {
-                    // collect form values from inputs/selects in this card
-                    const container = formRef.current;
-                    const payload: any = {};
-                    if (container) {
-                      const inputs = container.querySelectorAll<
-                        | HTMLInputElement
-                        | HTMLTextAreaElement
-                        | HTMLSelectElement
-                      >("input, textarea, select");
-                      inputs.forEach((el) => {
-                        const name =
-                          el.getAttribute("name") ||
-                          el.getAttribute("data-name") ||
-                          el.id;
-                        if (!name) return;
-                        payload[name] = (el as any).value;
-                      });
-                    }
-
-                    // map to backend fields expected
+                    // build payload from controlled state
                     const body = {
-                      customerName:
-                        payload.fullName ||
-                        payload.customerName ||
-                        payload.name ||
-                        "",
-                      email: payload.email || "",
-                      phone: payload.phone || "",
-                      passportNumber:
-                        payload.passportNumber || payload.passport || "",
-                      address: payload.address || "",
-                      destinationCountry:
-                        payload.country || payload.destinationCountry || "",
-                      visaType: payload.visaType || payload.category || "",
-                      travelDate: payload.travelDate || null,
-                      durationOfStay:
-                        payload.duration || payload.durationOfStay || null,
-                      purpose: payload.purpose || "",
+                      customerName: fullName,
+                      email,
+                      phone,
+                      passportNumber,
+                      address,
+                      destinationCountry: country,
+                      visaType,
+                      travelDate: travelDate || null,
+                      durationOfStay: duration || null,
+                      purpose,
                     };
+
+                    console.log("Submitting application payload ->", body);
 
                     const resp = await apiClient.post(
                       API_ENDPOINTS.applications,
                       body,
                     );
+
+                    // backend response mapping
                     const created = resp?.data?.data ?? resp?.data ?? resp;
+                    console.log(
+                      "Create response ->",
+                      resp,
+                      "mapped ->",
+                      created,
+                    );
+
+                    // success handling
                     toast.success("Application created");
                     navigate({ to: "/visa/applications" });
                   } catch (err: any) {
                     console.error("Create application failed:", err);
-                    setError(err?.message ?? String(err));
+                    // try to parse validation errors
+                    const msg =
+                      err?.response?.data?.message ||
+                      err?.message ||
+                      String(err);
+                    const validation =
+                      err?.response?.data?.errors ||
+                      err?.response?.data?.validation;
+                    if (validation) {
+                      // map validation object into readable string
+                      const details =
+                        typeof validation === "string"
+                          ? validation
+                          : JSON.stringify(validation);
+                      setError(details);
+                      toast.error("Validation error: " + details);
+                    } else {
+                      setError(msg);
+                      toast.error(msg);
+                    }
                   } finally {
                     setSubmitting(false);
                   }

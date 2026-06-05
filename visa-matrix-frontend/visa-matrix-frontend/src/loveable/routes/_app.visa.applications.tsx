@@ -6,6 +6,7 @@ import apiClient, {
 } from "@erp/services/apiClient";
 import * as React from "react";
 import type { Application } from "@/lib/mock-data";
+import ApplicationCreateDialog from "@/components/applications/ApplicationCreateDialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
@@ -18,6 +19,7 @@ function Page() {
   const [applications, setApplications] = React.useState<Application[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [createOpen, setCreateOpen] = React.useState(false);
   const cols: Column<Application>[] = [
     {
       key: "appId",
@@ -78,31 +80,54 @@ function Page() {
   }, []);
 
   return (
-    <ModulePage
-      title="Visa Applications"
-      description="Track and manage every visa case across countries."
-      data={applications}
-      columns={cols}
-      searchKeys={["applicant", "appId", "country", "visaType", "assignee"]}
-      primaryAction="New Application"
-      isLoading={loading}
-      error={error ?? undefined}
-      emptyMessage={
-        !loading && !error && applications.length === 0
-          ? "No applications found."
-          : undefined
-      }
-      rowAction={(r) => (
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() =>
-            navigate({ to: "/visa/applications/$id", params: { id: r.id } })
+    <>
+      <ModulePage
+        title="Visa Applications"
+        description="Track and manage every visa case across countries."
+        data={applications}
+        columns={cols}
+        searchKeys={["applicant", "appId", "country", "visaType", "assignee"]}
+        primaryAction="New Application"
+        onPrimaryAction={() => {
+          console.log("New Application clicked");
+          setCreateOpen(true);
+        }}
+        isLoading={loading}
+        error={error ?? undefined}
+        emptyMessage={
+          !loading && !error && applications.length === 0
+            ? "No applications found."
+            : undefined
+        }
+        rowAction={(r) => (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() =>
+              navigate({ to: "/visa/applications/$id", params: { id: r.id } })
+            }
+          >
+            <Eye className="size-4" />
+          </Button>
+        )}
+      />
+      <ApplicationCreateDialog
+        open={createOpen}
+        onOpenChange={(v) => setCreateOpen(v)}
+        onCreated={async () => {
+          // refresh table
+          setLoading(true);
+          try {
+            const resp = await apiClient.get(API_ENDPOINTS.applications);
+            const data = extractResponseData(resp) ?? [];
+            setApplications(Array.isArray(data) ? data : []);
+          } catch (err: any) {
+            console.error("Failed to refresh applications:", err);
+          } finally {
+            setLoading(false);
           }
-        >
-          <Eye className="size-4" />
-        </Button>
-      )}
-    />
+        }}
+      />
+    </>
   );
 }
