@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { countries, visaCategories } from "@/lib/mock-data";
 import * as React from "react";
 import apiClient, { API_ENDPOINTS } from "@erp/services/apiClient";
+import { fetchVisaCountries } from "@erp/services/api";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -22,11 +22,51 @@ export const Route = createFileRoute("/_app/visa/applications/new")({
   component: Page,
 });
 const steps = ["Applicant", "Visa Details", "Documents", "Review"];
+const visaCategories = [
+  { code: "TOURIST", name: "Tourist Visa", duration: "30-90 days" },
+  { code: "BUSINESS", name: "Business Visa", duration: "30-180 days" },
+  { code: "STUDENT", name: "Student Visa", duration: "1-4 years" },
+  { code: "WORK", name: "Work Permit", duration: "1-3 years" },
+  { code: "PR", name: "Permanent Residency", duration: "Permanent" },
+  { code: "TRANSIT", name: "Transit Visa", duration: "1-3 days" },
+];
+
+type CountryOption = {
+  id: string;
+  name: string;
+  flag?: string;
+};
+
+const normalizeCountries = (payload: unknown): CountryOption[] => {
+  const items = Array.isArray(payload)
+    ? payload
+    : Array.isArray((payload as any)?.items)
+      ? (payload as any).items
+      : [];
+
+  return items
+    .map((item: any) => {
+      const id = String(item?.id ?? item?.country_id ?? item?.code ?? item?.country_code ?? "");
+      const name = String(item?.name ?? item?.country_name ?? item?.country ?? item?.title ?? "");
+      const flag = item?.flag ?? item?.flag_image ?? item?.emoji;
+
+      return {
+        id,
+        name,
+        flag: flag ? String(flag) : undefined,
+      };
+    })
+    .filter((item) => item.id && item.name);
+};
+
 function Page() {
   const navigate = useNavigate();
   const [step, setStep] = React.useState(0);
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [countries, setCountries] = React.useState<CountryOption[]>([]);
+  const [loadingCountries, setLoadingCountries] = React.useState(true);
+  const [countriesError, setCountriesError] = React.useState<string | null>(null);
 
   // form state
   const [fullName, setFullName] = React.useState("");
@@ -41,6 +81,40 @@ function Page() {
   const [purpose, setPurpose] = React.useState("");
 
   const formRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    const loadCountries = async () => {
+      setLoadingCountries(true);
+      setCountriesError(null);
+
+      try {
+        const data = await fetchVisaCountries();
+        const nextCountries = normalizeCountries(data);
+
+        if (mounted) {
+          setCountries(nextCountries);
+        }
+      } catch (loadError: any) {
+        if (mounted) {
+          setCountries([]);
+          setCountriesError(loadError?.message ?? "Failed to load countries.");
+        }
+      } finally {
+        if (mounted) {
+          setLoadingCountries(false);
+        }
+      }
+    };
+
+    loadCountries();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <>
       <PageHeader
@@ -130,18 +204,44 @@ function Page() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Country</Label>
-                  <Select>
+                  <Select
+                    value={country}
+                    onValueChange={setCountry}
+                    disabled={loadingCountries}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue
+                        placeholder={
+                          loadingCountries
+                            ? "Loading countries..."
+                            : countriesError
+                              ? "Unable to load countries"
+                              : countries.length === 0
+                                ? "No countries available"
+                                : "Select country"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
+                      {loadingCountries && (
+                        <SelectItem value="__loading" disabled>
+                          Loading countries...
+                        </SelectItem>
+                      )}
+                      {!loadingCountries && countriesError && (
+                        <SelectItem value="__error" disabled>
+                          {countriesError}
+                        </SelectItem>
+                      )}
+                      {!loadingCountries && !countriesError && countries.length === 0 && (
+                        <SelectItem value="__empty" disabled>
+                          No countries available
+                        </SelectItem>
+                      )}
                       {countries.map((c) => (
-                        <SelectItem
-                          key={c.code}
-                          value={c.code}
-                          onSelect={() => setCountry(c.code)}
-                        >
-                          {c.flag} {c.name}
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.flag ? `${c.flag} ` : ""}
+                          {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
