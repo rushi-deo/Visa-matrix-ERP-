@@ -48,7 +48,7 @@
   --vm-overlay-background: #ffffff;
   --vm-overlay-border: #E5E7EB;
   --vm-overlay-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  --vm-z-overlay: 100;
+  --vm-z-overlay: 120;
   --vm-z-modal: 110;
 }
 
