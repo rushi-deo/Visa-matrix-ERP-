@@ -8,8 +8,12 @@ loadEnv({
   quiet: true,
 });
 
-const SUPABASE_URL = process.env.SUPABASE_URL?.trim();
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY?.trim();
+const SUPABASE_URL = (
+  process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
+)?.trim();
+const SUPABASE_ANON_KEY = (
+  process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY
+)?.trim();
 
 const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
   if (!value) {
