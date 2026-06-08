@@ -46,6 +46,20 @@ export const listCountries = async (query = {}) => {
   };
 };
 
+export const listActiveCountries = async () => {
+  const { data, error } = await supabase
+    .from("countries")
+    .select("*")
+    .eq("is_active", true)
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw fromSupabaseError(error, "Failed to list active countries.");
+  }
+
+  return data || [];
+};
+
 export const getCountryById = (id) => countryCrudRepository.findById(id);
 export const createCountry = (payload) => countryCrudRepository.create(payload);
 export const updateCountry = (id, payload) =>
