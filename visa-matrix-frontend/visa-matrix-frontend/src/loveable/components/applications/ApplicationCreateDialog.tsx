@@ -180,23 +180,39 @@ export function ApplicationCreateDialog({
     setError(null);
     setSubmitting(true);
     try {
-      console.log("Selected Country UUID:", country);
-      console.log("Selected Visa Type UUID:", visaType);
+      if (!country) {
+        throw new Error("Please select a country.");
+      }
+      if (!visaType) {
+        throw new Error("Please select a visa type.");
+      }
 
-      const body = {
-        customerName: fullName,
+      const customerPayload = {
+        full_name: fullName,
         email,
         phone,
-        passportNumber,
-        address,
-        destinationCountry: country,
-        visaType,
-        travelDate: travelDate || null,
-        durationOfStay: duration || null,
-        purpose,
+        passport_number: passportNumber,
       };
 
-      await apiClient.post(API_ENDPOINTS.applications, body);
+      const customerResp = await apiClient.post("/customers", customerPayload);
+      const customerData =
+        customerResp?.data?.data ?? customerResp?.data ?? customerResp;
+      const customerId = String(
+        customerData?.id ?? customerData?.customer_id ?? "",
+      );
+
+      if (!customerId) {
+        throw new Error("Customer creation succeeded without an id.");
+      }
+
+      const applicationPayload = {
+        customer_id: customerId,
+        country_id: country,
+        visa_type_id: visaType,
+        travel_date: travelDate || null,
+      };
+
+      await apiClient.post(API_ENDPOINTS.applications, applicationPayload);
       toast.success("Application created");
       onCreated?.();
       close();
