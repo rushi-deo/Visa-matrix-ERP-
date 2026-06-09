@@ -59,6 +59,28 @@ const normalizeCountries = (payload: unknown): CountryOption[] => {
     .filter((item) => item.id && item.name);
 };
 
+const normalizeVisaTypes = (payload: unknown): CountryOption[] => {
+  const items = Array.isArray(payload)
+    ? payload
+    : Array.isArray((payload as any)?.items)
+      ? (payload as any).items
+      : Array.isArray((payload as any)?.data)
+        ? (payload as any).data
+        : [];
+
+  return items
+    .map((item: any) => {
+      const id = String(item?.id ?? item?.visa_type_id ?? item?.code ?? item?.visa_code ?? "");
+      const name = String(item?.name ?? item?.visa_name ?? item?.visa_type ?? item?.type ?? "");
+
+      return {
+        id,
+        name,
+      };
+    })
+    .filter((item) => item.id && item.name);
+};
+
 function Page() {
   const navigate = useNavigate();
   const [step, setStep] = React.useState(0);
@@ -67,6 +89,9 @@ function Page() {
   const [countries, setCountries] = React.useState<CountryOption[]>([]);
   const [loadingCountries, setLoadingCountries] = React.useState(true);
   const [countriesError, setCountriesError] = React.useState<string | null>(null);
+  const [visaTypes, setVisaTypes] = React.useState<CountryOption[]>([]);
+  const [loadingVisaTypes, setLoadingVisaTypes] = React.useState(true);
+  const [visaTypesError, setVisaTypesError] = React.useState<string | null>(null);
 
   // form state
   const [fullName, setFullName] = React.useState("");
@@ -108,7 +133,31 @@ function Page() {
       }
     };
 
+    const loadVisaTypes = async () => {
+      setLoadingVisaTypes(true);
+      setVisaTypesError(null);
+
+      try {
+        const response = await apiClient.get("/visa-types");
+        const nextVisaTypes = normalizeVisaTypes(response?.data ?? response);
+
+        if (mounted) {
+          setVisaTypes(nextVisaTypes);
+        }
+      } catch (loadError: any) {
+        if (mounted) {
+          setVisaTypes([]);
+          setVisaTypesError(loadError?.message ?? "Failed to load visa types.");
+        }
+      } finally {
+        if (mounted) {
+          setLoadingVisaTypes(false);
+        }
+      }
+    };
+
     loadCountries();
+    loadVisaTypes();
 
     return () => {
       mounted = false;
@@ -249,17 +298,42 @@ function Page() {
                 </div>
                 <div className="space-y-2">
                   <Label>Visa Type</Label>
-                  <Select>
+                  <Select
+                    value={visaType}
+                    onValueChange={setVisaType}
+                    disabled={loadingVisaTypes}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue
+                        placeholder={
+                          loadingVisaTypes
+                            ? "Loading visa types..."
+                            : visaTypesError
+                              ? "Unable to load visa types"
+                              : visaTypes.length === 0
+                                ? "No visa types available"
+                                : "Select visa type"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {visaCategories.map((v) => (
-                        <SelectItem
-                          key={v.code}
-                          value={v.code}
-                          onSelect={() => setVisaType(v.code)}
-                        >
+                      {loadingVisaTypes && (
+                        <SelectItem value="__loading" disabled>
+                          Loading visa types...
+                        </SelectItem>
+                      )}
+                      {!loadingVisaTypes && visaTypesError && (
+                        <SelectItem value="__error" disabled>
+                          {visaTypesError}
+                        </SelectItem>
+                      )}
+                      {!loadingVisaTypes && !visaTypesError && visaTypes.length === 0 && (
+                        <SelectItem value="__empty" disabled>
+                          No visa types available
+                        </SelectItem>
+                      )}
+                      {visaTypes.map((v) => (
+                        <SelectItem key={v.id} value={v.id}>
                           {v.name}
                         </SelectItem>
                       ))}
@@ -348,42 +422,48 @@ function Page() {
                   setError(null);
                   setSubmitting(true);
                   try {
-                    // build payload from controlled state
-                    const body = {
-                      customerName: fullName,
+                    if (!country) {
+                      throw new Error("Please select a country.");
+                    }
+                    if (!visaType) {
+                      throw new Error("Please select a visa type.");
+                    }
+
+                    const customerPayload = {
+                      full_name: fullName,
                       email,
                       phone,
-                      passportNumber,
-                      address,
-                      destinationCountry: country,
-                      visaType,
-                      travelDate: travelDate || null,
-                      durationOfStay: duration || null,
-                      purpose,
+                      passport_number: passportNumber,
                     };
 
-                    console.log("Submitting application payload ->", body);
-
-                    const resp = await apiClient.post(
-                      API_ENDPOINTS.applications,
-                      body,
+                    const customerResp = await apiClient.post(
+                      "/customers",
+                      customerPayload,
                     );
 
-                    // backend response mapping
-                    const created = resp?.data?.data ?? resp?.data ?? resp;
-                    console.log(
-                      "Create response ->",
-                      resp,
-                      "mapped ->",
-                      created,
+                    const customerData =
+                      customerResp?.data?.data ?? customerResp?.data ?? customerResp;
+                    const customerId = String(
+                      customerData?.id ?? customerData?.customer_id ?? "",
                     );
 
-                    // success handling
+                    if (!customerId) {
+                      throw new Error("Customer creation succeeded without an id.");
+                    }
+
+                    const applicationPayload = {
+                      customer_id: customerId,
+                      country_id: country,
+                      visa_type_id: visaType,
+                      travel_date: travelDate || null,
+                    };
+
+                    await apiClient.post(API_ENDPOINTS.applications, applicationPayload);
+
                     toast.success("Application created");
                     navigate({ to: "/visa/applications" });
                   } catch (err: any) {
                     console.error("Create application failed:", err);
-                    // try to parse validation errors
                     const msg =
                       err?.response?.data?.message ||
                       err?.message ||
@@ -392,7 +472,6 @@ function Page() {
                       err?.response?.data?.errors ||
                       err?.response?.data?.validation;
                     if (validation) {
-                      // map validation object into readable string
                       const details =
                         typeof validation === "string"
                           ? validation
