@@ -194,7 +194,10 @@ export function ApplicationCreateDialog({
         passport_number: passportNumber,
       };
 
+      console.log("CUSTOMER PAYLOAD", customerPayload);
+
       const customerResp = await apiClient.post("/customers", customerPayload);
+      console.log("CUSTOMER RESPONSE", customerResp);
       const customerData =
         customerResp?.data?.data ?? customerResp?.data ?? customerResp;
       const customerId = String(
@@ -212,14 +215,19 @@ export function ApplicationCreateDialog({
         travel_date: travelDate || null,
       };
 
+      console.log("APPLICATION PAYLOAD", applicationPayload);
+
       await apiClient.post(API_ENDPOINTS.applications, applicationPayload);
       toast.success("Application created");
       onCreated?.();
       close();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || String(err);
+      console.error("API ERROR", err);
+      console.error("RESPONSE", err?.response?.data);
+      const responseData = err?.response?.data;
+      const msg = responseData ?? err?.message ?? String(err);
       const validation =
-        err?.response?.data?.errors || err?.response?.data?.validation;
+        responseData?.errors || responseData?.validation;
       if (validation) {
         const details =
           typeof validation === "string"
@@ -228,8 +236,14 @@ export function ApplicationCreateDialog({
         setError(details);
         toast.error("Validation error: " + details);
       } else {
-        setError(msg);
-        toast.error(msg);
+        const details =
+          typeof responseData === "string"
+            ? responseData
+            : responseData
+              ? JSON.stringify(responseData)
+              : String(msg);
+        setError(details);
+        toast.error(details);
       }
     } finally {
       setSubmitting(false);
