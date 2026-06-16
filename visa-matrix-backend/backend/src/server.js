@@ -14,6 +14,7 @@ import logger from "./core/logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import customerRoutes from "./modules/customers/customer.routes.js";
+import leadRoutes from "./modules/leads/lead.routes.js";
 import applicationRoutes from "./modules/applications/application.routes.js";
 import countryRoutes from "./modules/countries/country.routes.js";
 import visaCatalogRoutes from "./modules/visa-catalog/visaCatalog.routes.js";
@@ -127,6 +128,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/auth`, authRoutes);
   app.use(`${env.apiPrefix}/users`, userRoutes);
   app.use(`${env.apiPrefix}/customers`, customerRoutes);
+  app.use(`${env.apiPrefix}/leads`, leadRoutes);
   app.use(`${env.apiPrefix}/application`, legacyApplicationRoutes);
   app.use(`${env.apiPrefix}/public/applications`, publicApplicationsRoutes);
   app.use(`${env.apiPrefix}/applications`, applicationRoutes);

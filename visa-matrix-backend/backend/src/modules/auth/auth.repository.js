@@ -15,7 +15,7 @@ const sanitizeProfilePayload = ({
 }) => {
   return [
     {
-      auth_user_id: authUserId,
+      user_id: authUserId,
       full_name: fullName,
       email,
       phone,

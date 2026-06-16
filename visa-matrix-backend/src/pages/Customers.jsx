@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Form from "../components/Form";
 import Table from "../components/Table";
-import { getCustomers } from "../services/api";
+import { getCustomers, createCustomer } from "../services/api";
 
 const statusClassName = (status) => {
   const normalized = String(status || "").toLowerCase();
@@ -22,6 +22,7 @@ const initialFormValues = {
   email: "",
   phone: "",
   country: "India",
+  passportNumber: "",
   status: "Active",
 };
 
@@ -29,6 +30,7 @@ const customerFormFields = [
   { name: "name", label: "Customer Name", placeholder: "Enter full name" },
   { name: "email", label: "Email", type: "email", placeholder: "name@company.com" },
   { name: "phone", label: "Phone", placeholder: "+1 555 0199" },
+  { name: "passportNumber", label: "Passport Number", placeholder: "Passport Number" },
   { name: "country", label: "Country", type: "text", placeholder: "Country" },
   {
     name: "status",
@@ -50,6 +52,8 @@ export default function Customers({ searchQuery }) {
   const [customers, setCustomers] = useState([]);
   const [source, setSource] = useState("mock");
   const [formValues, setFormValues] = useState(initialFormValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -124,22 +128,45 @@ export default function Customers({ searchQuery }) {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!formValues.name || !formValues.email) {
       return;
     }
 
-    setCustomers((current) => [
-      {
-        id: `local-${Date.now()}`,
-        ...formValues,
-        segment: "New Lead",
-      },
-      ...current,
-    ]);
-    setFormValues(initialFormValues);
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const payload = {
+        full_name: formValues.name,
+        email: formValues.email,
+        phone: formValues.phone,
+        passport_number: formValues.passportNumber,
+        nationality: formValues.country,
+      };
+
+      const result = await createCustomer(payload);
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      const refreshed = await getCustomers();
+
+      setCustomers(refreshed.items);
+      setSource(refreshed.source);
+
+      setFormValues(initialFormValues);
+
+      console.log("Customer created successfully");
+    } catch (error) {
+      setSubmitError(error.message);
+      console.error("Failed to create customer:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -183,8 +210,9 @@ export default function Customers({ searchQuery }) {
             values={formValues}
             onChange={handleFormChange}
             onSubmit={handleSubmit}
-            submitLabel="Add Customer"
-            footerNote="Prototype action updates the UI immediately. Attach POST /customers when write access is required."
+            submitLabel={isSubmitting ? "Adding..." : "Add Customer"}
+            submitDisabled={isSubmitting}
+            footerNote={submitError || "Customer records are saved through POST /customers."}
           />
         </div>
       </div>

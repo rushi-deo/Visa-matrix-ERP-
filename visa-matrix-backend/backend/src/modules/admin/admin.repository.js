@@ -26,7 +26,7 @@ export const listAdminUsers = async ({
   let query = supabase.from("profiles").select(
     `
         id,
-        auth_user_id,
+        user_id,
         full_name,
         email,
         phone,
