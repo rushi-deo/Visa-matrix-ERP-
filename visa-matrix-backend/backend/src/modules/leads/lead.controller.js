@@ -1,4 +1,4 @@
-import { asyncHandler } from "../../core/error.js";
+import { asyncHandler } from "../../core/errors.js";
 import { sendSuccess, sendCreated } from "../../core/response.js";
 
 import {

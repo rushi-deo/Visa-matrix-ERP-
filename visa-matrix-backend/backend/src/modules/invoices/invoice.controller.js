@@ -1,4 +1,23 @@
 import supabase from "../../config/supabase.js";
+import { getInvoices } from "./invoice.service.js";
+
+export const listInvoices = async (req, res) => {
+  try {
+    const data = await getInvoices(req.query);
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("Invoice List Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
 export const createInvoice = async (req, res) => {
   try {
@@ -9,28 +28,29 @@ export const createInvoice = async (req, res) => {
     if (!customer_id || !amount) {
       return res.status(400).json({
         success: false,
-        error: "customer_id and amount are required"
+        error: "customer_id and amount are required",
       });
     }
 
     const { data, error } = await supabase
-      .from('invoices')
+      .from("invoices")
       .insert([
         {
           customer_id,
           subtotal: amount,
           tax_amount: 0,
           total_amount: amount,
-          status: status || 'pending'
-        }
+          status: status || "pending",
+        },
       ])
-      .select('*');
+      .select("*");
 
     if (error) {
       console.error("Supabase Insert Error:", error);
+
       return res.status(400).json({
         success: false,
-        error: error.message
+        error: error.message,
       });
     }
 
@@ -39,14 +59,14 @@ export const createInvoice = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Invoice created successfully",
-      data: data[0]
+      data: data[0],
     });
-
   } catch (err) {
     console.error("Server Error:", err);
+
     return res.status(500).json({
       success: false,
-      error: "Internal Server Error"
+      error: "Internal Server Error",
     });
   }
 };
