@@ -19,6 +19,39 @@ export const listInvoices = async (req, res) => {
   }
 };
 
+export const getInvoiceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("invoices")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    console.log("Invoice Data:", data);
+
+    if (error) {
+      return res.status(404).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("Invoice Detail Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 export const createInvoice = async (req, res) => {
   try {
     const { customer_id, amount, status } = req.body;

@@ -1,3 +1,4 @@
+
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "node:url";
@@ -23,10 +24,10 @@ import visaTypeRoutes from "./routes/visaTypeRoutes.js";
 import documentRoutes from "./modules/documents/document.routes.js";
 import departmentRoutes from "./modules/departments/department.routes.js";
 import existingInvoiceRoutes from "./modules/invoices/invoice.routes.js";
+import quotationRoutes from "./modules/Quotation/quotation.routes.js";
 import invoiceRoutes from "./routes/invoice.routes.js";
 import paymentRoutes from "./modules/payments/payment.routes.js";
 import paymentCreateRoutes from "./routes/payment.routes.js";
-import quotationRoutes from "./routes/quotation.routes.js";
 import taskRoutes from "./modules/tasks/task.routes.js";
 import workflowRoutes from "./modules/workflows/workflow.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
@@ -143,7 +144,6 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}`, validationRoutes);
   app.use("/api/invoices", existingInvoiceRoutes);
   app.use("/api", invoiceRoutes);
-  app.use(`${env.apiPrefix}`, quotationRoutes);
   app.use(`${env.apiPrefix}`, paymentCreateRoutes);
   app.use(`${env.apiPrefix}/payments`, paymentRoutes);
   app.use(`${env.apiPrefix}/tasks`, taskRoutes);
@@ -156,7 +156,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/pdf`, pdfRoutes);
   app.use(`${env.apiPrefix}/test`, testSecureRoutes);
   app.use(`${env.apiPrefix}/visa-fees`, visaFeesRoutes);
-
+app.use(`${env.apiPrefix}/quotations`, quotationRoutes);
   app.use(`${env.apiPrefix}/departments`, departmentRoutes);
 
   // Enterprise Auth & Access Control Routes

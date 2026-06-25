@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createInvoice, listInvoices } from "./invoice.controller.js";
+import {
+  createInvoice,
+  listInvoices,
+  getInvoiceById,
+} from "./invoice.controller.js";
 import authMiddleware from "../../middleware/authMiddleware.js";
 import permissionMiddleware from "../../middleware/permissionMiddleware.js";
 
@@ -10,6 +14,12 @@ router.get(
   authMiddleware,
   permissionMiddleware("invoicing", "view"),
   listInvoices
+);
+router.get(
+  "/:id",
+  authMiddleware,
+  permissionMiddleware("invoicing", "view"),
+  getInvoiceById
 );
 
 router.post(
