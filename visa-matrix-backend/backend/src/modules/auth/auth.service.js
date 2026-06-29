@@ -49,7 +49,7 @@ const signToken = async (user) => {
       {
         sub: user.id,
         userId: user.id,
-        authUserId: user.auth_user_id || null,
+        authUserId: user.user_id || null,
         email: user.email,
         role: userRole,
         permissions: permissions,
@@ -66,7 +66,7 @@ const signToken = async (user) => {
       {
         sub: user.id,
         userId: user.id,
-        authUserId: user.auth_user_id || null,
+        authUserId: user.user_id || null,
         email: user.email,
         role: normalizeEnterpriseRole(user.role) || "Employee",
         permissions: [],
@@ -182,7 +182,7 @@ export const getCurrentUser = async (authContext) => {
   return sanitizeUser({
     ...(userProfile || {
       id: authContext.userId,
-      auth_user_id: authContext.authUserId || null,
+      user_id: authContext.authUserId || null,
       email: authContext.email,
       role: authContext.role,
     }),

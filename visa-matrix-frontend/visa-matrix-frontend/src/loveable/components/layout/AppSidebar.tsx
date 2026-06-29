@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/sidebar";
 import { navGroups } from "@/lib/nav-config";
 import { useAuth } from "@/lib/auth";
-
+import visaMatrixLogo from "../../../assets/visa-matrix-logo.jpg";
 export function AppSidebar() {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
@@ -15,32 +15,24 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-3.5">
-        <div
-          className={`flex min-w-0 items-center ${collapsed ? "justify-center" : "gap-3"}`}
-          aria-label="Visa Matrix Immigration ERP"
-        >
-          <svg
-            className="h-9 w-9 shrink-0"
-            viewBox="0 0 36 36"
-            fill="none"
-            role="img"
-            aria-hidden="true"
-          >
-            <rect width="36" height="36" rx="8" fill="#2563EB" />
-            <path d="M10 10.5h16" stroke="#BFDBFE" strokeWidth="2" strokeLinecap="round" />
-            <path d="M10 25.5h16" stroke="#BFDBFE" strokeWidth="2" strokeLinecap="round" />
-            <path d="M11 14l5 9 5-9h-3.3l-1.7 4.3L14.3 14H11z" fill="#FFFFFF" />
-            <path d="M22 14h3v9h-3z" fill="#FFFFFF" />
-          </svg>
-          {!collapsed && (
-            <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-[15px] font-semibold text-sidebar-foreground">Visa Matrix</span>
-              <span className="truncate text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/65">Immigration ERP</span>
-            </div>
-          )}
-        </div>
-      </SidebarHeader>
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-5">
+  <div
+    className={`flex min-w-0 items-center ${
+      collapsed ? "justify-center" : "gap-4"
+    }`}
+    aria-label="Visa Matrix Immigration ERP"
+  >
+    <img
+      src={visaMatrixLogo}
+      alt="Visa Matrix"
+      className={`${
+        collapsed ? "h-10 w-10" : "h-12 w-auto"
+      } shrink-0 object-contain`}
+    />
+
+    {!collapsed && null}
+  </div>
+</SidebarHeader>
       <SidebarContent className="gap-3 px-2 py-3">
         {navGroups.map((group) => {
           const items = group.items.filter((i) => !i.roles || hasRole(i.roles));

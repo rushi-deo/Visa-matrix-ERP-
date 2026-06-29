@@ -124,7 +124,7 @@ export async function fetchApplicationById(applicationId) {
 }
 
 export async function fetchQuotationTemplate() {
-  const response = await apiClient.get("/quotation-template");
+  const response = await apiClient.get("/quotations/quotation-template");
 
   return extractResponseData(response) ?? {};
 }

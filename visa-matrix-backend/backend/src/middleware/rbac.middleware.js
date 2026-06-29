@@ -24,18 +24,16 @@ const normalizeRequiredPermissions = (requiredPermissions = []) => {
 const loadUserAccessProfile = async (userId, decoded) => {
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select(
-      `
-        id,
-        auth_user_id,
-        email,
-        role,
-        organization_id,
-        is_active,
-        status,
-        user_roles(role_id, roles(id, name, description))
-      `,
-    )
+    .select(`
+    id,
+    user_id,
+    email,
+    role,
+    organization_id,
+    is_active,
+    status,
+    user_roles(role_id, roles(id, name, description))
+`)
     .eq("id", userId)
     .maybeSingle();
 
@@ -89,7 +87,7 @@ const loadUserAccessProfile = async (userId, decoded) => {
     blocked: false,
     user: {
       userId,
-      authUserId: profile?.auth_user_id || decoded.authUserId || null,
+      authUserId: profile?.user_id || decoded.authUserId || null,
       email: profile?.email || decoded.email,
       role: resolvedRole,
       roleCode: normalizeRoleCode(resolvedRole),
