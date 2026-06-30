@@ -1,9 +1,11 @@
   import { Router } from "express";
   import {
-    createInvoice,
-    listInvoices,
-    getInvoiceById,
-  } from "./invoice.controller.js";
+  createInvoice,
+  listInvoices,
+  getInvoiceById,
+  updateInvoice,
+  deleteInvoice,
+} from "./invoice.controller.js";
   import authMiddleware from "../../middleware/authMiddleware.js";
   import permissionMiddleware from "../../middleware/permissionMiddleware.js";
 
@@ -28,5 +30,17 @@
     permissionMiddleware("invoicing", "create"),
     createInvoice
   );
+router.put(
+  "/:id",
+  authMiddleware,
+  permissionMiddleware("invoicing", "update"),
+  updateInvoice
+);
 
+router.delete(
+  "/:id",
+  authMiddleware,
+  permissionMiddleware("invoicing", "delete"),
+  deleteInvoice
+);
   export default router;

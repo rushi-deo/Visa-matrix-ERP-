@@ -1,5 +1,5 @@
 import { createCrudRepository } from "../../core/baseRepository.js";
-
+import supabase from "../../config/supabase.js";
 const invoiceCrudRepository = createCrudRepository({
   tableName: "invoices",
 });
@@ -28,3 +28,22 @@ export const updateInvoice = (id, payload) =>
 
 export const deleteInvoice = (id) =>
   invoiceCrudRepository.remove(id);
+export const getInvoiceDetails = async (id) => {
+  const { data, error } = await supabase
+    .from("invoices")
+   .select(`
+  *,
+  customers(*),
+  applications(*),
+  invoice_items(*),
+  payments(*)
+`)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
