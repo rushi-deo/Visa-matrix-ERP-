@@ -1,6 +1,7 @@
 import React from "react";
 import DataTable from "../components/DataTable";
-import PageHeader from "../components/PageHeader";
+import PageLayout from "../components/PageLayout";
+import SectionCard from "../components/SectionCard";
 import StatCard from "../components/StatCard";
 import StatusPill from "../components/StatusPill";
 import { useAuth } from "../context/AuthContext";
@@ -49,13 +50,12 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Home"
-        description="Modern visa consultancy dashboard"
-      />
-
-      <section className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+    <PageLayout
+      title="Home"
+      description="Modern visa consultancy dashboard"
+      eyebrow="SaaS ERP Overview"
+    >
+      <SectionCard title="Workspace snapshot" description="The workspace now supports roles, permissions, organizations, notifications, and audit visibility.">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <div>
             <span className="text-xs uppercase tracking-wider text-primary font-medium">
@@ -120,7 +120,7 @@ export default function Dashboard() {
             </article>
           </div>
         </div>
-      </section>
+      </SectionCard>
 
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
         <StatCard
@@ -167,17 +167,7 @@ export default function Dashboard() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <article className="bg-white rounded-xl border p-5 shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">
-              Recent Applications
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Latest files moving through counseling and processing.
-            </p>
-          </div>
-
+        <SectionCard title="Recent Applications" description="Latest files moving through counseling and processing.">
           <DataTable
             caption="Recent applications"
             columns={[
@@ -195,50 +185,30 @@ export default function Dashboard() {
             ]}
             rows={recentApplications}
           />
-        </article>
+        </SectionCard>
 
-        <article className="bg-white rounded-xl border p-5 shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">
-              Automation Highlights
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Reminders generated from applications and invoices.
-            </p>
-          </div>
-
+        <SectionCard title="Automation Highlights" description="Reminders generated from applications and invoices.">
           <div className="space-y-3">
             {automationAlerts.map((alert) => (
               <article
                 key={alert.id}
-                className="border rounded-lg p-4"
+                className="rounded-xl border border-slate-200 bg-slate-50 p-4"
               >
-                <span className="text-xs font-medium text-primary uppercase">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
                   {alert.title}
                 </span>
 
-                <p className="mt-1 text-sm">
+                <p className="mt-1 text-sm text-slate-600">
                   {alert.description}
                 </p>
               </article>
             ))}
           </div>
-        </article>
+        </SectionCard>
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <article className="bg-white rounded-xl border p-5 shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">
-              Recent Payments
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Outstanding and collected invoices.
-            </p>
-          </div>
-
+        <SectionCard title="Recent Payments" description="Outstanding and collected invoices.">
           <DataTable
             caption="Recent payments"
             columns={[
@@ -264,19 +234,9 @@ export default function Dashboard() {
             rowKey="invoiceId"
             rows={recentPayments}
           />
-        </article>
+        </SectionCard>
 
-        <article className="bg-white rounded-xl border p-5 shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">
-              Application Activity
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Latest application records.
-            </p>
-          </div>
-
+        <SectionCard title="Application Activity" description="Latest application records.">
           <DataTable
             caption="Application activity"
             columns={[
@@ -298,8 +258,8 @@ export default function Dashboard() {
             rowKey="id"
             rows={recentApplications.slice(0, 5)}
           />
-        </article>
+        </SectionCard>
       </section>
-    </div>
+    </PageLayout>
   );
 }

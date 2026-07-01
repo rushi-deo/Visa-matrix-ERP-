@@ -45,28 +45,82 @@ function InvoiceDetailRoute() {
   }, [id]);
 
   if (loading) {
-    return <div className="p-6">Loading invoice...</div>;
-  }
+  return (
+    <div className="min-h-screen bg-slate-50 p-8">
+      <div className="mx-auto max-w-7xl animate-pulse space-y-6">
+
+        <div className="h-48 rounded-2xl bg-gray-200" />
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="h-32 rounded-2xl bg-gray-200" />
+          <div className="h-32 rounded-2xl bg-gray-200" />
+          <div className="h-32 rounded-2xl bg-gray-200" />
+          <div className="h-32 rounded-2xl bg-gray-200" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <div className="xl:col-span-2 h-96 rounded-2xl bg-gray-200" />
+          <div className="h-96 rounded-2xl bg-gray-200" />
+        </div>
+
+      </div>
+    </div>
+  );
+}
 
   if (!invoice) {
-    return <div className="p-6">Invoice not found</div>;
-  }
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-8">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center max-w-md">
+
+        <FileText
+          size={56}
+          className="mx-auto text-gray-300 mb-5"
+        />
+
+        <h2 className="text-2xl font-bold text-gray-900">
+          Invoice Not Found
+        </h2>
+
+        <p className="mt-3 text-gray-500">
+          The invoice you're looking for doesn't exist or may have been deleted.
+        </p>
+
+      </div>
+    </div>
+  );
+}
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 text-gray-900">
+    <div className="min-h-screen bg-slate-50 px-8 py-8 text-gray-900">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Hero Header */}
         <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
             <div className="space-y-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500">
-                  Invoice
-                </p>
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-                  {invoice.invoice_number || invoice.invoice_code || "Invoice"}
-                </h1>
-              </div>
+              
+                <nav className="flex items-center gap-2 text-sm text-gray-500">
+
+  <span>Finance</span>
+
+  <span>/</span>
+
+  <span>Invoices</span>
+
+  <span>/</span>
+
+  <span className="font-medium text-gray-900">
+    {invoice.invoice_number ||
+      invoice.invoice_code ||
+      "Invoice"}
+  </span>
+
+</nav>
+                <h1 className="mt-2 text-4xl font-bold tracking-tight leading-tight sm:text-5xl">
+  {invoice.invoice_number ||
+    invoice.invoice_code ||
+    "Invoice"}
+</h1>
 
               <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
@@ -105,22 +159,26 @@ function InvoiceDetailRoute() {
                 {invoice.status || "Unpaid"}
               </span>
 
-              <div className="flex flex-wrap gap-3">
-                <button className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gray-800">
-                  <Download size={16} />
-                  Download PDF
-                </button>
+              <div className="flex flex-wrap justify-end gap-3">
                 <button
-                  onClick={() => window.print()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 shadow-sm transition hover:bg-gray-50"
-                >
-                  <Printer size={16} />
-                  Print
-                </button>
-                <button className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 shadow-sm transition hover:bg-gray-50">
-                  <Mail size={16} />
-                  Send Email
-                </button>
+  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700"
+>
+  <Download size={16} />
+  Download PDF
+</button>
+                <button
+  onClick={() => window.print()}
+  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-50 hover:border-gray-300"
+>
+  <Printer size={16} />
+  Print
+</button>
+                <button
+  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-50 hover:border-gray-300"
+>
+  <Mail size={16} />
+  Send Email
+</button>
               </div>
             </div>
           </div>
@@ -197,7 +255,7 @@ function InvoiceDetailRoute() {
             {/* Customer Information */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
               <div className="border-b border-gray-100 px-6 py-5">
-                <h2 className="text-lg font-semibold text-gray-900">Customer Information</h2>
+                <h2 className="text-6xl font-bold tracking-tight text-gray-900">Customer Information</h2>
               </div>
               <div className="grid gap-5 p-6 sm:grid-cols-2">
                 <div>
@@ -241,7 +299,7 @@ function InvoiceDetailRoute() {
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Status</p>
                   <div className="mt-2">
                     <span
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${
+                      className={`inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm ${
                         invoice.status === "paid"
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"

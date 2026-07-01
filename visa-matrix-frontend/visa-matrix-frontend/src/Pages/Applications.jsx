@@ -2,8 +2,10 @@ import React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "../components/DataTable";
+import FilterBar from "../components/FilterBar";
 import Modal from "../components/Modal";
-import PageHeader from "../components/PageHeader";
+import PageLayout from "../components/PageLayout";
+import SectionCard from "../components/SectionCard";
 import StatusPill from "../components/StatusPill";
 import TablePagination from "../components/TablePagination";
 import NewApplicationForm from "../forms/NewApplicationForm";
@@ -212,13 +214,14 @@ export default function Applications() {
 
   return (
     <DashboardLayout>
-      <PageHeader
+      <PageLayout
         title="Visa Applications"
         description="Track every application from draft intake through document collection, filing, embassy processing, and outcome."
+        eyebrow="Application Ops"
         action={
           canAccess("applications", "create") ? (
             <button
-              className="primary-button"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
               onClick={() => setShowNewModal(true)}
               type="button"
             >
@@ -226,22 +229,13 @@ export default function Applications() {
             </button>
           ) : null
         }
-      />
-
-      <section className="panel">
-        <div className="panel__header panel__header--stacked">
-          <div>
-            <h3>Application Tracking</h3>
-            <p>
-              Filter active cases and open a file to view application details.
-            </p>
-          </div>
-        </div>
-
-        <div className="filter-row">
-          <label className="search-toolbar">
-            <span>Search applications</span>
+      >
+      <SectionCard title="Application Tracking" description="Filter active cases and open a file to view application details.">
+        <FilterBar>
+          <label className="min-w-[240px] flex-1">
+            <span className="mb-1 block text-sm font-medium text-slate-600">Search applications</span>
             <input
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:bg-white"
               onChange={(event) => {
                 setSearchValue(event.target.value);
                 setPage(1);
@@ -252,9 +246,10 @@ export default function Applications() {
             />
           </label>
 
-          <label className="filter-select">
-            <span>Status</span>
+          <label className="min-w-[180px]">
+            <span className="mb-1 block text-sm font-medium text-slate-600">Status</span>
             <select
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:bg-white"
               onChange={(event) => {
                 setStatusFilter(event.target.value);
                 setPage(1);
@@ -276,7 +271,7 @@ export default function Applications() {
               ))}
             </select>
           </label>
-        </div>
+        </FilterBar>
 
         <DataTable
           caption="Visa applications"
@@ -336,7 +331,7 @@ export default function Applications() {
           page={page}
           pageCount={pageCount}
         />
-      </section>
+      </SectionCard>
 
       <Modal
         isOpen={showNewModal}
@@ -353,6 +348,7 @@ export default function Applications() {
           visaTypeOptions={visaTypeOptions}
         />
       </Modal>
+      </PageLayout>
     </DashboardLayout>
   );
 }
