@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 import { getRouter } from "./loveable/router";
 import "./index.css";
+import "./App.css";
 import "./loveable/styles.fixed.css";
 
 const router = getRouter();

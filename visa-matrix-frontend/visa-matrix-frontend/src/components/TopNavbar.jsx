@@ -150,6 +150,7 @@ export default function TopNavbar() {
     <header className="top-navbar mb-6">
       <div className="top-navbar__leading">
         <div className="top-navbar__intro">
+          <span className="top-navbar__eyebrow">Workspace</span>
           <h1 className="text-2xl font-semibold">{pageTitles[activeItem?.path] ?? defaultTitle}</h1>
           <p className="text-sm text-gray-500">Modern visa consultancy dashboard</p>
         </div>
@@ -192,10 +193,10 @@ export default function TopNavbar() {
                 top: "calc(100% + 8px)",
                 left: 0,
                 right: 0,
-                background: "#ffffff",
-                border: "1px solid rgba(226, 232, 240, 0.95)",
-                borderRadius: "12px",
-                boxShadow: "0 14px 30px rgba(15, 23, 42, 0.12)",
+                background: "var(--vm-color-surface)",
+                border: "1px solid var(--vm-color-border)",
+                borderRadius: "var(--vm-radius-lg)",
+                boxShadow: "var(--vm-shadow-md)",
                 overflow: "hidden",
                 zIndex: 20,
               }}
@@ -217,7 +218,7 @@ export default function TopNavbar() {
                       padding: "12px 14px",
                       border: 0,
                       borderBottom: "1px solid rgba(226, 232, 240, 0.8)",
-                      background: "#ffffff",
+                      background: "var(--vm-color-surface)",
                       cursor: "pointer",
                     }}
                   >
@@ -296,9 +297,9 @@ export default function TopNavbar() {
                   minWidth: "140px",
                   padding: "8px",
                   borderRadius: "12px",
-                  background: "#ffffff",
-                  border: "1px solid rgba(226, 232, 240, 0.9)",
-                  boxShadow: "0 12px 24px rgba(15, 23, 42, 0.12)",
+                  background: "var(--vm-color-surface)",
+                  border: "1px solid var(--vm-color-border)",
+                  boxShadow: "var(--vm-shadow-md)",
                   zIndex: 10,
                 }}
               >
