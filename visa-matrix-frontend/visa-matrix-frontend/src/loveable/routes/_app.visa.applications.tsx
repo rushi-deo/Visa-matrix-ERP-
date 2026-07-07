@@ -25,9 +25,36 @@ function Page() {
       key: "appId",
       header: "App ID",
       sortable: true,
-      render: (r) => <span className="font-medium">{r.appId}</span>,
+      render: (r) => (
+        <button
+          type="button"
+          className="font-medium text-primary hover:underline"
+          onClick={(event) => {
+            event.stopPropagation();
+            navigate({ to: "/visa/applications/$id", params: { id: r.id } });
+          }}
+        >
+          {r.appId}
+        </button>
+      ),
     },
-    { key: "applicant", header: "Applicant", sortable: true },
+    {
+      key: "applicant",
+      header: "Applicant",
+      sortable: true,
+      render: (r) => (
+        <button
+          type="button"
+          className="text-left text-foreground hover:underline"
+          onClick={(event) => {
+            event.stopPropagation();
+            navigate({ to: "/visa/applications/$id", params: { id: r.id } });
+          }}
+        >
+          {r.applicant}
+        </button>
+      ),
+    },
     {
       key: "country",
       header: "Country",
@@ -103,13 +130,17 @@ function Page() {
           <Button
             size="icon"
             variant="ghost"
-            onClick={() =>
-              navigate({ to: "/visa/applications/$id", params: { id: r.id } })
-            }
+            onClick={(event) => {
+              event.stopPropagation();
+              navigate({ to: "/visa/applications/$id", params: { id: r.id } });
+            }}
           >
             <Eye className="size-4" />
           </Button>
         )}
+        onRowClick={(r) =>
+          navigate({ to: "/visa/applications/$id", params: { id: r.id } })
+        }
       />
       <ApplicationCreateDialog
         open={createOpen}
