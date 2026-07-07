@@ -1,19 +1,19 @@
 export const sendSuccess = (res, data, options = {}) => {
   const { statusCode = 200, message = null, meta = null } = options;
- const payload = Object.freeze({
-  success: true,
-  data,
-});
+  const payload = {
+    success: true,
+    data,
+  };
 
-  if (message) {
+  if (message !== null && message !== undefined) {
     payload.message = message;
   }
 
-  if (meta) {
+  if (meta !== null && meta !== undefined) {
     payload.meta = meta;
   }
 
-  return res.status(statusCode).json(payload);
+  return res.status(statusCode).json(Object.freeze(payload));
 };
 
 export const sendCreated = (res, data, message = "Created successfully.") => {
