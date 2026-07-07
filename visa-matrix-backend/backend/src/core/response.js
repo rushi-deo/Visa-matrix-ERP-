@@ -34,3 +34,4 @@ export const sendErrorResponse = (res, error, statusCode = 500) => {
   error: error.details ?? null,
   timestamp: new Date().toISOString(),
 });
+};

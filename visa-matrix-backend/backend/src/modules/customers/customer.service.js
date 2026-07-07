@@ -24,7 +24,7 @@ const sanitizeCustomerPayload = (payload = {}) => {
 export const getCustomers = async (query) => listCustomers(query);
 export const getCustomer = async (id) => getCustomerById(id);
 export const createCustomerRecord = async (payload) => {
-  export const createCustomerRecord = async (payload) => {
+
   const customer = sanitizeCustomerPayload(payload);
 
   if (!customer.full_name) {
