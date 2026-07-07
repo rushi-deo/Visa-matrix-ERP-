@@ -1,17 +1,29 @@
 import supabase from "../config/supabaseClient.js";
-import { ApiError } from "../utils/apiError.js";
+import {
+  AppError,
+  NotFoundError,
+  ConflictError,
+  RequestValidationError,
+} from "../core/errors.js";
 import { buildListResponse, getPaginationOptions } from "../utils/pagination.js";
 
 export const mapDatabaseError = (error, fallbackMessage) => {
   if (error.code === "23503") {
-    return new ApiError(400, "Referenced record does not exist.");
+    return new RequestValidationError("Referenced record does not exist.");
   }
 
   if (error.code === "23505") {
-    return new ApiError(409, "A record with the same unique value already exists.");
+    return new ConflictError(
+  "A record with the same unique value already exists."
+);
   }
 
-  return new ApiError(500, `${fallbackMessage}: ${error.message}`);
+  return new AppError(fallbackMessage, 500, {
+  code: error.code,
+  message: error.message,
+  details: error.details,
+  hint: error.hint,
+});
 };
 
 export const fetchRecordById = async (
@@ -30,7 +42,7 @@ export const fetchRecordById = async (
   }
 
   if (!data) {
-    throw new ApiError(404, `${entityLabel} not found.`);
+    throw new NotFoundError(`${entityLabel} not found.`);
   }
 
   return data;

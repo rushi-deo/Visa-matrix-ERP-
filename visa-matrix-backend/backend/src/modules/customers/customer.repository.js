@@ -2,6 +2,14 @@ import { createCrudRepository } from "../../core/baseRepository.js";
 
 const customerCrudRepository = createCrudRepository({
   tableName: "customers",
+  defaultOrder: "created_at",
+  allowedFilters: ["status", "assigned_to", "country_id"],
+  allowedOrderColumns: [
+    "created_at",
+    "updated_at",
+    "full_name",
+    "email",
+  ],
 });
 
 export const listCustomers = (query = {}) => {

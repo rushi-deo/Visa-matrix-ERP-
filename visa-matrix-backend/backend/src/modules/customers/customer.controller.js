@@ -1,3 +1,4 @@
+import { RequestValidationError } from "../../core/errors.js";
 import { asyncHandler } from "../../core/errors.js";
 import { sendCreated, sendSuccess } from "../../core/response.js";
 import {
@@ -19,12 +20,20 @@ export const getCustomerByIdController = asyncHandler(async (req, res) => {
 });
 
 export const createCustomerController = asyncHandler(async (req, res) => {
-  const data = await createCustomerRecord(req.body);
+  if (!req.body || Object.keys(req.body).length === 0) {
+  throw new RequestValidationError("Request body cannot be empty.");
+}
+
+const data = await createCustomerRecord(req.body);
   return sendCreated(res, data, "Customer created successfully.");
 });
 
 export const updateCustomerController = asyncHandler(async (req, res) => {
-  const data = await updateCustomerRecord(req.params.id, req.body);
+  if (!req.body || Object.keys(req.body).length === 0) {
+  throw new RequestValidationError("Request body cannot be empty.");
+}
+
+const data = await updateCustomerRecord(req.params.id, req.body);
   return sendSuccess(res, data, {
     message: "Customer updated successfully.",
   });

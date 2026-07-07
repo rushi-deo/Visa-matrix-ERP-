@@ -1,33 +1,34 @@
-import { ApiError } from "../utils/apiError.js";
+import { RequestValidationError } from "../core/errors.js";
 import { removeUndefined } from "../utils/validation.js";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const trimString = (value) => {
-  return typeof value === "string" ? value.trim() : value;
-};
+const trimString = (value) =>
+  typeof value === "string" ? value.trim() : value;
 
-export const pickFields = (payload, allowedFields) => {
-  return allowedFields.reduce((result, field) => {
+export const pickFields = (payload, allowedFields) =>
+  allowedFields.reduce((result, field) => {
     if (payload[field] !== undefined) {
       result[field] = payload[field];
     }
-
     return result;
   }, {});
-};
 
 export const ensureRequiredFields = (payload, fields) => {
   const missing = fields.filter((field) => {
     const value = payload[field];
-    return value === undefined || value === null || value === "";
+    return (
+      value === undefined ||
+      value === null ||
+      (typeof value === "string" && value.trim() === "")
+    );
   });
 
   if (missing.length) {
-    throw new ApiError(
-      400,
+    throw new RequestValidationError(
       `Missing required fields: ${missing.join(", ")}.`
     );
   }
@@ -37,46 +38,38 @@ export const normalizeRequiredString = (fieldName, value) => {
   const normalized = trimString(value);
 
   if (!normalized) {
-    throw new ApiError(400, `${fieldName} is required.`);
+    throw new RequestValidationError(`${fieldName} is required.`);
   }
 
   return normalized;
 };
 
 export const normalizeOptionalString = (fieldName, value) => {
-  if (value === undefined) {
-    return undefined;
-  }
+  if (value === undefined) return undefined;
 
-  if (value === null || trimString(value) === "") {
-    return null;
-  }
+  if (value === null || trimString(value) === "") return null;
 
   if (typeof value !== "string") {
-    throw new ApiError(400, `${fieldName} must be a string.`);
+    throw new RequestValidationError(`${fieldName} must be a string.`);
   }
 
   return value.trim();
 };
 
-export const normalizeBoolean = (fieldName, value, defaultValue = undefined) => {
-  if (value === undefined) {
-    return defaultValue;
-  }
+export const normalizeBoolean = (
+  fieldName,
+  value,
+  defaultValue = undefined
+) => {
+  if (value === undefined) return defaultValue;
 
-  if (typeof value === "boolean") {
-    return value;
-  }
+  if (typeof value === "boolean") return value;
 
-  if (value === "true" || value === "1" || value === 1) {
-    return true;
-  }
+  if (value === "true" || value === "1" || value === 1) return true;
 
-  if (value === "false" || value === "0" || value === 0) {
-    return false;
-  }
+  if (value === "false" || value === "0" || value === 0) return false;
 
-  throw new ApiError(400, `${fieldName} must be a boolean.`);
+  throw new RequestValidationError(`${fieldName} must be a boolean.`);
 };
 
 export const normalizeNumber = (
@@ -84,75 +77,64 @@ export const normalizeNumber = (
   value,
   { integer = false, min = null } = {}
 ) => {
-  if (value === undefined) {
-    return undefined;
-  }
+  if (value === undefined) return undefined;
 
-  if (value === null || value === "") {
-    return null;
-  }
+  if (value === null || value === "") return null;
 
   const normalized = Number(value);
 
   if (!Number.isFinite(normalized)) {
-    throw new ApiError(400, `${fieldName} must be a valid number.`);
+    throw new RequestValidationError(`${fieldName} must be a valid number.`);
   }
 
   if (integer && !Number.isInteger(normalized)) {
-    throw new ApiError(400, `${fieldName} must be an integer.`);
+    throw new RequestValidationError(`${fieldName} must be an integer.`);
   }
 
   if (min !== null && normalized < min) {
-    throw new ApiError(400, `${fieldName} must be at least ${min}.`);
+    throw new RequestValidationError(
+      `${fieldName} must be at least ${min}.`
+    );
   }
 
   return normalized;
 };
 
 export const normalizeDate = (fieldName, value) => {
-  if (value === undefined) {
-    return undefined;
-  }
+  if (value === undefined) return undefined;
 
-  if (value === null || value === "") {
-    return null;
-  }
+  if (value === null || value === "") return null;
 
   const normalized = new Date(value);
 
   if (Number.isNaN(normalized.getTime())) {
-    throw new ApiError(400, `${fieldName} must be a valid date.`);
+    throw new RequestValidationError(`${fieldName} must be a valid date.`);
   }
 
   return normalized.toISOString().slice(0, 10);
 };
 
 export const normalizeEmail = (fieldName, value) => {
-  if (value === undefined) {
-    return undefined;
-  }
+  if (value === undefined) return undefined;
 
-  if (value === null || value === "") {
-    return null;
-  }
+  if (value === null || value === "") return null;
 
   const normalized = String(value).trim().toLowerCase();
 
   if (!EMAIL_PATTERN.test(normalized)) {
-    throw new ApiError(400, `${fieldName} must be a valid email address.`);
+    throw new RequestValidationError(
+      `${fieldName} must be a valid email address.`
+    );
   }
 
   return normalized;
 };
 
 export const ensureEnum = (fieldName, value, allowedValues) => {
-  if (value === undefined) {
-    return undefined;
-  }
+  if (value === undefined) return undefined;
 
   if (!allowedValues.includes(value)) {
-    throw new ApiError(
-      400,
+    throw new RequestValidationError(
       `${fieldName} must be one of: ${allowedValues.join(", ")}.`
     );
   }
@@ -162,12 +144,10 @@ export const ensureEnum = (fieldName, value, allowedValues) => {
 
 export const ensureUuid = (fieldName, value) => {
   if (!UUID_PATTERN.test(String(value || ""))) {
-    throw new ApiError(400, `${fieldName} must be a valid UUID.`);
+    throw new RequestValidationError(`${fieldName} must be a valid UUID.`);
   }
 
   return value;
 };
 
-export const finalizePayload = (payload) => {
-  return removeUndefined(payload);
-};
+export const finalizePayload = (payload) => removeUndefined(payload);

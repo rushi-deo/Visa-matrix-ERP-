@@ -1,9 +1,9 @@
 export const sendSuccess = (res, data, options = {}) => {
   const { statusCode = 200, message = null, meta = null } = options;
-  const payload = {
-    success: true,
-    data,
-  };
+ const payload = Object.freeze({
+  success: true,
+  data,
+});
 
   if (message) {
     payload.message = message;
@@ -29,8 +29,8 @@ export const sendNoContent = (res) => {
 
 export const sendErrorResponse = (res, error, statusCode = 500) => {
   return res.status(statusCode).json({
-    success: false,
-    message: error.message,
-    error: error.details || null,
-  });
-};
+  success: false,
+  message: error.message,
+  error: error.details ?? null,
+  timestamp: new Date().toISOString(),
+});

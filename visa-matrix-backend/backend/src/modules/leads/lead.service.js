@@ -1,22 +1,46 @@
+import { RequestValidationError } from "../../core/errors.js";
 import {
-  listLeads,
-  getLeadById,
   createLead,
-  updateLead,
   deleteLead,
+  getLeadById,
+  listLeads,
+  updateLead,
 } from "./lead.repository.js";
 
-export const getAllLeads = async (query) =>
-  listLeads(query);
+const sanitizeLeadPayload = (payload = {}) => {
+  const data = {
+    ...payload,
+    full_name: payload.full_name?.trim(),
+    email: payload.email?.trim().toLowerCase(),
+    phone: payload.phone?.trim(),
+  };
 
-export const getLead = async (id) =>
-  getLeadById(id);
+  return Object.fromEntries(
+    Object.entries(data).filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    )
+  );
+};
 
-export const createLeadRecord = async (payload) =>
-  createLead(payload);
+export const getAllLeads = async (query) => listLeads(query);
 
-export const updateLeadRecord = async (id, payload) =>
-  updateLead(id, payload);
+export const getLead = async (id) => getLeadById(id);
 
-export const deleteLeadRecord = async (id) =>
-  deleteLead(id);
+export const createLeadRecord = async (payload) => {
+  const lead = sanitizeLeadPayload(payload);
+
+  if (!lead.full_name) {
+    throw new RequestValidationError("Lead name is required.");
+  }
+
+  return createLead(lead);
+};
+
+export const updateLeadRecord = async (id, payload) => {
+  return updateLead(id, sanitizeLeadPayload(payload));
+};
+
+export const deleteLeadRecord = async (id) => deleteLead(id);
