@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ApplicationProfileModal } from "@/components/applications/ApplicationProfileModal";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ModulePage } from "@/components/common/ModulePage";
 import { applications, type Application } from "@/lib/mock-data";
@@ -9,6 +11,8 @@ import type { Column } from "@/components/common/DataTable";
 export const Route = createFileRoute("/_app/visa/approvals")({
   component: () => {
     const navigate = useNavigate();
+    const [profileOpen, setProfileOpen] = useState(false);
+const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
     const data = applications.filter((a) => a.status === "Under Review" || a.status === "Submitted");
     const cols: Column<Application>[] = [
       {
@@ -35,9 +39,10 @@ export const Route = createFileRoute("/_app/visa/approvals")({
             type="button"
             className="text-left text-foreground hover:underline"
             onClick={(event) => {
-              event.stopPropagation();
-              navigate({ to: "/visa/applications/$id", params: { id: r.id } });
-            }}
+  event.stopPropagation();
+  setSelectedApplication(r);
+  setProfileOpen(true);
+}}
           >
             {r.applicant}
           </button>
@@ -49,24 +54,31 @@ export const Route = createFileRoute("/_app/visa/approvals")({
     ];
 
     return (
-      <ModulePage
-        title="Approval Center"
-        description="Pending applications awaiting your review."
-        data={data}
-        columns={cols}
-        searchKeys={["applicant", "appId", "country"]}
-        rowAction={() => (
-          <div className="flex gap-1">
-            <Button size="sm" variant="outline">
-              <X className="size-3" />
-            </Button>
-            <Button size="sm">
-              <Check className="size-3" />
-            </Button>
-          </div>
-        )}
-        onRowClick={(r) => navigate({ to: "/visa/applications/$id", params: { id: r.id } })}
-      />
-    );
-  },
-});
+  <>
+    <ModulePage
+      title="Approval Center"
+      description="Pending applications awaiting your review."
+      data={data}
+      columns={cols}
+      searchKeys={["applicant", "appId", "country"]}
+      rowAction={() => (
+        <div className="flex gap-1">
+          <Button size="sm" variant="outline">
+            <X className="size-3" />
+          </Button>
+          <Button size="sm">
+            <Check className="size-3" />
+          </Button>
+        </div>
+      )}
+      onRowClick={(r) =>
+        navigate({ to: "/visa/applications/$id", params: { id: r.id } })
+      }
+    />
+
+    <ApplicationProfileModal
+      open={profileOpen}
+      onOpenChange={setProfileOpen}
+    />
+  </>
+);
