@@ -95,12 +95,6 @@ function Page() {
             </Button>
           </div>
         )}
-        onRowClick={(r) =>
-          navigate({
-            to: "/visa/applications/$id",
-            params: { id: r.id },
-          })
-        }
       />
 
       <ApplicationProfileModal
