@@ -95,9 +95,9 @@ function Page() {
             </Button>
           </div>
         )}
+
         onRowClick={undefined}
       />
-
       <ApplicationProfileModal
         application={selectedApplication}
         open={profileOpen}
