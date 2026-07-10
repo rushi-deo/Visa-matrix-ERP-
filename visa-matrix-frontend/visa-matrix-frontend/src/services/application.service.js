@@ -78,10 +78,11 @@ const mapApplicationToNewApplicationPayload = (application = {}) =>
       application.destinationCountry ?? application.destination_country,
     visa_type: normalizeVisaType(application.visaType ?? application.visa_type),
     travel_date: application.travelDate ?? application.travel_date,
-    agent_assigned:
+    assigned_to:
       application.agentAssigned ??
       application.assigned_agent ??
-      application.agent_assigned,
+      application.agent_assigned ??
+      application.assigned_to,
     lead_source: application.leadSource ?? application.lead_source,
   });
 
@@ -144,21 +145,18 @@ export async function createApplication(payload, _currentUser) {
   // ✅ SAFE payload (fix for RLS error)
   const insertPayload = {
     customer_name: payload.customerName || payload.customer_name || "",
-    passport_number:
-      payload.passportNumber || payload.passport_number || "NA",
+    passport_number: payload.passportNumber || payload.passport_number || "NA",
     email: payload.email || "",
     phone: payload.phone || "",
     destination_country:
       payload.destinationCountry || payload.destination_country || "",
-
     visa_type: normalizeVisaType(payload.visaType || payload.visa_type) || "Tourist",
-
-    visa_type: payload.visaType || payload.visa_type || "General Visa",
     travel_date: payload.travelDate || payload.travel_date || null,
-    agent_assigned:
+    assigned_to:
       payload.agentAssigned ||
       payload.assigned_agent ||
       payload.agent_assigned ||
+      payload.assigned_to ||
       null,
     lead_source: payload.leadSource || payload.lead_source || null,
   };
@@ -166,7 +164,7 @@ export async function createApplication(payload, _currentUser) {
   console.log("FINAL INSERT PAYLOAD:", insertPayload);
 
   const { data, error } = await supabase
-    .from("new_applications")
+    .from("applications")
     .insert([insertPayload])
     .select()
     .single();

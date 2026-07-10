@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { activities } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const c: Record<string,string> = {
   success: "bg-success", info: "bg-info", warning: "bg-warning", danger: "bg-destructive",
 };
-export function ActivityFeed() {
+type ActivityItem = { id: string | number; who: string; action: string; target: string; time: string; type: keyof typeof c };
+
+export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
   return (
     <Card>
       <CardHeader><CardTitle className="text-base">Recent Activity</CardTitle></CardHeader>

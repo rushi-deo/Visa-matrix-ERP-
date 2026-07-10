@@ -1,6 +1,5 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
-import { applications } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -8,13 +7,14 @@ import { Check, X, UserPlus } from "lucide-react";
 import * as React from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
-import apiClient, { API_ENDPOINTS, extractResponseData } from "@erp/services/apiClient";
+import { fetchApplicationById } from "@erp/services/application.service";
 
-export const Route = createFileRoute("/_app/visa/applications/$id")({ component: Page });
+export const Route = createFileRoute("/_app/visa/applications/$id")({
+  component: Page,
+});
 
 function Page() {
   const { id } = useParams({ from: "/_app/visa/applications/$id" });
-  const fallbackApp = applications.find((a) => a.id === id) ?? applications[0];
   const [application, setApplication] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [approve, setApprove] = React.useState(false);
@@ -25,12 +25,11 @@ function Page() {
     (async () => {
       setLoading(true);
       try {
-        const response = await apiClient.get(API_ENDPOINTS.applicationById(id));
-        const data = extractResponseData(response);
-        if (mounted) setApplication(data ?? fallbackApp);
+        const data = await fetchApplicationById(id);
+        if (mounted) setApplication(data);
       } catch (error) {
         console.error("Failed to load application details:", error);
-        if (mounted) setApplication(fallbackApp);
+        if (mounted) setApplication(null);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -39,53 +38,23 @@ function Page() {
     return () => {
       mounted = false;
     };
-  }, [fallbackApp, id]);
+  }, [id]);
 
-  const app = application ?? fallbackApp;
-  const applicantName =
-    app?.applicant_name ||
-    app?.applicantName ||
-    app?.full_name ||
-    app?.customer?.full_name ||
-    app?.applicant ||
-    fallbackApp?.applicant ||
-    "—";
-  const applicationId =
-    app?.app_id ||
-    app?.appId ||
-    app?.application_id ||
-    app?.id ||
-    fallbackApp?.appId ||
-    "—";
-  const status = app?.status || app?.application_status || fallbackApp?.status || "Submitted";
-  const priority = app?.priority || app?.urgency || fallbackApp?.priority || "Medium";
-  const country =
-    app?.country?.name ||
-    app?.country_name ||
-    app?.country ||
-    fallbackApp?.country ||
-    "—";
-  const visaType =
-    app?.visa_type?.name ||
-    app?.visa_type_name ||
-    app?.visa_type ||
-    app?.visaType ||
-    fallbackApp?.visaType ||
-    "—";
-  const assignedEmployee =
-    app?.assigned_employee?.full_name ||
-    app?.assignedEmployee ||
-    app?.assigned_to ||
-    app?.assignee ||
-    fallbackApp?.assignee ||
-    "—";
-  const createdDate = app?.created_at || app?.createdAt || app?.submitted || fallbackApp?.submitted || "—";
+  const app = application ?? {};
+  const applicantName = app?.applicant_name || app?.applicantName || app?.full_name || app?.customer?.full_name || app?.applicant || "—";
+  const applicationId = app?.app_id || app?.appId || app?.application_id || app?.id || "—";
+  const status = app?.status || app?.application_status || "Submitted";
+  const priority = app?.priority || app?.urgency || "Medium";
+  const country = app?.country?.name || app?.country_name || app?.country || "—";
+  const visaType = app?.visa_type?.name || app?.visa_type_name || app?.visa_type || app?.visaType || "—";
+  const assignedEmployee = app?.assigned_employee?.full_name || app?.assignedEmployee || app?.assigned_to || app?.assignee || "—";
+  const createdDate = app?.created_at || app?.createdAt || app?.submitted || "—";
   const updatedDate = app?.updated_at || app?.updatedAt || app?.last_updated || createdDate;
   const passportNumber = app?.passport_number || app?.passportNumber || app?.customer?.passport_number || "—";
   const dob = app?.date_of_birth || app?.dob || app?.customer?.date_of_birth || "—";
   const gender = app?.gender || app?.customer?.gender || "—";
   const nationality = app?.nationality || app?.customer?.nationality || "—";
-  const email = app?.email || app?.customer?.email || fallbackApp?.email || "—";
+  const email = app?.email || app?.customer?.email || "—";
   const phone = app?.phone || app?.customer?.phone || "—";
   const address = app?.address || app?.customer?.address || "—";
   const destinationCountry = app?.destination_country || app?.destinationCountry || country;
@@ -95,7 +64,7 @@ function Page() {
   const branch = app?.branch || "—";
   const counsellor = app?.counsellor || "—";
   const processor = app?.processor || assignedEmployee;
-  const progress = app?.progress ?? fallbackApp?.progress ?? 0;
+  const progress = app?.progress ?? 0;
 
   return (
     <>
@@ -217,26 +186,6 @@ function Page() {
               </div>
             </CardContent>
           </Card>
-
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {[
-              { title: "Documents", content: "Documents and uploads will appear here." },
-              { title: "Timeline", content: "Case milestones and history will appear here." },
-              { title: "Payments", content: "Payment records and invoices will appear here." },
-              { title: "Tasks", content: "Assigned follow-ups and action items will appear here." },
-              { title: "Internal Notes", content: "Internal comments and notes will appear here." },
-              { title: "Communication", content: "Email and message history will appear here." },
-            ].map((item) => (
-              <Card key={item.title}>
-                <CardHeader>
-                  <CardTitle className="text-base">{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{item.content}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </div>
       )}
 

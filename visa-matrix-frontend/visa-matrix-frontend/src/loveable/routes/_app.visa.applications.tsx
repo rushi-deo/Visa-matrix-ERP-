@@ -5,12 +5,23 @@ import apiClient, {
   API_ENDPOINTS,
 } from "@erp/services/apiClient";
 import * as React from "react";
-import type { Application } from "@/lib/mock-data";
 import ApplicationCreateDialog from "@/components/applications/ApplicationCreateDialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import type { Column } from "@/components/common/DataTable";
+type Application = {
+  id: string;
+  appId: string;
+  applicant: string;
+  email: string;
+  country: string;
+  visaType: string;
+  status: string;
+  priority: string;
+  assignee: string;
+  amount: number;
+};
 export const Route = createFileRoute("/_app/visa/applications")({
   component: Page,
 });

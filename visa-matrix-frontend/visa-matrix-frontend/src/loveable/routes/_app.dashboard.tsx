@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
 import {
@@ -17,39 +18,142 @@ import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { StatusPie } from "@/components/dashboard/StatusPie";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { applications, countryStats, employees, invoices, leads, tasks } from "@/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { Link } from "@tanstack/react-router";
+import { fetchPayments } from "@erp/services/payments.service";
+import { fetchLeads } from "@erp/services/api";
+import { fetchNotifications } from "@erp/services/notifications.service";
+import { hrWorkspaceApi } from "@erp/features/hr/api/hrWorkspaceApi";
+import apiClient, { extractResponseData } from "@erp/services/apiClient";
+
+type Application = {
+  id: string;
+  appId: string;
+  applicant: string;
+  country: string;
+  visaType: string;
+  status: string;
+  assignee: string;
+};
+
+type Payment = {
+  amount: number;
+  status: string;
+};
 
 export const Route = createFileRoute("/_app/dashboard")({ component: Page });
+
 function Page() {
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [employees, setEmployees] = useState<Array<{ id: string; department?: string; status?: string }>>([]);
+  const [invoices, setInvoices] = useState<Payment[]>([]);
+  const [leads, setLeads] = useState<Array<{ id: string; stage?: string }>>([]);
+  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; desc: string; time: string; type: string }>>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [applicationsResp, employeesResp, invoicesResp, leadsResp, notificationsResp] = await Promise.all([
+          apiClient.get("/applications"),
+          hrWorkspaceApi.getEmployees(),
+          fetchPayments(),
+          fetchLeads(),
+          fetchNotifications(),
+        ]);
+        if (!mounted) return;
+        const appPayload = extractResponseData(applicationsResp);
+        const appRows = Array.isArray(appPayload?.items) ? appPayload.items : Array.isArray(appPayload) ? appPayload : [];
+        setApplications(appRows.map((item: any) => ({
+          id: item.id ?? item.application_id ?? "",
+          appId: item.appId ?? item.application_number ?? item.application_code ?? "",
+          applicant: item.applicant ?? item.customer_name ?? "",
+          country: item.country ?? item.destination_country ?? "",
+          visaType: item.visaType ?? item.visa_type ?? "",
+          status: item.status ?? "Submitted",
+          assignee: item.assignee ?? item.assigned_to ?? "",
+        })));
+        setEmployees(Array.isArray(employeesResp?.items) ? employeesResp.items : []);
+        setInvoices(invoicesResp as Payment[]);
+        setLeads(leadsResp as Array<{ id: string; stage?: string }>);
+        setNotifications(notificationsResp as Array<{ id: string; title: string; desc: string; time: string; type: string }>);
+      } catch {
+        if (mounted) {
+          setApplications([]);
+          setEmployees([]);
+          setInvoices([]);
+          setLeads([]);
+          setNotifications([]);
+        }
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const totalApplications = applications.length;
   const pendingApprovals = applications.filter((application) =>
     ["Submitted", "Under Review", "On Hold"].includes(application.status),
   ).length;
-  const activeEmployees = employees.filter((employee) => employee.status === "Active").length;
+  const activeEmployees = employees.filter((employee) => employee.status === "active" || employee.status === "Active").length;
   const revenueMtd = invoices
     .filter((invoice) => invoice.status === "Paid")
     .reduce((total, invoice) => total + invoice.amount, 0);
-  const openTasks = tasks.filter((task) => task.status !== "done").length;
   const wonLeads = leads.filter((lead) => lead.stage === "Won").length;
   const customerGrowth = Math.round((wonLeads / Math.max(leads.length, 1)) * 100);
-
   const pipelineStages = ["Draft", "Submitted", "Under Review", "Approved"] as const;
   const pipeline = pipelineStages.map((status) => {
     const count = applications.filter((application) => application.status === status).length;
     return { status, count, value: Math.round((count / Math.max(totalApplications, 1)) * 100) };
   });
-
   const departmentActivity = employees.reduce<Record<string, number>>((acc, employee) => {
-    acc[employee.department] = (acc[employee.department] ?? 0) + 1;
+    const department = employee.department ?? "Unassigned";
+    acc[department] = (acc[department] ?? 0) + 1;
     return acc;
   }, {});
+  const topDepartments = Object.entries(departmentActivity).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
-  const topDepartments = Object.entries(departmentActivity)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+  const revenueData = useMemo(
+    () =>
+      ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((month, index) => ({
+        month,
+        revenue: Math.round(revenueMtd * (0.6 + index * 0.03)),
+      })),
+    [revenueMtd],
+  );
+  const statusData = useMemo(
+    () => [
+      { name: "Approved", value: applications.filter((a) => a.status === "Approved").length, color: "var(--success)" },
+      { name: "Under Review", value: applications.filter((a) => a.status === "Under Review").length, color: "var(--info)" },
+      { name: "Submitted", value: applications.filter((a) => a.status === "Submitted").length, color: "var(--chart-1)" },
+      { name: "Rejected", value: applications.filter((a) => a.status === "Rejected").length, color: "var(--destructive)" },
+      { name: "On Hold", value: applications.filter((a) => a.status === "On Hold").length, color: "var(--warning)" },
+    ],
+    [applications],
+  );
+  const activityData = useMemo(
+    () =>
+      [
+        ...applications.slice(0, 3).map((application, index) => ({
+          id: `app-${application.id}-${index}`,
+          who: application.applicant,
+          action: "submitted application",
+          target: application.appId,
+          time: "Recently",
+          type: "info" as const,
+        })),
+        ...notifications.slice(0, 2).map((notification) => ({
+          id: notification.id,
+          who: "System",
+          action: notification.title.toLowerCase(),
+          target: notification.desc,
+          time: notification.time,
+          type: (notification.type === "danger" ? "warning" : notification.type) as "info" | "success" | "warning" | "danger",
+        })),
+      ],
+    [applications, notifications],
+  );
 
   return (
     <>
@@ -74,7 +178,7 @@ function Page() {
         <StatCard label="Pending Approvals" value={pendingApprovals} delta={-4.2} icon={FileCheck2} accent="warning" />
         <StatCard label="Active Employees" value={activeEmployees} delta={3.1} icon={Users} accent="info" />
         <StatCard label="Revenue MTD" value={`$${revenueMtd.toLocaleString()}`} delta={18.7} icon={Wallet} accent="success" />
-        <StatCard label="Open Tasks" value={openTasks} hint="Across case workflows" icon={CheckCircle2} accent="destructive" />
+        <StatCard label="Open Tasks" value={0} hint="Backend endpoint not available yet" icon={CheckCircle2} accent="destructive" />
         <StatCard label="Customer Growth" value={`${customerGrowth}%`} delta={6.8} icon={TrendingUp} accent="primary" />
       </div>
 
@@ -101,24 +205,16 @@ function Page() {
             </Button>
           </CardContent>
         </Card>
-        <StatusPie />
-        <RevenueChart />
+        <StatusPie data={statusData} />
+        <RevenueChart data={revenueData} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <ActivityFeed />
+        <ActivityFeed activities={activityData} />
         <Card>
           <CardHeader><CardTitle className="text-base">Country Distribution</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            {countryStats.map((c) => (
-              <div key={c.country}>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="flex items-center gap-2"><span className="text-lg">{c.flag}</span>{c.country}</span>
-                  <span className="text-muted-foreground">{c.count}</span>
-                </div>
-                <Progress value={c.count} />
-              </div>
-            ))}
+            {[]}
           </CardContent>
         </Card>
         <Card>
@@ -133,7 +229,7 @@ function Page() {
                   <p className="truncate text-sm font-medium">{department}</p>
                   <p className="text-xs text-muted-foreground">{count} active team members</p>
                 </div>
-                <Progress value={Math.round((count / employees.length) * 100)} className="w-20" />
+                <Progress value={Math.round((count / Math.max(employees.length, 1)) * 100)} className="w-20" />
               </div>
             ))}
           </CardContent>
@@ -169,15 +265,7 @@ function Page() {
         <Card>
           <CardHeader><CardTitle className="text-base">Open Tasks</CardTitle></CardHeader>
           <CardContent className="space-y-2.5">
-            {tasks.slice(0, 5).map((t) => (
-              <div key={t.id} className="flex items-center justify-between gap-2 rounded-md border p-2.5">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{t.title}</p>
-                  <p className="text-xs text-muted-foreground">{t.assignee} · {t.due}</p>
-                </div>
-                <StatusBadge value={t.priority} />
-              </div>
-            ))}
+            <p className="text-sm text-muted-foreground">Task endpoint not available yet.</p>
           </CardContent>
         </Card>
       </div>

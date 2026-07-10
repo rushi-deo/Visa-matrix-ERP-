@@ -3,14 +3,27 @@ import {
   Popover, PopoverContent, PopoverTrigger,
 } from "@/components/ui/popover";
 import { Bell, CheckCheck } from "lucide-react";
-import { notifications } from "@/lib/mock-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { fetchNotifications } from "@erp/services/notifications.service";
 
 const dot: Record<string, string> = {
   info: "bg-info", success: "bg-success", warning: "bg-warning", danger: "bg-destructive",
 };
 export function NotificationCenter() {
+  const [notifications, setNotifications] = useState<Array<{ id: string | number; title: string; desc: string; time: string; unread?: boolean; type: string }>>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchNotifications()
+      .then((rows) => mounted && setNotifications(rows as any))
+      .catch(() => mounted && setNotifications([]));
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const unread = notifications.filter((n) => n.unread).length;
   return (
     <Popover>

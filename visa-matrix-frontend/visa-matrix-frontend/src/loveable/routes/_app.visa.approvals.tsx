@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ModulePage } from "@/components/common/ModulePage";
-import { applications, type Application } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import type { Column } from "@/components/common/DataTable";
-import { ApplicationProfileModal } from "@/components/applications/ApplicationProfileModal";
+import { ApplicationProfileModal, type Application } from "@/components/applications/ApplicationProfileModal";
+import { fetchApplications } from "@erp/services/application.service";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_app/visa/approvals")({
   component: Page,
@@ -18,6 +19,21 @@ function Page() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] =
     useState<Application | null>(null);
+  const [applications, setApplications] = useState<Application[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchApplications()
+      .then((rows) => {
+        if (mounted) setApplications(rows as Application[]);
+      })
+      .catch(() => {
+        if (mounted) setApplications([]);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const data = applications.filter(
     (a) => a.status === "Under Review" || a.status === "Submitted"

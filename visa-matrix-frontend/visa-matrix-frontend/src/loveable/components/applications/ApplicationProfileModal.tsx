@@ -4,8 +4,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import type { Application } from "@/lib/mock-data";
 import { CalendarDays, CircleDollarSign, Clock3, FileText, MessageSquare, ShieldCheck, UserRound } from "lucide-react";
+
+export interface Application {
+  applicant: string;
+  appId: string;
+  flag: string;
+  country: string;
+  visaType: string;
+  status: string;
+  priority: string;
+  email: string;
+  assignee: string;
+  submitted: string;
+  amount: number;
+  progress: number;
+}
 
 interface ApplicationProfileModalProps {
   application: Application | null;
