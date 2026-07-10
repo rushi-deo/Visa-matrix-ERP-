@@ -51,9 +51,13 @@ function Page() {
           type="button"
           className="font-semibold text-left text-foreground hover:underline"
           onClick={(event) => {
+            event.preventDefault();
             event.stopPropagation();
             setSelectedApplication(r);
             setProfileOpen(true);
+          }}
+          onMouseDown={(event) => {
+            event.stopPropagation();
           }}
         >
           {r.applicant}
