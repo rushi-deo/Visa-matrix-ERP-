@@ -52,6 +52,7 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
 
   try {
     application = await createApplication(tenantPayload);
+    return application;
     transaction.addRollback("delete_application", () =>
       deleteApplicationById(application.id)
     );
@@ -79,7 +80,7 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
       action: "create",
       entityType: "application",
       entityId: application.id,
-      after: application,
+      after: application, 
     });
 
     const quotation = await generateQuotation(application.id);
