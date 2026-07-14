@@ -94,6 +94,18 @@ function getApplicationsTable() {
   return supabase.from("applications");
 }
 
+const unwrapApplicationsPayload = (payload) => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload?.data)) {
+    return payload.data;
+  }
+
+  return [];
+};
+
 export function generateApplicationCode(count) {
   const now = new Date();
   const monthLetters = "ABCDEFGHIJKL";
@@ -104,17 +116,11 @@ export function generateApplicationCode(count) {
 }
 
 export async function fetchApplications() {
-  const { data, error } = await getApplicationsTable()
-    .select("*")
-    .order("created_at", { ascending: false });
+  const response = await apiClient.get("/applications");
+  const payload = extractResponseData(response);
+  const applications = unwrapApplicationsPayload(payload);
 
-  if (error) {
-    console.error("Supabase applications fetch error:", error);
-    throw error;
-  }
-
-  console.log("Supabase applications response:", data);
-  return Array.isArray(data) ? data.map(normalizeApplication) : [];
+  return applications.map(normalizeApplication);
 }
 
 export async function fetchApplicationById(applicationId) {

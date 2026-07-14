@@ -24,7 +24,6 @@ import {
 } from "../services/erpService";
 import { normalizeApplicationWorkflow } from "../utils/workflow";
 import { DB_VISA_TYPES } from "../utils/visaType";
-import { apiRequest } from "../services/api";
 
 export default function Applications() {
   const navigate = useNavigate();
@@ -41,23 +40,6 @@ export default function Applications() {
   const [showNewModal, setShowNewModal] = useState(false);
   const getApplicationDisplayId = (application) =>
     application?.applicationCode || application?.id || "";
-
-  // Fetch from backend API (no auth required for public route)
-  const loadApplicationsFromBackend = async () => {
-    const result = await apiRequest("/public/applications");
-    const payload = result.data;
-
-    if (result.success) {
-      if (Array.isArray(payload)) {
-        return payload;
-      }
-
-      return Array.isArray(payload?.data) ? payload.data : [];
-    }
-
-    console.error("Backend API error:", result.error);
-    throw new Error(result.error || "Failed to fetch");
-  };
 
   const loadApplications = async (preferredApplicationId = "") => {
     const nextApplications = await fetchApplications();
@@ -97,8 +79,7 @@ export default function Applications() {
       setError("");
 
       try {
-        // Use backend API instead of Supabase
-        const nextApplications = await loadApplicationsFromBackend();
+        const nextApplications = await loadApplications();
         console.log("Applications from backend:", nextApplications);
 
         if (!isMounted) {
