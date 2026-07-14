@@ -1,3 +1,4 @@
+
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "node:url";
@@ -14,16 +15,19 @@ import logger from "./core/logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import customerRoutes from "./modules/customers/customer.routes.js";
+import leadRoutes from "./modules/leads/lead.routes.js";
 import applicationRoutes from "./modules/applications/application.routes.js";
 import countryRoutes from "./modules/countries/country.routes.js";
 import visaCatalogRoutes from "./modules/visa-catalog/visaCatalog.routes.js";
 import visaRuleRoutes from "./modules/visaRules/visaRule.routes.js";
+import visaTypeRoutes from "./routes/visaTypeRoutes.js";
 import documentRoutes from "./modules/documents/document.routes.js";
+import departmentRoutes from "./modules/departments/department.routes.js";
 import existingInvoiceRoutes from "./modules/invoices/invoice.routes.js";
+import quotationRoutes from "./modules/Quotation/quotation.routes.js";
 import invoiceRoutes from "./routes/invoice.routes.js";
 import paymentRoutes from "./modules/payments/payment.routes.js";
 import paymentCreateRoutes from "./routes/payment.routes.js";
-import quotationRoutes from "./routes/quotation.routes.js";
 import taskRoutes from "./modules/tasks/task.routes.js";
 import workflowRoutes from "./modules/workflows/workflow.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
@@ -48,10 +52,7 @@ import { startWorkflowWorker } from "./jobs/workflowJob.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const activeWorkers = [];
-const allowedCorsOrigins = [
-  "http://localhost:5173",
-  ...env.corsOrigins,
-];
+const allowedCorsOrigins = ["http://localhost:5173", ...env.corsOrigins];
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -128,12 +129,14 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/auth`, authRoutes);
   app.use(`${env.apiPrefix}/users`, userRoutes);
   app.use(`${env.apiPrefix}/customers`, customerRoutes);
+  app.use(`${env.apiPrefix}/leads`, leadRoutes);
   app.use(`${env.apiPrefix}/application`, legacyApplicationRoutes);
   app.use(`${env.apiPrefix}/public/applications`, publicApplicationsRoutes);
   app.use(`${env.apiPrefix}/applications`, applicationRoutes);
   app.use(`${env.apiPrefix}/countries`, countryRoutes);
   app.use(`${env.apiPrefix}/visa-catalog`, visaCatalogRoutes);
   app.use(`${env.apiPrefix}`, visaCatalogRoutes);
+  app.use(`${env.apiPrefix}/visa-types`, visaTypeRoutes);
   app.use(`${env.apiPrefix}/visa-rules`, visaRuleRoutes);
   app.use(`${env.apiPrefix}/documents`, documentRoutes);
   app.use(`${env.apiPrefix}/form-config`, formConfigRoutes);
@@ -141,7 +144,6 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}`, validationRoutes);
   app.use("/api/invoices", existingInvoiceRoutes);
   app.use("/api", invoiceRoutes);
-  app.use(`${env.apiPrefix}`, quotationRoutes);
   app.use(`${env.apiPrefix}`, paymentCreateRoutes);
   app.use(`${env.apiPrefix}/payments`, paymentRoutes);
   app.use(`${env.apiPrefix}/tasks`, taskRoutes);
@@ -154,7 +156,9 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/pdf`, pdfRoutes);
   app.use(`${env.apiPrefix}/test`, testSecureRoutes);
   app.use(`${env.apiPrefix}/visa-fees`, visaFeesRoutes);
-  
+app.use(`${env.apiPrefix}/quotations`, quotationRoutes);
+  app.use(`${env.apiPrefix}/departments`, departmentRoutes);
+
   // Enterprise Auth & Access Control Routes
   app.use(`${env.apiPrefix}/employees`, employeeRoutes);
 

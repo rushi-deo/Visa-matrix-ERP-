@@ -1,6 +1,6 @@
 import React from "react";
 const getStatusTone = (label) => {
-  const normalizedLabel = label.toLowerCase();
+  const normalizedLabel = String(label ?? "").toLowerCase();
 
   if (
     normalizedLabel.includes("approved") ||
@@ -54,5 +54,6 @@ const getStatusTone = (label) => {
 };
 
 export default function StatusPill({ label }) {
-  return <span className={`status-pill status-pill--${getStatusTone(label)}`}>{label}</span>;
+  const tone = getStatusTone(label);
+  return <span className={`vm-badge vm-badge--${tone}`}>{label}</span>;
 }

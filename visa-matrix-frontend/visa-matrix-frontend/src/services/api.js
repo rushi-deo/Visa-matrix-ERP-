@@ -119,7 +119,15 @@ export const fetchVisaCountries = async () => {
   const response = await apiClient.get("/countries");
   const countries = extractResponseData(response);
 
-  return Array.isArray(countries) ? countries : [];
+  if (Array.isArray(countries)) {
+    return countries;
+  }
+
+  if (Array.isArray(countries?.items)) {
+    return countries.items;
+  }
+
+  return [];
 };
 
 export const fetchCountryQuestions = async (countryId) => {

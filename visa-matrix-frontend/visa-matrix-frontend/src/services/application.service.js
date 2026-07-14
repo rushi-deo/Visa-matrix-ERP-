@@ -78,10 +78,11 @@ const mapApplicationToNewApplicationPayload = (application = {}) =>
       application.destinationCountry ?? application.destination_country,
     visa_type: normalizeVisaType(application.visaType ?? application.visa_type),
     travel_date: application.travelDate ?? application.travel_date,
-    agent_assigned:
+    assigned_to:
       application.agentAssigned ??
       application.assigned_agent ??
-      application.agent_assigned,
+      application.agent_assigned ??
+      application.assigned_to,
     lead_source: application.leadSource ?? application.lead_source,
   });
 
@@ -93,6 +94,18 @@ function getApplicationsTable() {
   return supabase.from("applications");
 }
 
+const unwrapApplicationsPayload = (payload) => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload?.data)) {
+    return payload.data;
+  }
+
+  return [];
+};
+
 export function generateApplicationCode(count) {
   const now = new Date();
   const monthLetters = "ABCDEFGHIJKL";
@@ -103,17 +116,11 @@ export function generateApplicationCode(count) {
 }
 
 export async function fetchApplications() {
-  const { data, error } = await getApplicationsTable()
-    .select("*")
-    .order("created_at", { ascending: false });
+  const response = await apiClient.get("/applications");
+  const payload = extractResponseData(response);
+  const applications = unwrapApplicationsPayload(payload);
 
-  if (error) {
-    console.error("Supabase applications fetch error:", error);
-    throw error;
-  }
-
-  console.log("Supabase applications response:", data);
-  return Array.isArray(data) ? data.map(normalizeApplication) : [];
+  return applications.map(normalizeApplication);
 }
 
 export async function fetchApplicationById(applicationId) {
@@ -124,7 +131,7 @@ export async function fetchApplicationById(applicationId) {
 }
 
 export async function fetchQuotationTemplate() {
-  const response = await apiClient.get("/quotation-template");
+  const response = await apiClient.get("/quotations/quotation-template");
 
   return extractResponseData(response) ?? {};
 }
@@ -144,21 +151,18 @@ export async function createApplication(payload, _currentUser) {
   // ✅ SAFE payload (fix for RLS error)
   const insertPayload = {
     customer_name: payload.customerName || payload.customer_name || "",
-    passport_number:
-      payload.passportNumber || payload.passport_number || "NA",
+    passport_number: payload.passportNumber || payload.passport_number || "NA",
     email: payload.email || "",
     phone: payload.phone || "",
     destination_country:
       payload.destinationCountry || payload.destination_country || "",
-
     visa_type: normalizeVisaType(payload.visaType || payload.visa_type) || "Tourist",
-
-    visa_type: payload.visaType || payload.visa_type || "General Visa",
     travel_date: payload.travelDate || payload.travel_date || null,
-    agent_assigned:
+    assigned_to:
       payload.agentAssigned ||
       payload.assigned_agent ||
       payload.agent_assigned ||
+      payload.assigned_to ||
       null,
     lead_source: payload.leadSource || payload.lead_source || null,
   };
@@ -166,7 +170,7 @@ export async function createApplication(payload, _currentUser) {
   console.log("FINAL INSERT PAYLOAD:", insertPayload);
 
   const { data, error } = await supabase
-    .from("new_applications")
+    .from("applications")
     .insert([insertPayload])
     .select()
     .single();

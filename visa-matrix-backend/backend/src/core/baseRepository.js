@@ -21,6 +21,9 @@ export const createCrudRepository = ({
   tableName,
   defaultSelect = "*",
   defaultOrder = "created_at",
+  allowedFilters = [],
+  allowedOrderColumns = [],
+  softDelete = false,
 }) => {
   const list = async ({
     page = 1,
@@ -34,12 +37,20 @@ export const createCrudRepository = ({
   } = {}) => {
     const pagination = getPaginationOptions(page, limit);
     let query = supabase.from(tableName).select(select, { count: "exact" });
-
-    Object.entries(filters)
-      .filter(([, value]) => value !== undefined && value !== null && value !== "")
-      .forEach(([column, value]) => {
-        query = query.eq(column, value);
-      });
+if (softDelete) {
+  query = query.is("deleted_at", null);
+}
+   Object.entries(filters)
+  .filter(
+    ([column, value]) =>
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      (allowedFilters.length === 0 || allowedFilters.includes(column))
+  )
+  .forEach(([column, value]) => {
+    query = query.eq(column, value);
+  });
 
     const normalizedSearch = sanitizeSearchTerm(searchTerm);
 
@@ -51,10 +62,28 @@ export const createCrudRepository = ({
       );
     }
 
-    query = query.order(orderBy, { ascending });
+    const sortColumn =
+      allowedOrderColumns.length === 0
+        ? orderBy || defaultOrder
+        : allowedOrderColumns.includes(orderBy)
+          ? orderBy
+          : defaultOrder;
+
+    query = query.order(sortColumn, { ascending });
     query = query.range(pagination.from, pagination.to);
 
     const { data, error, count } = await query;
+
+if (error) {
+  console.error("========== SUPABASE ERROR ==========");
+  console.error(error);
+  console.error("Table:", tableName);
+  console.error("Select:", select);
+  console.error("Filters:", filters);
+  console.error("Search:", searchTerm);
+  console.error("====================================");
+  throw fromSupabaseError(error, `Failed to list ${tableName}.`);
+}
 
     if (error) {
       throw fromSupabaseError(error, `Failed to list ${tableName}.`);

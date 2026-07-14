@@ -9,6 +9,7 @@ export default function Form({
   onChange,
   onSubmit,
   submitLabel = "Save",
+  submitDisabled = false,
   footerNote,
 }) {
   return (
@@ -65,7 +66,8 @@ export default function Form({
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-500">{footerNote}</p>
         <button
-          className="rounded-2xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-400"
+          className="rounded-2xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={submitDisabled}
           type="submit"
         >
           {submitLabel}

@@ -1,5 +1,18 @@
 import supabase from "../../config/supabase.js";
-import { NotFoundError } from "../../core/errors.js";
+import { normalizeRoleCode } from "../../config/rbac.js";
+
+const roleSelectColumns = "id, name, description, created_at, organization_id, level, status";
+
+const mapRoleRecord = (role) => {
+  if (!role) {
+    return null;
+  }
+
+  return {
+    ...role,
+    code: role.code ?? normalizeRoleCode(role.name),
+  };
+};
 
 /**
  * Fetch user's role from database
@@ -116,7 +129,7 @@ export const getAllRoles = async () => {
   try {
     const { data, error } = await supabase
       .from("roles")
-      .select("id, code, name, description, created_at")
+      .select(roleSelectColumns)
       .order("name");
 
     if (error) {
@@ -124,7 +137,7 @@ export const getAllRoles = async () => {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(mapRoleRecord);
   } catch (error) {
     console.error("Error in getAllRoles:", error);
     return [];
@@ -138,7 +151,7 @@ export const getRoleById = async (roleId) => {
   try {
     const { data, error } = await supabase
       .from("roles")
-      .select("id, code, name, description, created_at")
+      .select(roleSelectColumns)
       .eq("id", roleId)
       .maybeSingle();
 
@@ -147,7 +160,7 @@ export const getRoleById = async (roleId) => {
       return null;
     }
 
-    return data;
+    return mapRoleRecord(data);
   } catch (error) {
     console.error("Error in getRoleById:", error);
     return null;
@@ -159,30 +172,37 @@ export const getRoleById = async (roleId) => {
  */
 export const getRoleByName = async (roleName) => {
   try {
-    const { data, error } = await supabase
-      .from("roles")
-      .select("id, code, name, description, created_at")
-      .eq("name", roleName)
-      .maybeSingle();
+    const canonicalRoleName = normalizeRoleCode(roleName);
+    const lookupNames = new Set([
+      roleName,
+      String(roleName || "").trim(),
+      String(roleName || "").trim().toLowerCase(),
+      canonicalRoleName,
+      canonicalRoleName.replace(/_/g, " "),
+    ]);
 
-    if (error) {
-      console.error("Error fetching role by name:", error);
-    } else if (data) {
-      return data;
+    for (const lookupName of lookupNames) {
+      if (!lookupName) {
+        continue;
+      }
+
+      const { data, error } = await supabase
+        .from("roles")
+        .select(roleSelectColumns)
+        .eq("name", lookupName)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching role by name:", error);
+        return null;
+      }
+
+      if (data) {
+        return mapRoleRecord(data);
+      }
     }
 
-    const { data: roleByCode, error: codeError } = await supabase
-      .from("roles")
-      .select("id, code, name, description, created_at")
-      .eq("code", roleName)
-      .maybeSingle();
-
-    if (codeError) {
-      console.error("Error fetching role by code:", codeError);
-      return null;
-    }
-
-    return roleByCode;
+    return null;
   } catch (error) {
     console.error("Error in getRoleByName:", error);
     return null;
@@ -205,7 +225,7 @@ export const updateRoleById = async (roleId, payload) => {
       .from("roles")
       .update(updates)
       .eq("id", roleId)
-      .select("id, code, name, description, created_at")
+      .select(roleSelectColumns)
       .maybeSingle();
 
     if (error) {
@@ -213,7 +233,7 @@ export const updateRoleById = async (roleId, payload) => {
       return null;
     }
 
-    return data;
+    return mapRoleRecord(data);
   } catch (error) {
     console.error("Error in updateRoleById:", error);
     return null;

@@ -7,24 +7,25 @@ export const recordApplicationStatusHistory = async ({
   fromStatus,
   toStatus,
   changedBy = null,
-  reason = null,
-  metadata = {},
 }) => {
   const { data, error } = await supabase
     .from("application_status_history")
-    .insert({
-      application_id: applicationId,
-      from_status: fromStatus,
-      to_status: toStatus,
-      changed_by: changedBy,
-      reason,
-      metadata,
-    })
+    .insert([
+      {
+        application_id: applicationId,
+        old_status: fromStatus,
+        new_status: toStatus,
+        changed_by: changedBy,
+      },
+    ])
     .select("*")
     .single();
 
   if (error) {
-    throw fromSupabaseError(error, "Failed to record application status history.");
+    throw fromSupabaseError(
+      error,
+      "Failed to record application status history."
+    );
   }
 
   return data;
@@ -36,18 +37,17 @@ export const recordApplicationEvent = async ({
   actorId = null,
   title,
   description = null,
-  metadata = {},
 }) => {
   const { data, error } = await supabase
-    .from("application_events")
-    .insert({
-      application_id: applicationId,
-      event_type: eventType,
-      actor_id: actorId,
-      title,
-      description,
-      metadata,
-    })
+    .from("application_timeline")
+    .insert([
+      {
+        application_id: applicationId,
+        stage: eventType,
+        description: description || title,
+        created_by: actorId,
+      },
+    ])
     .select("*")
     .single();
 
@@ -63,26 +63,18 @@ export const recordAuditLog = async ({
   action,
   entityType,
   entityId = null,
-  requestId = null,
-  ipAddress = null,
-  userAgent = null,
   before = null,
   after = null,
-  metadata = {},
 }) => {
   const { data, error } = await supabase
     .from("audit_logs")
     .insert({
-      actor_id: actorId,
-      action,
-      entity_type: entityType,
-      entity_id: entityId,
-      request_id: requestId,
-      ip_address: ipAddress,
-      user_agent: userAgent,
-      before,
-      after,
-      metadata,
+      table_name: entityType,
+      record_id: entityId,
+      operation: action,
+      old_data: before,
+      new_data: after,
+      changed_by: actorId,
     })
     .select("*")
     .single();
@@ -94,6 +86,7 @@ export const recordAuditLog = async ({
       entityId,
       error: error.message,
     });
+
     throw fromSupabaseError(error, "Failed to record audit log.");
   }
 

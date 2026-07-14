@@ -1,16 +1,18 @@
 import React from "react";
 import Breadcrumbs from "./Breadcrumbs";
 
-export default function PageHeader({ title, description, action }) {
+export default function PageHeader({ title, description, action, eyebrow = "Workspace" }) {
   return (
-    <div className="page-header mb-6">
-      <div>
-        <Breadcrumbs currentLabel={title} />
-        <span className="page-header__eyebrow">Workspace</span>
-        <h2 className="text-2xl font-semibold">{title}</h2>
-        <p className="text-sm text-gray-500">{description}</p>
+    <div className="vm-surface-card vm-page-header">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <Breadcrumbs currentLabel={title} />
+          <span className="vm-eyebrow mt-2">{eyebrow}</span>
+          <h2 className="vm-heading mt-2 text-2xl tracking-tight">{title}</h2>
+          <p className="vm-muted mt-1 max-w-3xl text-sm">{description}</p>
+        </div>
+        {action ? <div className="flex items-center gap-2">{action}</div> : null}
       </div>
-      {action ? <div className="page-header__action">{action}</div> : null}
     </div>
   );
 }

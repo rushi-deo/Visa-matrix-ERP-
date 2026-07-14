@@ -108,9 +108,20 @@ export default function CRM() {
       !leadForm.interestedCountry ||
       !leadForm.assignedAgent.trim()
     ) {
+      
       setLeadError("Lead name, contact details, country, and agent are required.");
       return;
     }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailPattern.test(leadForm.email)) {
+  setLeadError("Please enter a valid email address.");
+  return;
+}
+
+if (!leadForm.visaType) {
+  setLeadError("Please select a visa type.");
+  return;
+}
 
     try {
       await createLead({

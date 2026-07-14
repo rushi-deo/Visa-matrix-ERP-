@@ -1,29 +1,46 @@
-import { Router } from "express";
-import { createInvoice } from "./invoice.controller.js";
-import authMiddleware from "../../middleware/authMiddleware.js";
-import permissionMiddleware from "../../middleware/permissionMiddleware.js";
+  import { Router } from "express";
+  import {
+  createInvoice,
+  listInvoices,
+  getInvoiceById,
+  updateInvoice,
+  deleteInvoice,
+} from "./invoice.controller.js";
+  import authMiddleware from "../../middleware/authMiddleware.js";
+  import permissionMiddleware from "../../middleware/permissionMiddleware.js";
 
-const router = Router();
+  const router = Router();
 
-const getInvoices = (_req, res) => {
-  return res.status(200).json({
-    success: true,
-    data: [],
-  });
-};
+  router.get(
+    "/",
+    authMiddleware,
+    permissionMiddleware("invoicing", "view"),
+    listInvoices
+  );
+  router.get(
+    "/:id",
+    authMiddleware,
+    permissionMiddleware("invoicing", "view"),
+    getInvoiceById
+  );
 
-router.get(
-  "/",
+  router.post(
+    "/",
+    authMiddleware,
+    permissionMiddleware("invoicing", "create"),
+    createInvoice
+  );
+router.put(
+  "/:id",
   authMiddleware,
-  permissionMiddleware("invoicing", "view"),
-  getInvoices
+  permissionMiddleware("invoicing", "update"),
+  updateInvoice
 );
 
-router.post(
-  "/",
+router.delete(
+  "/:id",
   authMiddleware,
-  permissionMiddleware("invoicing", "create"),
-  createInvoice
+  permissionMiddleware("invoicing", "delete"),
+  deleteInvoice
 );
-
-export default router;
+  export default router;

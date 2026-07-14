@@ -3,23 +3,25 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import countriesRoutes from "./routes/countriesRoutes.js";
+import visaTypesRoutes from "./routes/visaTypesRoutes.js";
 import applicationsRoutes from "./routes/applicationsRoutes.js";
 import accessControlRoutes from "./routes/accessControlRoutes.js";
 import invoicesRoutes from "./routes/invoicesRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import hrRoutes from "./modules/hr/index.js";
-import enterpriseHrRoutes from "./services/hr/index.js";
+import enterpriseHrRoutes from "./src/services/hr/index.js";
 import { getSupabaseConfigStatus } from "./config/supabaseClient.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/api", authRoutes);
 app.use("/api", countriesRoutes);
+app.use("/api", visaTypesRoutes);
 app.use("/api", applicationsRoutes);
 app.use("/api", accessControlRoutes);
 app.use("/api", invoicesRoutes);

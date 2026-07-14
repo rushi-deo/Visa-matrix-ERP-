@@ -128,10 +128,10 @@ declare
   perm_id uuid;
 begin
   -- Get role IDs
-  select id into admin_role_id from public.roles where code = 'admin';
-  select id into manager_role_id from public.roles where code = 'manager';
-  select id into agent_role_id from public.roles where code = 'agent';
-  select id into customer_role_id from public.roles where code = 'customer';
+  select id into admin_role_id from public.roles where lower(name) = 'admin';
+  select id into manager_role_id from public.roles where lower(name) = 'manager';
+  select id into agent_role_id from public.roles where lower(name) = 'agent';
+  select id into customer_role_id from public.roles where lower(name) = 'customer';
 
   -- Admin gets most permissions (not user:delete for safety)
   if admin_role_id is not null then

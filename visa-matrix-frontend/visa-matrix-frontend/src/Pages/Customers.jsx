@@ -1,7 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import DataTable from "../components/DataTable";
-import PageHeader from "../components/PageHeader";
+import FilterBar from "../components/FilterBar";
+import PageLayout from "../components/PageLayout";
+import SectionCard from "../components/SectionCard";
 import StatCard from "../components/StatCard";
 import TablePagination from "../components/TablePagination";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -89,12 +91,12 @@ export default function Customers() {
 
   return (
     <DashboardLayout>
-      <PageHeader
+      <PageLayout
         title="Customers"
         description="Customer profiles, passport data, visa history, and uploaded document context in one view."
-      />
-
-      <section className="summary-grid">
+        eyebrow="Customer CRM"
+      >
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard title="Total Customers" value={customers.length} icon="CU" color="#2563EB" />
         <StatCard
           title="Active Accounts"
@@ -105,16 +107,13 @@ export default function Customers() {
         <StatCard title="Documents Uploaded" value={totalDocuments} icon="DU" color="#0F172A" />
       </section>
 
-      <section className="profile-layout">
-        <article className="panel">
-          <div className="panel__header panel__header--stacked">
-            <div>
-              <h3>Customer Directory</h3>
-              <p>Search by customer name, passport number, or assigned consultant.</p>
-            </div>
-            <label className="search-toolbar">
-              <span>Search customers</span>
+      <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+        <SectionCard title="Customer Directory" description="Search by customer name, passport number, or assigned consultant.">
+          <FilterBar>
+            <label className="min-w-[240px] flex-1">
+              <span className="mb-1 block text-sm font-medium text-slate-600">Search customers</span>
               <input
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:bg-white"
                 onChange={(event) => {
                   setSearchValue(event.target.value);
                   setPage(1);
@@ -124,7 +123,7 @@ export default function Customers() {
                 value={searchValue}
               />
             </label>
-          </div>
+          </FilterBar>
 
           <DataTable
             caption="Customer directory"
@@ -141,12 +140,10 @@ export default function Customers() {
             page={page}
             pageCount={pageCount}
           />
-        </article>
+        </SectionCard>
 
-        <div className="page-grid">
-          <article className="profile-card">
-            <span className="profile-card__eyebrow">Customer Profile</span>
-            <h3>{selectedCustomer?.name}</h3>
+        <div className="space-y-6">
+          <SectionCard title="Customer Profile" description="Profile context for the selected customer.">
 
             <dl className="detail-list">
               <div>
@@ -196,20 +193,28 @@ export default function Customers() {
                 ))}
               </div>
             </div>
-          </article>
+          </SectionCard>
 
-          <article className="placeholder-card">
-            <span className="profile-card__eyebrow">Client Portal Preparation</span>
-            <strong>Client document upload</strong>
-            <p>Placeholder for secure customer uploads linked to this customer profile.</p>
-            <strong>Application status tracking</strong>
-            <p>Placeholder for real-time customer-facing progress visibility.</p>
-            <strong>Client communication</strong>
-            <p>Placeholder for portal messages, document comments, and appointment reminders.</p>
-          </article>
+          <SectionCard title="Client Portal Preparation" description="Preparation items for customer-facing updates.">
+            <div className="space-y-3 text-sm text-slate-600">
+              <div>
+                <strong className="block text-slate-900">Client document upload</strong>
+                <p>Placeholder for secure customer uploads linked to this customer profile.</p>
+              </div>
+              <div>
+                <strong className="block text-slate-900">Application status tracking</strong>
+                <p>Placeholder for real-time customer-facing progress visibility.</p>
+              </div>
+              <div>
+                <strong className="block text-slate-900">Client communication</strong>
+                <p>Placeholder for portal messages, document comments, and appointment reminders.</p>
+              </div>
+            </div>
+          </SectionCard>
         </div>
       </section>
       {error ? <p className="form-error">{error}</p> : null}
+      </PageLayout>
     </DashboardLayout>
   );
 }

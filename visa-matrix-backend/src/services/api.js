@@ -803,6 +803,19 @@ export const getCustomers = async () => {
   };
 };
 
+export const createCustomer = async (payload) => {
+  const result = await request(
+    "/customers",
+    null,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }
+  );
+
+  return result;
+};
+
 export const getApplications = async () => {
   const result = await request("/applications", { items: mockApplications });
 

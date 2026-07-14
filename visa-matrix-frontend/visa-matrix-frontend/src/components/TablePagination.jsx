@@ -1,33 +1,26 @@
 import React from "react";
+import { Button } from "./ui/button";
+
 export default function TablePagination({
   page,
   pageCount,
   onPrevious,
   onNext,
   itemLabel = "records",
+  className = "",
 }) {
   return (
-    <div className="pagination">
-      <span className="pagination__info">
-        Page {page} of {pageCount} for {itemLabel}
+    <div className={`table-pagination ${className}`.trim()}>
+      <span className="table-pagination__info">
+        Page {page} of {pageCount || 1} for {itemLabel}
       </span>
       <div className="button-row">
-        <button
-          className="secondary-button"
-          disabled={page <= 1}
-          onClick={onPrevious}
-          type="button"
-        >
+        <Button disabled={page <= 1} onClick={onPrevious} size="sm" type="button" variant="outline">
           Previous
-        </button>
-        <button
-          className="secondary-button"
-          disabled={page >= pageCount}
-          onClick={onNext}
-          type="button"
-        >
+        </Button>
+        <Button disabled={page >= pageCount} onClick={onNext} size="sm" type="button" variant="outline">
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

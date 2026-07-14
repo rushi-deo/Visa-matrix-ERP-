@@ -5,15 +5,15 @@ export const sendSuccess = (res, data, options = {}) => {
     data,
   };
 
-  if (message) {
+  if (message !== null && message !== undefined) {
     payload.message = message;
   }
 
-  if (meta) {
+  if (meta !== null && meta !== undefined) {
     payload.meta = meta;
   }
 
-  return res.status(statusCode).json(payload);
+  return res.status(statusCode).json(Object.freeze(payload));
 };
 
 export const sendCreated = (res, data, message = "Created successfully.") => {
@@ -29,8 +29,9 @@ export const sendNoContent = (res) => {
 
 export const sendErrorResponse = (res, error, statusCode = 500) => {
   return res.status(statusCode).json({
-    success: false,
-    message: error.message,
-    error: error.details || null,
-  });
+  success: false,
+  message: error.message,
+  error: error.details ?? null,
+  timestamp: new Date().toISOString(),
+});
 };

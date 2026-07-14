@@ -11,7 +11,8 @@ export const getApplications = async (user) => {
     let query = supabase
       .from("applications")
       .select("*")
-      .order("submissionDate", { ascending: false });
+      .order("created_at", { ascending: false, nullsFirst: false })
+      .order("submission_date", { ascending: false, nullsFirst: false });
 
     if (user?.role !== "admin") {
       query = query.eq("organization_id", user.organization_id);

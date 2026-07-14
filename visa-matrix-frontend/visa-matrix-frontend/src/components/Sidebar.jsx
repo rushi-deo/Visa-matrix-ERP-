@@ -132,6 +132,14 @@ const menuIcons = {
   ),
 };
 
+const sidebarSections = [
+  { title: "CRM", paths: ["/dashboard", "/customers", "/applications", "/documents"] },
+  { title: "Visa Operations", paths: ["/countries", "/workflow", "/visa-question-flow", "/tasks"] },
+  { title: "Finance", paths: ["/payments", "/accounts"] },
+  { title: "HR", paths: ["/hr"] },
+  { title: "Administration", paths: ["/communication", "/audit-logs", "/reports", "/admin", "/settings"] },
+];
+
 export default function Sidebar() {
   const location = useLocation();
   const { canAccess } = useAuth();
@@ -145,12 +153,9 @@ export default function Sidebar() {
   };
 
   const primaryNavigation = navigationItems.filter((item) => {
-    // Check if item has children (submenu)
     if (item.children) {
-      // For parent items, just check module access
       return !item.module || canAccess(item.module, "view");
     }
-    // For regular items, use the original filter logic
     return (
       primaryPaths.includes(item.path) &&
       (!item.module || canAccess(item.module, "view")) &&
@@ -158,17 +163,20 @@ export default function Sidebar() {
     );
   });
 
+  const visibleSectionItems = (sectionPaths) =>
+    primaryNavigation.filter((item) => sectionPaths.includes(item.path));
+
   return (
     <aside className="sidebar">
       <div className="sidebar__header">
-        <Link className="sidebar__brand flex items-center gap-2" to="/">
-          <span className="sidebar__brand-mark p-2 rounded-lg inline-block mb-8">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="h-12 w-auto object-contain"
-            />
+        <Link className="sidebar__brand" to="/">
+          <span className="sidebar__brand-mark">
+            <img src="/logo.png" alt="Visa Matrix logo" className="sidebar__brand-image" />
           </span>
+          <div className="sidebar__brand-copy">
+            <h2>Visa Matrix</h2>
+            <span>Enterprise Platform</span>
+          </div>
         </Link>
       </div>
 
@@ -223,68 +231,95 @@ export default function Sidebar() {
                   </span>
                 </button>
 
-                {isExpanded && (
-                  <div className="sidebar__submenu">
-                    {item.children.map((child) => {
-                      const isActive =
-                        child.path && location.pathname.startsWith(child.path);
+                  return (
+                    <div key={item.shortLabel} className="sidebar__menu-group">
+                      <button
+                        onClick={() => toggleMenu(item.shortLabel)}
+                        className={`sidebar__link sidebar__menu-toggle ${
+                          hasActiveChild ? "sidebar__link--active" : ""
+                        } ${isExpanded ? "sidebar__menu-toggle--expanded" : ""}`}
+                        aria-expanded={isExpanded}
+                      >
+                        <span className="sidebar__icon" aria-hidden="true">
+                          {menuIcons[item.path]}
+                        </span>
+                        <span className="sidebar__label">{item.shortLabel}</span>
+                        <span className="sidebar__chevron" aria-hidden="true">
+                          <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                          >
+                            <path
+                              d="M7 8l3 3 3-3"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </button>
 
-                      return (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          onClick={() => {
-                            // eslint-disable-next-line no-console
-                            console.log("Sidebar click ->", child.path);
-                          }}
-                          className={`sidebar__submenu-link ${
-                            isActive ? "sidebar__submenu-link--active" : ""
-                          }`}
-                        >
-                          <span className="sidebar__submenu-label">
-                            {child.shortLabel}
-                          </span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          }
+                      {isExpanded && (
+                        <div className="sidebar__submenu">
+                          {item.children.map((child) => {
+                            const isActive = child.path && location.pathname.startsWith(child.path);
 
-          // Handle regular menu items
-          const isDashboardRoute =
-            item.path === "/dashboard" &&
-            (location.pathname === "/" || location.pathname === "/dashboard");
-          const isActive =
-            isDashboardRoute ||
-            (item.path !== "/" && location.pathname.startsWith(item.path));
+                            return (
+                              <Link
+                                key={child.path}
+                                to={child.path}
+                                className={`sidebar__submenu-link ${isActive ? "sidebar__submenu-link--active" : ""}`}
+                              >
+                                <span className="sidebar__submenu-label">{child.shortLabel}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
 
-          return (
-            <Link
-              key={item.path}
-              className={`sidebar__link ${isActive ? "sidebar__link--active" : ""}`}
-              to={item.path}
-            >
-              <span className="sidebar__icon" aria-hidden="true">
-                {menuIcons[item.path]}
-              </span>
-              <span className="sidebar__label">
-                {sidebarLabels[item.path] ?? item.shortLabel ?? item.label}
-              </span>
-            </Link>
+                const isDashboardRoute =
+                  item.path === "/dashboard" &&
+                  (location.pathname === "/" || location.pathname === "/dashboard");
+                const isActive =
+                  isDashboardRoute ||
+                  (item.path !== "/" && location.pathname.startsWith(item.path));
+
+                return (
+                  <Link
+                    key={item.path}
+                    className={`sidebar__link ${isActive ? "sidebar__link--active" : ""}`}
+                    to={item.path}
+                  >
+                    <span className="sidebar__icon" aria-hidden="true">
+                      {menuIcons[item.path]}
+                    </span>
+                    <span className="sidebar__label">
+                      {sidebarLabels[item.path] ?? item.shortLabel ?? item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           );
         })}
       </nav>
 
       <div className="sidebar__footer">
-        <span className="sidebar__footer-label">Operations Snapshot</span>
-        <strong>Modern visa consultancy dashboard</strong>
-        <p>
-          Track cases, payments, permissions, and agency access from one clean
-          workspace.
-        </p>
+        <span className="sidebar__footer-label">Operations Panel</span>
+        <strong>Visa Matrix ERP</strong>
+        <div className="sidebar__footer-meta">
+          <span className="sidebar__footer-version">Version 2.0</span>
+          <span className="sidebar__status-pill">
+            <span className="sidebar__status-dot" />
+            Online
+          </span>
+        </div>
+        <p>System status and workspace access are synchronized in real time.</p>
       </div>
     </aside>
   );
