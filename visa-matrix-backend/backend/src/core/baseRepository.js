@@ -22,6 +22,7 @@ export const createCrudRepository = ({
   defaultSelect = "*",
   defaultOrder = "created_at",
   allowedFilters = [],
+  allowedOrderColumns = [],
   softDelete = false,
 }) => {
   const list = async ({
@@ -62,12 +63,27 @@ if (softDelete) {
     }
 
     const sortColumn =
-  allowedOrderColumns.includes(orderBy) ? orderBy : defaultOrder;
+      allowedOrderColumns.length === 0
+        ? orderBy || defaultOrder
+        : allowedOrderColumns.includes(orderBy)
+          ? orderBy
+          : defaultOrder;
 
-query = query.order(sortColumn, { ascending });
+    query = query.order(sortColumn, { ascending });
     query = query.range(pagination.from, pagination.to);
 
     const { data, error, count } = await query;
+
+if (error) {
+  console.error("========== SUPABASE ERROR ==========");
+  console.error(error);
+  console.error("Table:", tableName);
+  console.error("Select:", select);
+  console.error("Filters:", filters);
+  console.error("Search:", searchTerm);
+  console.error("====================================");
+  throw fromSupabaseError(error, `Failed to list ${tableName}.`);
+}
 
     if (error) {
       throw fromSupabaseError(error, `Failed to list ${tableName}.`);
