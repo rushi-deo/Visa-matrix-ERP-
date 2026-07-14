@@ -1,25 +1,66 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 
 function Layout({ children }) {
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: "Arial" }}>
-      <div style={{ width: "220px", background: "#1e293b", color: "white", padding: "20px" }}>
+      <div
+        style={{
+          width: "220px",
+          background: "#1e293b",
+          color: "white",
+          padding: "20px",
+        }}
+      >
         <h2>Visa Matrix</h2>
 
-        <nav style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
-          <Link to="/" style={{ color: "white" }}>Dashboard</Link>
-          <Link to="/crm" style={{ color: "white" }}>CRM</Link>
-          <Link to="/applications" style={{ color: "white" }}>Applications</Link>
-          <Link to="/documents" style={{ color: "white" }}>Documents</Link>
-          <Link to="/payments" style={{ color: "white" }}>Payments</Link>
-          <Link to="/reports" style={{ color: "white" }}>Reports</Link>
-          <Link to="/admin" style={{ color: "white" }}>Admin</Link>
+        <nav
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginTop: "20px",
+          }}
+        >
+          <Link to="/" style={{ color: "white" }}>
+            Dashboard
+          </Link>
+          <Link to="/crm" style={{ color: "white" }}>
+            CRM
+          </Link>
+          <Link to="/applications" style={{ color: "white" }}>
+            Applications
+          </Link>
+          <Link to="/documents" style={{ color: "white" }}>
+            Documents
+          </Link>
+          <Link to="/payments" style={{ color: "white" }}>
+            Payments
+          </Link>
+          <Link to="/accounts" style={{ color: "white" }}>
+            Accounts
+          </Link>
+          <Link to="/accounts/invoices" style={{ color: "white" }}>
+            Invoices
+          </Link>
+          <Link to="/accounts/transactions" style={{ color: "white" }}>
+            Transactions
+          </Link>
+          <Link to="/accounts/expenses" style={{ color: "white" }}>
+            Expenses
+          </Link>
+          <Link to="/accounts/reports" style={{ color: "white" }}>
+            Reports
+          </Link>
+          <Link to="/reports" style={{ color: "white" }}>
+            Reports
+          </Link>
+          <Link to="/admin" style={{ color: "white" }}>
+            Admin
+          </Link>
         </nav>
       </div>
 
-      <div style={{ flex: 1, padding: "30px" }}>
-        {children}
-      </div>
+      <div style={{ flex: 1, padding: "30px" }}>{children}</div>
     </div>
   );
 }
@@ -30,14 +71,14 @@ function Dashboard() {
     padding: "20px",
     borderRadius: "10px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-    width: "200px"
+    width: "200px",
   };
 
   return (
     <div>
       <h1>Dashboard</h1>
 
-      <div style={{display:"flex", gap:"20px", marginTop:"20px"}}>
+      <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
         <div style={cardStyle}>
           <h3>Total Applications</h3>
           <p>124</p>
@@ -70,16 +111,23 @@ function Applications() {
   const applications = [
     { id: "VM001", name: "John Doe", country: "Canada", status: "Pending" },
     { id: "VM002", name: "Sara Khan", country: "UK", status: "Approved" },
-    { id: "VM003", name: "Raj Patel", country: "Australia", status: "Processing" }
+    {
+      id: "VM003",
+      name: "Raj Patel",
+      country: "Australia",
+      status: "Processing",
+    },
   ];
 
   return (
     <div>
       <h1>Visa Applications</h1>
 
-      <table style={{width:"100%", marginTop:"20px", borderCollapse:"collapse"}}>
+      <table
+        style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}
+      >
         <thead>
-          <tr style={{background:"#f1f5f9"}}>
+          <tr style={{ background: "#f1f5f9" }}>
             <th>ID</th>
             <th>Customer</th>
             <th>Country</th>
@@ -121,13 +169,104 @@ function Admin() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout><Dashboard /></Layout>} />
-      <Route path="/crm" element={<Layout><CRM /></Layout>} />
-      <Route path="/applications" element={<Layout><Applications /></Layout>} />
-      <Route path="/documents" element={<Layout><Documents /></Layout>} />
-      <Route path="/payments" element={<Layout><Payments /></Layout>} />
-      <Route path="/reports" element={<Layout><Reports /></Layout>} />
-      <Route path="/admin" element={<Layout><Admin /></Layout>} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/dashboard"
+        element={
+          <Layout>
+            <Dashboard />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crm"
+        element={
+          <Layout>
+            <CRM />
+          </Layout>
+        }
+      />
+      <Route
+        path="/applications"
+        element={
+          <Layout>
+            <Applications />
+          </Layout>
+        }
+      />
+      <Route
+        path="/documents"
+        element={
+          <Layout>
+            <Documents />
+          </Layout>
+        }
+      />
+      <Route
+        path="/payments"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/accounts"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/accounts/invoices"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/accounts/transactions"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/accounts/expenses"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/accounts/reports"
+        element={
+          <Layout>
+            <Payments />
+          </Layout>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <Layout>
+            <Reports />
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <Layout>
+            <Admin />
+          </Layout>
+        }
+      />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
