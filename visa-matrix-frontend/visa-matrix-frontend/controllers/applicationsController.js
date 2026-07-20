@@ -46,12 +46,12 @@ export const getApplicationHandler = async (req, res) => {
 
 export const createApplicationHandler = async (req, res) => {
   try {
+    console.log("createApplicationHandler req.body:", req.body);
     const applicationData = req.body;
     const requiredFields = [
-      "customerName",
-      "email",
-      "destinationCountry",
-      "visaType",
+      "customer_id",
+      "country_id",
+      "visa_type_id",
     ];
     const missingFields = requiredFields.filter(
       (field) => !applicationData[field],
@@ -66,26 +66,27 @@ export const createApplicationHandler = async (req, res) => {
     }
 
     const newApplication = await createApplication(applicationData, req.user);
+    const organizationId =
+      newApplication.organization_id ?? req.user?.organization_id ?? null;
 
     await createNotification({
-      organization_id:
-        newApplication.organization_id ?? req.user.organization_id,
+      organization_id: organizationId,
       title: "Application created",
-      message: `${newApplication.customerName} application was created for ${newApplication.destinationCountry}.`,
+      message: `Application ${newApplication.id} was created for customer ${newApplication.customer_id} and country ${newApplication.country_id}.`,
       module: "notifications",
       entity_id: newApplication.id,
     });
 
     await createAuditLog({
       user_id: req.user.id,
-      organization_id:
-        newApplication.organization_id ?? req.user.organization_id,
+      organization_id: organizationId,
       action: "application_created",
       module: "applications",
       entity_id: newApplication.id,
       metadata: {
-        destinationCountry: newApplication.destinationCountry,
-        visaType: newApplication.visaType,
+        customer_id: newApplication.customer_id,
+        country_id: newApplication.country_id,
+        visa_type_id: newApplication.visa_type_id,
       },
     });
 
