@@ -47,6 +47,12 @@ type AuthContextValue = {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
+function debugAuthEvent(message: string, payload: Record<string, unknown>) {
+  if (import.meta.env.DEV) {
+    console.debug(`[RBAC][AuthContext] ${message}`, payload);
+  }
+}
+
 function userFromMeResponse(me: authService.MeResponse): AuthUser {
   const profile = me.user;
   return normalizeAuthUser({
@@ -75,6 +81,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(nextUser);
     setStoredToken(nextToken);
     setStoredUser(nextUser);
+    debugAuthEvent("applySession", {
+      role: nextUser.role,
+      permissions: nextUser.permissions,
+      tokenPresent: Boolean(nextToken),
+    });
   }, []);
 
   useEffect(() => {
@@ -109,6 +120,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
 
         const refreshedUser = userFromMeResponse(me);
+        debugAuthEvent("restoreSession:user", {
+          role: refreshedUser.role,
+          permissions: refreshedUser.permissions,
+        });
         applySession(storedToken, refreshedUser);
       } catch {
         if (!cancelled) {
@@ -139,6 +154,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const normalizedUser = normalizeAuthUser({
       ...authRecord,
       permissions: authRecord.permissions,
+    });
+
+    debugAuthEvent("login:user", {
+      role: normalizedUser.role,
+      permissions: normalizedUser.permissions,
     });
 
     if (isGuest(normalizedUser.role)) {

@@ -16,6 +16,12 @@ type ProtectedRouteProps = {
   requireAllPermissions?: boolean;
 };
 
+function debugRouteCheck(message: string, payload: Record<string, unknown>) {
+  if (import.meta.env.DEV) {
+    console.debug(`[RBAC][ProtectedRoute] ${message}`, payload);
+  }
+}
+
 export default function ProtectedRoute({
   roles,
   requiredPermissions,
@@ -37,13 +43,28 @@ export default function ProtectedRoute({
     !requiredPermissions?.length ||
     (requireAllPermissions
       ? requiredPermissions.every((permission) =>
-          hasPermissionAccess(auth.user, permission)
+          hasPermissionAccess(auth.user, permission),
         )
       : requiredPermissions.some((permission) =>
-          hasPermissionAccess(auth.user, permission)
+          hasPermissionAccess(auth.user, permission),
         ));
 
   const routeOk = canAccessRoute(auth.user, location.pathname);
+  const accountsAccess = location.pathname.startsWith("/accounts")
+    ? canAccessRoute(auth.user, "/accounts")
+    : null;
+
+  debugRouteCheck("check", {
+    pathname: location.pathname,
+    userRole: auth.user?.role,
+    permissions: auth.user?.permissions,
+    explicitRoleOk,
+    explicitPermOk,
+    routeOk,
+    accountsAccess,
+    requiredPermissions,
+    roles,
+  });
 
   if (!explicitRoleOk || !explicitPermOk || !routeOk) {
     return <Navigate to="/unauthorized" replace />;

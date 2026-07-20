@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileCheck2,
   Globe2,
+  Landmark,
   LayoutDashboard,
   MessageSquareMore,
   Settings,
@@ -19,6 +20,7 @@ import {
   API_FALLBACK_BASE_URLS as API_BASE_URL_FALLBACKS,
   API_ROOT_URL,
 } from "./api";
+import { MODULE_PERMISSION_KEYS } from "./rbac";
 import type { FrontendRole, NavigationItem, Permission } from "../types";
 
 export const APP_NAME = "Visa Matrix";
@@ -89,29 +91,79 @@ export const SIDEBAR_NAVIGATION: NavigationItem[] = [
     label: "Leads",
     icon: ClipboardList,
     to: "/leads",
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     requiredPermission: "manage_crm",
   },
   {
     label: "Customers",
     icon: Users,
     to: "/customers",
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     requiredPermission: "manage_crm",
   },
   {
     label: "Documents",
     icon: FileCheck2,
     to: "/documents",
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     requiredPermission: "manage_documents",
   },
   {
-    label: "Payments",
-    icon: CircleDollarSign,
-    to: "/payments",
+    label: "Accounts Dashboard",
+    icon: Landmark,
+    to: "/accounts",
     roles: ["Super Admin", "Admin", "Finance Manager"],
-    requiredPermission: "manage_payments",
+    requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+    children: [
+      {
+        label: "Dashboard",
+        to: "/accounts/dashboard",
+        roles: ["Super Admin", "Admin", "Finance Manager"],
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+      },
+      {
+        label: "Invoices",
+        to: "/accounts/invoices",
+        roles: ["Super Admin", "Admin", "Finance Manager"],
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+      },
+      {
+        label: "Transactions",
+        to: "/accounts/transactions",
+        roles: ["Super Admin", "Admin", "Finance Manager"],
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+      },
+      {
+        label: "Expenses",
+        to: "/accounts/expenses",
+        roles: ["Super Admin", "Admin", "Finance Manager"],
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+      },
+      {
+        label: "Reports",
+        to: "/accounts/reports",
+        roles: ["Super Admin", "Admin", "Finance Manager"],
+        requiredPermission: MODULE_PERMISSION_KEYS.accounts.view,
+      },
+    ],
   },
   {
     label: "Analytics",
@@ -138,7 +190,13 @@ export const SIDEBAR_NAVIGATION: NavigationItem[] = [
     label: "Tasks",
     icon: Activity,
     to: "/tasks",
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     requiredPermission: "tasks:view",
   },
   {

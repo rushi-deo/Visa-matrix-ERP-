@@ -20,7 +20,11 @@ export type Permission =
   | "manage_payments"
   | "view_reports"
   | "manage_crm"
-  | "edit_applications";
+  | "edit_applications"
+  | "accounts:view"
+  | "accounts:create"
+  | "accounts:edit"
+  | "accounts:delete";
 
 export type AuthUser = {
   id: string;
@@ -74,12 +78,20 @@ export type LoginResponse = {
   };
 };
 
+export type NavigationSubItem = {
+  label: string;
+  to: string;
+  roles: FrontendRole[];
+  requiredPermission?: Permission | string;
+};
+
 export type NavigationItem = {
   label: string;
   icon: LucideIcon;
   to: string;
   roles: FrontendRole[];
   requiredPermission?: Permission | string;
+  children?: NavigationSubItem[];
 };
 
 export type Role = {

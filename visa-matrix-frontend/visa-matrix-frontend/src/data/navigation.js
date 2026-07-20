@@ -30,14 +30,9 @@ export const navigationItems = [
     module: "documents",
   },
   {
-    label: "Payments & Invoices",
-    path: "/payments",
-    shortLabel: "Payments",
-    module: "invoicing",
-  },
-  {
     label: "Accounts",
     path: "/accounts",
+
     shortLabel: "Accounts",
     module: "invoicing",
     children: [
@@ -70,6 +65,35 @@ export const navigationItems = [
         path: "/accounts/reports",
         shortLabel: "Reports",
         module: "invoicing",
+      },
+    ],
+    shortLabel: "Accounts",
+    module: "invoicing",
+    children: [
+      {
+        path: "/accounts/dashboard",
+        shortLabel: "Dashboard",
+        label: "Dashboard",
+      },
+      {
+        path: "/accounts/invoices",
+        shortLabel: "Invoices",
+        label: "Invoices",
+      },
+      {
+        path: "/accounts/transactions",
+        shortLabel: "Transactions",
+        label: "Transactions",
+      },
+      {
+        path: "/accounts/expenses",
+        shortLabel: "Expenses",
+        label: "Expenses",
+      },
+      {
+        path: "/accounts/reports",
+        shortLabel: "Reports",
+        label: "Reports",
       },
     ],
   },

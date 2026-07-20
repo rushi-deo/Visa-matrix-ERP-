@@ -2,7 +2,12 @@
  * Enterprise RBAC — single source of truth for roles, routes, and UI access (frontend).
  */
 
-import type { AuthUser, FrontendRole, NavigationItem, Permission } from "../types";
+import type {
+  AuthUser,
+  FrontendRole,
+  NavigationItem,
+  Permission,
+} from "../types";
 
 export const ENTERPRISE_ROLES = [
   "Super Admin",
@@ -47,15 +52,48 @@ export const ROLE_ALIASES: Record<string, FrontendRole> = {
   guest: "Guest",
 };
 
-/** Legacy UI permission keys → API module:action names */
+export const MODULE_PERMISSION_KEYS = {
+  accounts: {
+    view: "accounts:view",
+    create: "accounts:create",
+    edit: "accounts:edit",
+    delete: "accounts:delete",
+  },
+} as const;
+
+/** Canonical key aliases used by the UI and API permission layer. */
 export const PERMISSION_ALIASES: Record<Permission, string[]> = {
-  manage_users: ["manage_users", "settings:view", "settings:edit", "users:manage"],
+  manage_users: [
+    "manage_users",
+    "settings:view",
+    "settings:edit",
+    "users:manage",
+  ],
   manage_roles: ["manage_roles", "settings:edit", "roles:manage"],
   assign_roles: ["assign_roles", "settings:edit"],
-  manage_employees: ["manage_employees", "hr:view", "hr:edit", "employees:manage"],
-  manage_visas: ["manage_visas", "countries:view", "countries:edit", "workflow:view"],
+  manage_employees: [
+    "manage_employees",
+    "hr:view",
+    "hr:edit",
+    "employees:manage",
+  ],
+  manage_visas: [
+    "manage_visas",
+    "countries:view",
+    "countries:edit",
+    "workflow:view",
+  ],
   manage_documents: ["manage_documents", "documents:view", "documents:edit"],
-  manage_payments: ["manage_payments", "payments:view", "payments:edit", "invoicing:view"],
+  manage_payments: [
+    "manage_payments",
+    "payments:view",
+    "payments:edit",
+    "invoicing:view",
+    MODULE_PERMISSION_KEYS.accounts.view,
+    MODULE_PERMISSION_KEYS.accounts.create,
+    MODULE_PERMISSION_KEYS.accounts.edit,
+    MODULE_PERMISSION_KEYS.accounts.delete,
+  ],
   view_reports: ["view_reports", "reports:view", "dashboard:view"],
   manage_crm: ["manage_crm", "crm:view", "crm:edit", "customers:view"],
   edit_applications: [
@@ -63,6 +101,23 @@ export const PERMISSION_ALIASES: Record<Permission, string[]> = {
     "applications:view",
     "applications:edit",
     "applications:create",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.view]: [
+    MODULE_PERMISSION_KEYS.accounts.view,
+    "payments:view",
+    "manage_payments",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.create]: [
+    MODULE_PERMISSION_KEYS.accounts.create,
+    "payments:create",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.edit]: [
+    MODULE_PERMISSION_KEYS.accounts.edit,
+    "payments:edit",
+  ],
+  [MODULE_PERMISSION_KEYS.accounts.delete]: [
+    MODULE_PERMISSION_KEYS.accounts.delete,
+    "payments:delete",
   ],
 };
 
@@ -74,7 +129,20 @@ export const API_TO_LEGACY: Record<string, string[]> = {
   "crm:view": ["crm:view", "manage_crm"],
   "customers:view": ["customers:view", "manage_crm"],
   "documents:view": ["documents:view", "manage_documents"],
-  "payments:view": ["payments:view", "manage_payments"],
+  "payments:view": [
+    "payments:view",
+    "manage_payments",
+    MODULE_PERMISSION_KEYS.accounts.view,
+  ],
+  "payments:create": [
+    "payments:create",
+    MODULE_PERMISSION_KEYS.accounts.create,
+  ],
+  "payments:edit": ["payments:edit", MODULE_PERMISSION_KEYS.accounts.edit],
+  "payments:delete": [
+    "payments:delete",
+    MODULE_PERMISSION_KEYS.accounts.delete,
+  ],
   "reports:view": ["reports:view", "view_reports"],
   "settings:view": ["settings:view", "manage_users"],
   "settings:edit": ["settings:edit", "manage_roles", "assign_roles"],
@@ -105,29 +173,61 @@ export const ROUTE_ACCESS: Record<
 > = {
   "/dashboard": { roles: ENTERPRISE_ROLES.filter((r) => r !== "Guest") },
   "/applications": {
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager", "Employee"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+      "Employee",
+    ],
     permissions: ["applications:view", "edit_applications"],
   },
-  "/hr": { roles: ["Super Admin", "Admin", "HR Manager"], permissions: ["hr:view"] },
+  "/hr": {
+    roles: ["Super Admin", "Admin", "HR Manager"],
+    permissions: ["hr:view"],
+  },
   "/hr/employees": {
     roles: ["Super Admin", "Admin", "HR Manager"],
     permissions: ["hr:edit", "manage_employees"],
   },
   "/leads": {
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     permissions: ["crm:view", "manage_crm"],
   },
   "/customers": {
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     permissions: ["customers:view", "manage_crm"],
   },
   "/documents": {
-    roles: ["Super Admin", "Admin", "HR Manager", "Visa Officer", "Finance Manager"],
+    roles: [
+      "Super Admin",
+      "Admin",
+      "HR Manager",
+      "Visa Officer",
+      "Finance Manager",
+    ],
     permissions: ["documents:view", "manage_documents"],
   },
   "/payments": {
     roles: ["Super Admin", "Admin", "Finance Manager"],
     permissions: ["payments:view", "manage_payments"],
+  },
+  "/accounts": {
+    roles: ["Super Admin", "Admin", "Finance Manager"],
+    permissions: [MODULE_PERMISSION_KEYS.accounts.view],
   },
   "/analytics": {
     roles: ["Super Admin", "Admin", "Finance Manager"],
@@ -154,7 +254,9 @@ export function normalizeEnterpriseRole(role?: string | null): FrontendRole {
   }
 
   const key = trimmed.toLowerCase();
-  return ROLE_ALIASES[key] || ROLE_ALIASES[key.replace(/\s+/g, "_")] || "Employee";
+  return (
+    ROLE_ALIASES[key] || ROLE_ALIASES[key.replace(/\s+/g, "_")] || "Employee"
+  );
 }
 
 export function isSuperAdmin(role?: FrontendRole | string | null): boolean {
@@ -166,7 +268,7 @@ export function isGuest(role?: FrontendRole | string | null): boolean {
 }
 
 export function expandPermissionChecks(
-  permission: Permission | string
+  permission: Permission | string,
 ): string[] {
   const value = String(permission);
   const legacy = PERMISSION_ALIASES[value as Permission];
@@ -175,7 +277,7 @@ export function expandPermissionChecks(
 
 export function hasRoleAccess(
   userRole: FrontendRole | string | undefined,
-  allowedRoles?: FrontendRole[]
+  allowedRoles?: FrontendRole[],
 ): boolean {
   if (!allowedRoles?.length) {
     return true;
@@ -196,13 +298,13 @@ export function hasRoleAccess(
   }
 
   return allowedRoles.some(
-    (allowed) => normalizeEnterpriseRole(allowed) === canonical
+    (allowed) => normalizeEnterpriseRole(allowed) === canonical,
   );
 }
 
 export function hasPermissionAccess(
   user: Pick<AuthUser, "role" | "permissions"> | null,
-  permission: Permission | Permission[] | string
+  permission: Permission | Permission[] | string | string[],
 ): boolean {
   if (!user) {
     return false;
@@ -225,7 +327,7 @@ export function hasPermissionAccess(
 
 export function canAccessNavItem(
   user: AuthUser | null,
-  item: NavigationItem
+  item: NavigationItem,
 ): boolean {
   if (!user || isGuest(user.role)) {
     return false;
@@ -235,7 +337,10 @@ export function canAccessNavItem(
     return false;
   }
 
-  if (item.requiredPermission && !hasPermissionAccess(user, item.requiredPermission)) {
+  if (
+    item.requiredPermission &&
+    !hasPermissionAccess(user, item.requiredPermission)
+  ) {
     return false;
   }
 
@@ -244,7 +349,7 @@ export function canAccessNavItem(
 
 export function canAccessRoute(
   user: AuthUser | null,
-  pathname: string
+  pathname: string,
 ): boolean {
   if (!user || isGuest(user.role)) {
     return false;
@@ -267,6 +372,9 @@ export function canAccessRoute(
   return roleOk && permOk;
 }
 
-export function isAuthenticatedUser(user: AuthUser | null, token: string | null) {
+export function isAuthenticatedUser(
+  user: AuthUser | null,
+  token: string | null,
+) {
   return Boolean(token && user && !isGuest(user.role));
 }

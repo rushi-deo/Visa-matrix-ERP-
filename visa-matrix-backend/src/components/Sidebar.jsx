@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   FiBarChart2,
+  FiBriefcase,
   FiCheckSquare,
   FiClipboard,
   FiCreditCard,
@@ -19,8 +20,12 @@ const navigation = [
   { label: "Countries", to: "/countries", icon: FiGlobe },
   { label: "Documents", to: "/documents", icon: FiFileText },
   { label: "Payments", to: "/payments", icon: FiCreditCard },
+  { label: "Accounts", to: "/accounts", icon: FiBriefcase },
+  { label: "Invoices", to: "/accounts/invoices", icon: FiBriefcase },
+  { label: "Transactions", to: "/accounts/transactions", icon: FiBriefcase },
+  { label: "Expenses", to: "/accounts/expenses", icon: FiBriefcase },
+  { label: "Reports", to: "/accounts/reports", icon: FiBriefcase },
   { label: "Tasks", to: "/tasks", icon: FiCheckSquare },
-  { label: "Reports", to: "/reports", icon: FiBarChart2 },
   { label: "Admin", to: "/admin", icon: FiSettings },
 ];
 
@@ -51,7 +56,9 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="section-label">Visa Matrix ERP</div>
-            <h1 className="mt-2 text-2xl font-bold text-white">Command Center</h1>
+            <h1 className="mt-2 text-2xl font-bold text-white">
+              Command Center
+            </h1>
             <p className="mt-2 text-sm text-slate-400">
               Monitoring, CRM, and case execution in one control surface.
             </p>
@@ -97,10 +104,12 @@ export default function Sidebar({ isOpen, onClose }) {
         </nav>
 
         <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <div className="text-sm font-semibold text-white">Operations Note</div>
+          <div className="text-sm font-semibold text-white">
+            Operations Note
+          </div>
           <p className="mt-2 text-sm text-slate-400">
-            Keep fallback mode enabled during demos. Protected endpoints will still
-            hydrate when an auth token is present.
+            Keep fallback mode enabled during demos. Protected endpoints will
+            still hydrate when an auth token is present.
           </p>
         </div>
       </aside>
