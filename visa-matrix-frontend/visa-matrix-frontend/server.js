@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import countriesRoutes from "./routes/countriesRoutes.js";
+import customersRoutes from "./routes/customersRoutes.js";
 import visaTypesRoutes from "./routes/visaTypesRoutes.js";
 import applicationsRoutes from "./routes/applicationsRoutes.js";
 import accessControlRoutes from "./routes/accessControlRoutes.js";
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/api", authRoutes);
 app.use("/api", countriesRoutes);
+app.use("/api", customersRoutes);
 app.use("/api", visaTypesRoutes);
 app.use("/api", applicationsRoutes);
 app.use("/api", accessControlRoutes);

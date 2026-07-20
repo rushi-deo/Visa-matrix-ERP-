@@ -22,7 +22,7 @@ export const permissionMiddleware = (moduleName, action) => async (req, res, nex
   }
 
   const organizationId =
-    req.body.organization_id || req.query.organization_id || req.params.organization_id;
+    req.body?.organization_id || req.query.organization_id || req.params.organization_id;
 
   if (!canAccessOrganization(req.user, organizationId)) {
     return res.status(403).json({

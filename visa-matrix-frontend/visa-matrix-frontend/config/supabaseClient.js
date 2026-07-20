@@ -11,8 +11,8 @@ loadEnv({
 const SUPABASE_URL = (
   process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
 )?.trim();
-const SUPABASE_ANON_KEY = (
-  process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY
+const SUPABASE_SERVICE_ROLE_KEY = (
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )?.trim();
 
 const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
@@ -27,20 +27,23 @@ const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
   return `${value.slice(0, visibleStart)}...${value.slice(-visibleEnd)}`;
 };
 
-export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
 
 export const getSupabaseConfigStatus = () => ({
   status: isSupabaseConfigured ? "configured" : "missing_env",
   url: maskSensitiveValue(SUPABASE_URL),
-  anonKey: maskSensitiveValue(SUPABASE_ANON_KEY),
+  serviceRoleKey: maskSensitiveValue(SUPABASE_SERVICE_ROLE_KEY),
 });
 
 if (isSupabaseConfigured) {
-  console.info("[Supabase] Client configured.", getSupabaseConfigStatus());
+  console.info(
+    "[Supabase] Client configured with key type: service_role.",
+    getSupabaseConfigStatus(),
+  );
 } else {
-  console.warn("[Supabase] Missing SUPABASE_URL or SUPABASE_ANON_KEY.", getSupabaseConfigStatus());
+  console.warn("[Supabase] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.", getSupabaseConfigStatus());
 }
 
 export const supabase = isSupabaseConfigured
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
   : null;
