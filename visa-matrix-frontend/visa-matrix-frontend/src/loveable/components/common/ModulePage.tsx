@@ -13,6 +13,9 @@ interface Props<T extends { id: string }> {
   onPrimaryAction?: () => void;
   rowAction?: (row: T) => React.ReactNode;
   onRowClick?: (row: T) => void;
+  isLoading?: boolean;
+  error?: string;
+  emptyMessage?: string;
 }
 export function ModulePage<T extends { id: string }>({
   title,
@@ -24,6 +27,9 @@ export function ModulePage<T extends { id: string }>({
   rowAction,
   onRowClick,
   onPrimaryAction,
+  isLoading = false,
+  error,
+  emptyMessage,
 }: Props<T>) {
   return (
     <>
@@ -59,6 +65,13 @@ export function ModulePage<T extends { id: string }>({
         rowAction={rowAction}
         onRowClick={onRowClick}
       />
+      {isLoading ? (
+        <p className="mt-3 text-sm text-muted-foreground">Loading applications...</p>
+      ) : null}
+      {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
+      {!isLoading && !error && emptyMessage ? (
+        <p className="mt-3 text-sm text-muted-foreground">{emptyMessage}</p>
+      ) : null}
     </>
   );
 }

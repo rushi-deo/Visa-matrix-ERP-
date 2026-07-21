@@ -15,6 +15,13 @@ export const normalizeApplication = (application = {}) => ({
   destinationCountry:
     application.destinationCountry ?? application.destination_country ?? "",
   visaType: normalizeVisaType(application.visaType ?? application.visa_type) ?? "",
+  status: application.status ?? application.application_status ?? "",
+  stage: application.stage ?? "",
+  assignedEmployee:
+    application.assignedEmployee ??
+    application.assigned_employee ??
+    application.assigned_to ??
+    "",
   assignedAgent:
     application.assignedAgent ??
     application.assigned_agent ??
@@ -29,6 +36,9 @@ export const normalizeApplication = (application = {}) => ({
     "",
   passportNumber: application.passportNumber ?? application.passport_number ?? "",
   travelDate: application.travelDate ?? application.travel_date ?? "",
+  createdAt: application.createdAt ?? application.created_at ?? "",
+  updatedAt: application.updatedAt ?? application.updated_at ?? "",
+  paymentStatus: application.paymentStatus ?? application.payment_status ?? "",
   submissionDate:
     application.submissionDate ??
     application.submission_date ??
@@ -118,7 +128,7 @@ export function generateApplicationCode(count) {
 export async function fetchApplications() {
   const response = await apiClient.get("/applications");
   const payload = extractResponseData(response);
-  const applications = unwrapApplicationsPayload(payload);
+  const applications = unwrapApplicationsPayload(payload?.items ?? payload);
 
   return applications.map(normalizeApplication);
 }
