@@ -35,7 +35,7 @@ import communicationRoutes from "./modules/communication/communication.routes.js
 import reportRoutes from "./modules/reports/report.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
 import debugDbRoutes from "./routes/debugDb.routes.js";
-import formConfigRoutes from "./routes/formConfig.js";
+import formRoutes from "./modules/forms/forms.routes.js";
 import legacyApplicationRoutes from "./routes/applicationRoutes.js";
 import publicApplicationsRoutes from "./routes/publicApplications.js";
 import pdfRoutes from "./routes/pdf.routes.js";
@@ -139,7 +139,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/visa-types`, visaTypeRoutes);
   app.use(`${env.apiPrefix}/visa-rules`, visaRuleRoutes);
   app.use(`${env.apiPrefix}/documents`, documentRoutes);
-  app.use(`${env.apiPrefix}/form-config`, formConfigRoutes);
+  app.use(`${env.apiPrefix}/forms`, formRoutes);
   // DEV ONLY: keep rule-engine validation available without auth while testing.
   app.use(`${env.apiPrefix}`, validationRoutes);
   app.use("/api/invoices", existingInvoiceRoutes);

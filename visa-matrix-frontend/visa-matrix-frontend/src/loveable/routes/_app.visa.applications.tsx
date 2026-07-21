@@ -12,15 +12,16 @@ import { Eye } from "lucide-react";
 import type { Column } from "@/components/common/DataTable";
 type Application = {
   id: string;
-  appId: string;
-  applicant: string;
-  email: string;
-  country: string;
-  visaType: string;
+  application_number: string;
+  customer_name: string;
+  destination_country: string;
+  visa_type: string;
   status: string;
-  priority: string;
-  assignee: string;
-  amount: number;
+  stage: string;
+  assigned_employee: string;
+  created_at: string;
+  updated_at: string;
+  payment_status: string;
 };
 export const Route = createFileRoute("/_app/visa/applications")({
   component: Page,
@@ -33,8 +34,8 @@ function Page() {
   const [createOpen, setCreateOpen] = React.useState(false);
   const cols: Column<Application>[] = [
     {
-      key: "appId",
-      header: "App ID",
+      key: "application_number",
+      header: "Application Number",
       sortable: true,
       render: (r) => (
         <button
@@ -45,13 +46,13 @@ function Page() {
             navigate({ to: "/visa/applications/$id", params: { id: r.id } });
           }}
         >
-          {r.appId}
+          {r.application_number || r.id}
         </button>
       ),
     },
     {
-      key: "applicant",
-      header: "Applicant",
+      key: "customer_name",
+      header: "Customer Name",
       sortable: true,
       render: (r) => (
         <button
@@ -62,39 +63,37 @@ function Page() {
             navigate({ to: "/visa/applications/$id", params: { id: r.id } });
           }}
         >
-          {r.applicant}
+          {r.customer_name || "-"}
         </button>
       ),
     },
     {
-      key: "country",
-      header: "Country",
-      render: (r) => (
-        <span className="inline-flex items-center gap-1.5">
-          <span>{r.flag}</span>
-          {r.country}
-        </span>
-      ),
+      key: "destination_country",
+      header: "Destination Country",
     },
-    { key: "visaType", header: "Visa Type" },
+    { key: "visa_type", header: "Visa Type" },
     {
       key: "status",
       header: "Status",
       render: (r) => <StatusBadge value={r.status} />,
     },
     {
-      key: "priority",
-      header: "Priority",
-      render: (r) => <StatusBadge value={r.priority} />,
+      key: "stage",
+      header: "Stage",
+      render: (r) => <StatusBadge value={r.stage} />,
     },
-    { key: "assignee", header: "Assignee" },
+    { key: "assigned_employee", header: "Assigned Employee" },
     {
-      key: "amount",
-      header: "Amount",
-      sortable: true,
-      accessor: (r) => r.amount,
-      render: (r) => `$${r.amount.toLocaleString()}`,
+      key: "created_at",
+      header: "Created Date",
+      render: (r) => r.created_at || "-",
     },
+    {
+      key: "updated_at",
+      header: "Updated Date",
+      render: (r) => r.updated_at || "-",
+    },
+    { key: "payment_status", header: "Payment Status" },
   ];
   React.useEffect(() => {
     let mounted = true;
@@ -103,8 +102,9 @@ function Page() {
       setError(null);
       try {
         const resp = await apiClient.get(API_ENDPOINTS.applications);
-        const data = extractResponseData(resp) ?? [];
-        if (mounted) setApplications(Array.isArray(data) ? data : []);
+        const data = extractResponseData(resp);
+        const items = Array.isArray(data?.items) ? data.items : [];
+        if (mounted) setApplications(items);
       } catch (err: any) {
         console.error("Failed to load applications:", err);
         if (mounted) setError(err?.message ?? String(err));
@@ -124,7 +124,15 @@ function Page() {
         description="Track and manage every visa case across countries."
         data={applications}
         columns={cols}
-        searchKeys={["applicant", "appId", "country", "visaType", "assignee"]}
+        searchKeys={[
+          "application_number",
+          "customer_name",
+          "destination_country",
+          "visa_type",
+          "assigned_employee",
+          "status",
+          "stage",
+        ]}
         primaryAction="New Application"
         onPrimaryAction={() => {
           console.log("New Application clicked");
@@ -161,8 +169,9 @@ function Page() {
           setLoading(true);
           try {
             const resp = await apiClient.get(API_ENDPOINTS.applications);
-            const data = extractResponseData(resp) ?? [];
-            setApplications(Array.isArray(data) ? data : []);
+            const data = extractResponseData(resp);
+            const items = Array.isArray(data?.items) ? data.items : [];
+            setApplications(items);
           } catch (err: any) {
             console.error("Failed to refresh applications:", err);
           } finally {
