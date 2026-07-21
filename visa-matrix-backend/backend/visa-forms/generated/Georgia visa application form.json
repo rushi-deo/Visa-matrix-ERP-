@@ -1,0 +1,110 @@
+{
+  "country": "Georgia",
+  "visa_type": "application form",
+  "name": "Georgia visa application form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "Application Details",
+        "fields": [
+          {
+            "label": "First Name",
+            "type": "text",
+            "required": true,
+            "id": "first_name"
+          },
+          {
+            "label": "Surname",
+            "type": "text",
+            "required": true,
+            "id": "surname"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Email Address (Visa correspondence)",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Phone number",
+            "type": "text",
+            "required": true,
+            "id": "phone_number"
+          }
+        ]
+      },
+      {
+        "id": "travel_document",
+        "title": "Application Details",
+        "fields": [
+          {
+            "label": "Travel Document No",
+            "type": "text",
+            "required": true,
+            "id": "travel_document_no"
+          },
+          {
+            "label": "Expiration date of Travel Document/Passport",
+            "type": "date",
+            "required": true,
+            "id": "travel_document_expiration_date"
+          }
+        ]
+      },
+      {
+        "id": "trip_details",
+        "title": "Application Details",
+        "fields": [
+          {
+            "label": "Purpose",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourism",
+              "Business"
+            ],
+            "id": "purpose_of_visit"
+          },
+          {
+            "label": "Address in Georgia",
+            "type": "textarea",
+            "required": true,
+            "id": "address_in_georgia"
+          },
+          {
+            "label": "Planned arrival date",
+            "type": "date",
+            "required": true,
+            "id": "planned_arrival_date"
+          },
+          {
+            "label": "Duration of stay (usually up to 30 days per visit)",
+            "type": "text",
+            "required": true,
+            "id": "duration_of_stay"
+          }
+        ]
+      }
+    ]
+  }
+}

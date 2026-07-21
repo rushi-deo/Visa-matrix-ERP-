@@ -5,6 +5,7 @@ import path from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { AppError, RequestValidationError } from "../../core/errors.js";
+import { createRollbackTransaction } from "../../core/transaction.js";
 import {
   createForm,
   deleteForm,
@@ -103,6 +104,115 @@ const normalizeJsonObject = (value) => {
   return value;
 };
 
+const SUPPORTED_RULE_OPERATORS = new Set([">", ">=", "<", "<=", "=", "!=", "includes"]);
+const FIELD_REFERENCE_KEYS = [
+  "field",
+  "field_id",
+  "fieldId",
+  "field_name",
+  "application_field",
+  "depends_on",
+  "dependsOn",
+];
+
+const collectFields = (formSchema) => {
+  if (!formSchema || typeof formSchema !== "object" || Array.isArray(formSchema)) {
+    throw new RequestValidationError("form_schema must be a JSON object.");
+  }
+
+  if (!Array.isArray(formSchema.sections) || formSchema.sections.length === 0) {
+    throw new RequestValidationError("form_schema.sections must be a non-empty array.");
+  }
+
+  const fields = [];
+  for (const [sectionIndex, section] of formSchema.sections.entries()) {
+    if (!section || typeof section !== "object" || Array.isArray(section)) {
+      throw new RequestValidationError(`form_schema.sections[${sectionIndex}] must be an object.`);
+    }
+    if (!Array.isArray(section.fields)) {
+      throw new RequestValidationError(`form_schema.sections[${sectionIndex}].fields must be an array.`);
+    }
+    for (const [fieldIndex, field] of section.fields.entries()) {
+      if (!field || typeof field !== "object" || Array.isArray(field)) {
+        throw new RequestValidationError(`Field ${sectionIndex}.${fieldIndex} must be an object.`);
+      }
+      if (typeof field.id !== "string" || !field.id.trim()) {
+        throw new RequestValidationError(`Field ${sectionIndex}.${fieldIndex} requires a non-empty id.`);
+      }
+      if (typeof field.type !== "string" || !field.type.trim()) {
+        throw new RequestValidationError(`Field '${field.id}' requires a type.`);
+      }
+      fields.push(field);
+    }
+  }
+  return fields;
+};
+
+const collectReferences = (value, references = []) => {
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectReferences(item, references));
+    return references;
+  }
+  if (!value || typeof value !== "object") return references;
+
+  for (const [key, nested] of Object.entries(value)) {
+    if (FIELD_REFERENCE_KEYS.includes(key)) {
+      if (typeof nested === "string") references.push(nested);
+      else if (Array.isArray(nested)) nested.forEach((item) => {
+        if (typeof item === "string") references.push(item);
+      });
+    }
+    collectReferences(nested, references);
+  }
+  return references;
+};
+
+const validateFormStructure = (formSchema) => {
+  const fields = collectFields(formSchema);
+  const fieldIds = new Set();
+  for (const field of fields) {
+    if (fieldIds.has(field.id)) {
+      throw new RequestValidationError(`Duplicate field id '${field.id}'.`);
+    }
+    fieldIds.add(field.id);
+
+    if (["select", "multiselect", "radio"].includes(field.type) &&
+        field.options !== undefined && !Array.isArray(field.options)) {
+      throw new RequestValidationError(`Field '${field.id}' options must be an array.`);
+    }
+
+    const rules = field.validation ?? field.validation_rules ?? field.validationRules ?? field.rules;
+    if (rules !== undefined) {
+      if (!Array.isArray(rules)) {
+        throw new RequestValidationError(`Validation rules for field '${field.id}' must be an array.`);
+      }
+      for (const rule of rules) {
+        if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+          throw new RequestValidationError(`Validation rules for field '${field.id}' must contain objects.`);
+        }
+        if (rule.operator !== undefined && !SUPPORTED_RULE_OPERATORS.has(rule.operator)) {
+          throw new RequestValidationError(`Invalid validation operator '${rule.operator}' for field '${field.id}'.`);
+        }
+        if (rule.operator === undefined && rule.type === undefined && rule.kind === undefined) {
+          throw new RequestValidationError(`Validation rule for field '${field.id}' requires an operator or rule type.`);
+        }
+        if (rule.operator !== undefined && !Object.prototype.hasOwnProperty.call(rule, "value")) {
+          throw new RequestValidationError(`Validation rule for field '${field.id}' requires a value.`);
+        }
+      }
+    }
+  }
+
+  const references = collectReferences(formSchema);
+  const unknownReference = references.find((reference) => {
+    const root = reference.split(".")[0];
+    return !fieldIds.has(root);
+  });
+  if (unknownReference) {
+    throw new RequestValidationError(`Conditional field reference '${unknownReference}' does not exist.`);
+  }
+};
+
 const parseJsonContent = (content, sourceLabel) => {
   try {
     const parsed = JSON.parse(String(content));
@@ -134,6 +244,7 @@ const extractZipArchive = async (buffer) => {
       `Expand-Archive -LiteralPath "${zipPath.replace(/"/g, '""')}" -DestinationPath "${extractDir.replace(/"/g, '""')}" -Force`,
     ]);
   } catch (error) {
+    await fs.rm(tempRoot, { recursive: true, force: true }).catch(() => null);
     throw new AppError("Failed to extract ZIP archive.", 400, {
       message: error.message,
     });
@@ -160,10 +271,24 @@ const extractZipArchive = async (buffer) => {
 
   await walk(extractDir);
 
+  if (collected.length === 0) {
+    await fs.rm(tempRoot, { recursive: true, force: true }).catch(() => null);
+    throw new RequestValidationError("ZIP archive does not contain any JSON files.");
+  }
+
   return { tempRoot, jsonFiles: collected };
 };
 
 const parseImportSource = async (input = {}) => {
+  const parseRecordsValue = (value) => {
+    if (typeof value === "string") {
+      try { return JSON.parse(value); } catch { throw new RequestValidationError("records must contain valid JSON."); }
+    }
+    return value;
+  };
+
+  input.records = parseRecordsValue(input.records);
+  input.record = parseRecordsValue(input.record);
   if (Array.isArray(input.records)) {
     return input.records.flatMap((record) =>
       Array.isArray(record) ? record.map(normalizeJsonObject) : [normalizeJsonObject(record)],
@@ -239,8 +364,13 @@ const parseImportSource = async (input = {}) => {
 };
 
 const resolveForeignKeys = async (record, index) => {
-  const countrySource = record.country ?? record.country_name ?? record.country_code ?? record.country_id;
-  const visaTypeSource = record.visa_type ?? record.visa_name ?? record.visa_code ?? record.visa_type_id;
+  const lookupValue = (value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+    return value.id ?? value.country_id ?? value.visa_type_id ?? value.name ??
+      value.country_name ?? value.visa_name ?? value.code ?? value.country_code;
+  };
+  const countrySource = lookupValue(record.country ?? record.country_name ?? record.country_code ?? record.country_id);
+  const visaTypeSource = lookupValue(record.visa_type ?? record.visa_name ?? record.visa_code ?? record.visa_type_id);
 
   const country = await findCountryMatch(countrySource);
   const visaType = await findVisaTypeMatch(visaTypeSource);
@@ -267,8 +397,11 @@ const resolveForeignKeys = async (record, index) => {
 
 const normalizeImportedRecord = async (record, index) => {
   const normalized = normalizeJsonObject(record);
-  const resolved = await resolveForeignKeys(normalized, index);
-  const form_schema = normalized.form_schema ?? normalized.schema ?? normalized.fields;
+  const metadata = normalized.metadata && typeof normalized.metadata === "object"
+    ? normalized.metadata
+    : normalized;
+  const resolved = await resolveForeignKeys({ ...normalized, ...metadata }, index);
+  const form_schema = normalized.form_schema ?? normalized.schema ?? normalized.fields ?? metadata.form_schema ?? metadata.schema;
 
   if (form_schema === undefined) {
     throw new RequestValidationError(
@@ -277,18 +410,23 @@ const normalizeImportedRecord = async (record, index) => {
   }
 
   jsonSchemaValue.parse(form_schema);
+  validateFormStructure(form_schema);
 
   const name =
     String(normalized.name || "").trim() ||
     `${resolved.country_name || "Form"} - ${resolved.visa_type_name || "Template"}`;
+  const version = normalized.version === undefined ? 1 : Number(normalized.version);
+  if (!Number.isInteger(version) || version < 1) {
+    throw new RequestValidationError(`Import row ${index + 1}: version must be a positive integer.`);
+  }
 
   return {
     name,
     country_id: resolved.country_id,
     visa_type_id: resolved.visa_type_id,
     form_schema,
-    version: 1,
-    status: "draft",
+    version,
+    status: normalized.status === undefined ? "draft" : formStatusSchema.parse(normalized.status),
   };
 };
 
@@ -356,11 +494,18 @@ export const publishFormRecord = async (id) => {
 };
 
 export const importFormsRecord = async (input = {}) => {
-  const rawRecords = await parseImportSource(input);
-  const imported = [];
-  const skipped = [];
+  const summary = { imported: 0, skipped: 0, duplicates: 0, failed: 0, errors: [] };
+  let rawRecords;
+  try {
+    rawRecords = await parseImportSource(input);
+  } catch (error) {
+    summary.failed = 1;
+    summary.errors.push({ index: null, message: error.message });
+    return summary;
+  }
+
+  const transaction = createRollbackTransaction();
   const errors = [];
-  const createdIds = [];
 
   try {
     for (let index = 0; index < rawRecords.length; index += 1) {
@@ -369,38 +514,26 @@ export const importFormsRecord = async (input = {}) => {
         const duplicate = await findDuplicateForm(candidate);
 
         if (duplicate) {
-          skipped.push({
-            index,
-            reason: "duplicate",
-            name: candidate.name,
-            country_id: candidate.country_id,
-            visa_type_id: candidate.visa_type_id,
-          });
+          summary.skipped += 1;
+          summary.duplicates += 1;
           continue;
         }
 
         const created = await createForm(candidate);
-        createdIds.push(created.id);
-        imported.push(created);
+        summary.imported += 1;
+        transaction.addRollback(`delete_imported_form_${created.id}`, () => deleteForm(created.id));
       } catch (error) {
-        errors.push({
-          index,
-          message: error.message,
-        });
+        errors.push({ index, message: error.message });
         throw error;
       }
     }
 
-    return { imported, skipped, errors };
+    return { ...summary, errors };
   } catch (error) {
-    for (const id of createdIds.reverse()) {
-      await deleteForm(id).catch(() => null);
-    }
-
-    if (errors.length === 0) {
-      errors.push({ index: null, message: error.message });
-    }
-
-    return { imported: [], skipped, errors };
+    await transaction.rollback(error);
+    summary.imported = 0;
+    summary.failed = 1;
+    summary.errors = errors.length ? errors : [{ index: null, message: error.message }];
+    return summary;
   }
 };

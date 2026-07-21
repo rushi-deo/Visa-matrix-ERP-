@@ -1,0 +1,366 @@
+{
+  "country": "Brazilian",
+  "visa_type": "Application Form",
+  "name": "Brazilian Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Father’s Full Name",
+            "type": "text",
+            "required": true,
+            "id": "father_full_name"
+          },
+          {
+            "label": "Date of Birth (Gregorian)",
+            "type": "date",
+            "format": "mm/dd/yyyy",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Single",
+                "value": "single"
+              },
+              {
+                "label": "Engaged",
+                "value": "engaged"
+              },
+              {
+                "label": "Married",
+                "value": "married"
+              },
+              {
+                "label": "Separated",
+                "value": "separated"
+              },
+              {
+                "label": "Widow / Widower",
+                "value": "widow_widower"
+              }
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Female",
+                "value": "female"
+              },
+              {
+                "label": "Male",
+                "value": "male"
+              }
+            ],
+            "id": "gender"
+          },
+          {
+            "label": "Child: (Under 18 Years)",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ],
+            "id": "is_child_under_18"
+          },
+          {
+            "label": "Do you have any former names",
+            "type": "text",
+            "required": false,
+            "id": "former_names"
+          },
+          {
+            "label": "Country of Residence",
+            "type": "text",
+            "required": true,
+            "id": "country_of_residence"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Have you ever been to Brazil?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ],
+            "id": "ever_been_to_brazil"
+          },
+          {
+            "label": "Date of previous travel to Brazil",
+            "type": "date",
+            "format": "mm/dd/yyyy",
+            "required": true,
+            "conditional_logic": {
+              "field_id": "ever_been_to_brazil",
+              "value": "yes"
+            },
+            "id": "prev_travel_date"
+          },
+          {
+            "label": "Period of previous stay (days/months)",
+            "type": "text",
+            "required": true,
+            "conditional_logic": {
+              "field_id": "ever_been_to_brazil",
+              "value": "yes"
+            },
+            "id": "prev_stay_period"
+          },
+          {
+            "label": "Previous final scheduled date of stay",
+            "type": "date",
+            "format": "mm/dd/yyyy",
+            "required": true,
+            "conditional_logic": {
+              "field_id": "ever_been_to_brazil",
+              "value": "yes"
+            },
+            "id": "prev_scheduled_stay_end_date"
+          },
+          {
+            "label": "Do you have Brazilian nationality?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ],
+            "id": "has_brazilian_nationality"
+          },
+          {
+            "label": "Other Nationalities",
+            "type": "text",
+            "required": true,
+            "conditional_logic": {
+              "field_id": "has_brazilian_nationality",
+              "value": "yes"
+            },
+            "id": "other_nationalities"
+          }
+        ]
+      },
+      {
+        "id": "parents_details",
+        "title": "Parents (both father and mother)",
+        "fields": [
+          {
+            "label": "Given name",
+            "type": "text",
+            "required": true,
+            "id": "parent_given_name"
+          },
+          {
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "id": "parent_family_name"
+          },
+          {
+            "label": "Place of Birth",
+            "type": "text",
+            "required": true,
+            "id": "parent_place_of_birth"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "format": "mm/dd/yyyy",
+            "required": true,
+            "id": "parent_date_of_birth"
+          }
+        ]
+      },
+      {
+        "id": "trip_purpose",
+        "title": "Purpose of the trip",
+        "fields": [
+          {
+            "label": "Purpose of Journey",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Business",
+                "value": "business"
+              },
+              {
+                "label": "Convention / Conference",
+                "value": "convention_conference"
+              },
+              {
+                "label": "Education",
+                "value": "education"
+              },
+              {
+                "label": "Employment",
+                "value": "employment"
+              },
+              {
+                "label": "Exhibition",
+                "value": "exhibition"
+              },
+              {
+                "label": "Visiting Friends / Family",
+                "value": "visiting_friends_family"
+              },
+              {
+                "label": "Holiday",
+                "value": "holiday"
+              },
+              {
+                "label": "Other Entry",
+                "value": "other_entry"
+              }
+            ],
+            "id": "purpose_of_journey"
+          },
+          {
+            "label": "Estimated Date Of Arrival",
+            "type": "date",
+            "format": "mm/dd/yyyy",
+            "required": true,
+            "id": "estimated_date_of_arrival"
+          },
+          {
+            "label": "Have You Ever Been To Brazil?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ],
+            "id": "ever_been_to_brazil_2"
+          }
+        ]
+      },
+      {
+        "id": "profession_occupation",
+        "title": "Profession or Occupation",
+        "fields": [
+          {
+            "label": "Profession",
+            "type": "text",
+            "required": true,
+            "id": "profession"
+          },
+          {
+            "label": "Job description",
+            "type": "textarea",
+            "required": true,
+            "id": "job_description"
+          },
+          {
+            "label": "Nature of business and activities to be conducted by applicant in Brazil",
+            "type": "textarea",
+            "required": true,
+            "id": "nature_of_brazil_activities"
+          },
+          {
+            "label": "Monthly income in USD",
+            "type": "text",
+            "required": true,
+            "id": "monthly_income_usd"
+          },
+          {
+            "label": "Name Of Employer/College/School",
+            "type": "text",
+            "required": true,
+            "id": "employer_or_institution_name"
+          },
+          {
+            "label": "Nature of company’s/organization’s business or activities in Brazil",
+            "type": "textarea",
+            "required": false,
+            "id": "nature_of_company_brazil_activities"
+          }
+        ]
+      },
+      {
+        "id": "contact_in_brazil",
+        "title": "Contact in Brazil",
+        "fields": [
+          {
+            "label": "Name of contact",
+            "type": "text",
+            "required": true,
+            "id": "contact_name"
+          },
+          {
+            "label": "Full Address",
+            "type": "textarea",
+            "required": true,
+            "id": "contact_full_address"
+          },
+          {
+            "label": "relationship",
+            "type": "text",
+            "required": true,
+            "id": "contact_relationship"
+          },
+          {
+            "label": "Telephone number & email",
+            "type": "text",
+            "required": true,
+            "id": "contact_phone_email"
+          }
+        ]
+      }
+    ]
+  }
+}

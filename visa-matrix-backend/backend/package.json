@@ -10,6 +10,7 @@
     "dev": "node --watch src/server.js",
     "worker": "node src/server.js",
     "seed:admin": "node seed-admin.js",
+    "convert:forms": "node tools/form-converter/index.js",
     "build": "echo \"No build step required\"",
     "lint": "echo \"Add ESLint later\""
   },

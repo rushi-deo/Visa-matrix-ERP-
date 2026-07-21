@@ -1,0 +1,170 @@
+{
+  "country": "Australia",
+  "visa_type": "Application Form",
+  "name": "Australia Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Family name",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Place of Birth: Town/city, State/province, Country",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          }
+        ]
+      },
+      {
+        "id": "passport_details",
+        "title": "Passport Details",
+        "fields": [
+          {
+            "label": "Passport number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Country of passport",
+            "type": "text",
+            "required": true,
+            "id": "country_of_passport"
+          },
+          {
+            "label": "Nationality of passport holder",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Date of issue (Day/Month/Year)",
+            "type": "date",
+            "required": true,
+            "id": "date_of_issue"
+          },
+          {
+            "label": "Date of expiry",
+            "type": "date",
+            "required": true,
+            "id": "date_of_expiry"
+          },
+          {
+            "label": "Place of issue/ issuing authority",
+            "type": "text",
+            "required": true,
+            "id": "issuing_authority"
+          }
+        ]
+      },
+      {
+        "id": "status_and_employment",
+        "title": "Marital Status and Employment",
+        "fields": [
+          {
+            "label": "Marital status?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married/ Civil Partner",
+              "Unmarried Partner",
+              "Divorced/Dissolved Partnership",
+              "Separated",
+              "Widowed/Surviving Civil Partner"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Are you or have you been known by any other name? (including name at birth, previous married names, aliases)",
+            "type": "boolean",
+            "required": true,
+            "id": "known_by_other_name"
+          },
+          {
+            "label": "Other names/aliases",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "known_by_other_name",
+              "value": true
+            },
+            "id": "other_names"
+          },
+          {
+            "label": "Do you currently hold an Australian visa?",
+            "type": "boolean",
+            "required": true,
+            "id": "holds_australian_visa"
+          },
+          {
+            "label": "Do you currently hold, or have you applied for, an APEC Business Travel Card (ABTC) or hold the Pacific-Australia Card (PAC)?",
+            "type": "boolean",
+            "required": true,
+            "id": "holds_apec_card"
+          },
+          {
+            "label": "Are you a citizen of any other country?",
+            "type": "boolean",
+            "required": true,
+            "id": "citizen_of_other_country"
+          },
+          {
+            "label": "What is your employment status?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Employed",
+              "Self Employed",
+              "Retired",
+              "Student",
+              "Other"
+            ],
+            "id": "employment_status"
+          },
+          {
+            "label": "Year of Retirement (yr of Reti)",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Retired"
+            },
+            "id": "retirement_year"
+          }
+        ]
+      }
+    ]
+  }
+}

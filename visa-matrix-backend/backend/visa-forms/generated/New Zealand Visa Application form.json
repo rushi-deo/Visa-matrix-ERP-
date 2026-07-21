@@ -1,0 +1,291 @@
+{
+  "country": "New Zealand",
+  "visa_type": "Application form",
+  "name": "New Zealand Visa Application form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Father’s Full Name",
+            "type": "text",
+            "required": true,
+            "id": "father_full_name"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "single",
+                "label": "Single"
+              },
+              {
+                "value": "engaged",
+                "label": "Engaged"
+              },
+              {
+                "value": "married",
+                "label": "Married"
+              },
+              {
+                "value": "separated",
+                "label": "Separated"
+              },
+              {
+                "value": "widow_widower",
+                "label": "Widow / Widower"
+              }
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "female",
+                "label": "Female"
+              },
+              {
+                "value": "male",
+                "label": "Male"
+              }
+            ],
+            "id": "gender"
+          },
+          {
+            "label": "Child (Under 18 Years)",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "value": true,
+                "label": "Yes"
+              },
+              {
+                "value": false,
+                "label": "No"
+              }
+            ],
+            "id": "has_child_under_18"
+          },
+          {
+            "label": "Country of Residence",
+            "type": "text",
+            "required": true,
+            "id": "country_of_residence"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          }
+        ]
+      },
+      {
+        "id": "contact_details",
+        "title": "Contact Details",
+        "fields": [
+          {
+            "label": "Current Address",
+            "type": "textarea",
+            "required": true,
+            "id": "current_address"
+          },
+          {
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Mobile",
+            "type": "text",
+            "required": true,
+            "id": "mobile_tel"
+          },
+          {
+            "label": "Work Tel",
+            "type": "text",
+            "required": false,
+            "id": "work_tel"
+          },
+          {
+            "label": "Home Tel",
+            "type": "text",
+            "required": false,
+            "id": "home_tel"
+          },
+          {
+            "label": "Fax",
+            "type": "text",
+            "required": false,
+            "id": "fax_tel"
+          }
+        ]
+      },
+      {
+        "id": "employment_details",
+        "title": "Employment Details",
+        "fields": [
+          {
+            "label": "Current Occupation",
+            "type": "text",
+            "required": true,
+            "id": "current_occupation"
+          },
+          {
+            "label": "Employer’s Name",
+            "type": "text",
+            "required": true,
+            "id": "employer_name"
+          },
+          {
+            "label": "Employer’s Address",
+            "type": "textarea",
+            "required": true,
+            "id": "employer_address"
+          },
+          {
+            "label": "Previous Employer’s Name",
+            "type": "text",
+            "required": false,
+            "id": "previous_employer_name"
+          },
+          {
+            "label": "Previous Employer’s Address",
+            "type": "textarea",
+            "required": false,
+            "id": "previous_employer_address"
+          }
+        ]
+      },
+      {
+        "id": "visa_details",
+        "title": "Visa Details",
+        "fields": [
+          {
+            "label": "Visa Type",
+            "type": "text",
+            "required": true,
+            "id": "visa_type"
+          },
+          {
+            "label": "Purpose of Journey",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "business",
+                "label": "Business"
+              },
+              {
+                "value": "convention_conference",
+                "label": "Convention / Conference"
+              },
+              {
+                "value": "education",
+                "label": "Education"
+              },
+              {
+                "value": "employment",
+                "label": "Employment"
+              },
+              {
+                "value": "exhibition",
+                "label": "Exhibition"
+              },
+              {
+                "value": "visiting_friends_family",
+                "label": "Visiting Friends / Family"
+              },
+              {
+                "value": "holiday",
+                "label": "Holiday"
+              },
+              {
+                "value": "other_entry",
+                "label": "Other Entry"
+              }
+            ],
+            "id": "purpose_of_journey"
+          },
+          {
+            "label": "Point of Entry",
+            "type": "text",
+            "required": true,
+            "id": "point_of_entry"
+          },
+          {
+            "label": "Intended Duration of Stay (days)",
+            "type": "text",
+            "required": true,
+            "id": "intended_duration_days"
+          },
+          {
+            "label": "Have you previously applied for a New Zealand visa?",
+            "type": "boolean",
+            "required": true,
+            "id": "applied_nz_visa_previously"
+          },
+          {
+            "label": "Do you have an Australian Permanent Resident Visa?",
+            "type": "boolean",
+            "required": true,
+            "id": "has_au_pr_visa"
+          },
+          {
+            "label": "Do you hold an Australian Permanent Resident Visa?",
+            "type": "boolean",
+            "required": true,
+            "id": "holds_au_pr_visa"
+          },
+          {
+            "label": "Have you ever travelled to New Zealand?",
+            "type": "boolean",
+            "required": true,
+            "id": "travelled_to_nz_previously"
+          },
+          {
+            "label": "National identity number",
+            "type": "text",
+            "required": true,
+            "id": "national_identity_number"
+          },
+          {
+            "label": "Do you hold any citizenship?",
+            "type": "boolean",
+            "required": true,
+            "id": "holds_other_citizenship"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,432 @@
+{
+  "country": "JAPAN",
+  "visa_type": "APPLICATION",
+  "name": "JAPAN VISA APPLICATION",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "Personal Information",
+        "fields": [
+          {
+            "id": "full_name_surname",
+            "label": "Full Name (Surname)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "full_name_given_name",
+            "label": "Full Name (Given Name)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "nationality",
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "previous_nationality",
+            "label": "Previous Nationality (if any)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "gender",
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female"
+            ]
+          },
+          {
+            "id": "marital_status",
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Other"
+            ]
+          },
+          {
+            "id": "marital_status_other_details",
+            "label": "Please specify 'Other' marital status",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "marital_status",
+              "equals": "Other"
+            }
+          }
+        ]
+      },
+      {
+        "id": "contact_employment_details",
+        "title": "Contact and Employment Details",
+        "fields": [
+          {
+            "id": "residential_address",
+            "label": "Residential Address",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "residential_phone_number",
+            "label": "Phone Number (Residential)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "email_address",
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "current_occupation",
+            "label": "Current Occupation",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "employer_school_name",
+            "label": "Employer / School Name",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "employer_school_address",
+            "label": "Employer / School Address",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "employer_school_phone_number",
+            "label": "Phone Number (Employment/School)",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "trip_details",
+        "title": "Trip Details",
+        "fields": [
+          {
+            "id": "purpose_of_visit",
+            "label": "Purpose of Visit to Japan",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourism",
+              "Business",
+              "Visiting Family / Friends",
+              "Short-term Study",
+              "Conference / Event",
+              "Transit",
+              "Other"
+            ]
+          },
+          {
+            "id": "purpose_of_visit_other_details",
+            "label": "Please specify 'Other' purpose of visit",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "purpose_of_visit",
+              "equals": "Other"
+            }
+          },
+          {
+            "id": "intended_arrival_date",
+            "label": "Intended Arrival Date",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "intended_length_of_stay_days",
+            "label": "Intended Length of Stay (days)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "entries_requested",
+            "label": "Entries Requested",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Double",
+              "Multiple"
+            ]
+          },
+          {
+            "id": "port_of_entry",
+            "label": "Port of Entry",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "airline_travel_route",
+            "label": "Airline / Travel Route (if known)",
+            "type": "text",
+            "required": false,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "accommodation_financial_support",
+        "title": "Accommodation and Financial Support",
+        "fields": [
+          {
+            "id": "accommodation_name",
+            "label": "Where You Will Stay: Name (Hotel / Residence)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "accommodation_address",
+            "label": "Where You Will Stay: Address",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "accommodation_phone",
+            "label": "Where You Will Stay: Phone",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "staying_with_host",
+            "label": "Are you staying with a host?",
+            "type": "radio",
+            "required": false,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "host_name",
+            "label": "Name of Host / Contact Person",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "staying_with_host",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "host_relationship",
+            "label": "Relationship to Host",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "staying_with_host",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "host_address_in_japan",
+            "label": "Host's Address in Japan",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "staying_with_host",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "host_phone",
+            "label": "Host's Phone",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "staying_with_host",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "host_occupation",
+            "label": "Occupation of Host",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "staying_with_host",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "trip_payer",
+            "label": "Person Paying for Your Trip",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Myself",
+              "Sponsor",
+              "Company"
+            ]
+          },
+          {
+            "id": "payer_name",
+            "label": "Payer's Name",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "trip_payer",
+              "equals": "Sponsor"
+            }
+          },
+          {
+            "id": "payer_relationship",
+            "label": "Payer's Relationship (If Sponsor)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "trip_payer",
+              "equals": "Sponsor"
+            }
+          },
+          {
+            "id": "payer_address",
+            "label": "Payer's Address",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "trip_payer",
+              "equals": "Sponsor"
+            }
+          },
+          {
+            "id": "payer_phone",
+            "label": "Payer's Phone",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "trip_payer",
+              "equals": "Sponsor"
+            }
+          }
+        ]
+      },
+      {
+        "id": "background_declarations",
+        "title": "Background and Declarations",
+        "fields": [
+          {
+            "id": "japan_previous_visit",
+            "label": "Have you been to Japan before?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "japan_previous_visit_dates",
+            "label": "If yes, provide dates:",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "japan_previous_visit",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "other_countries_visited",
+            "label": "Visits to Other Countries in Last 3 Years (list countries and dates)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "visa_refused",
+            "label": "Ever refused a visa (Japan or other country)?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "visa_refused_explanation",
+            "label": "If yes, explain:",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "visa_refused",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "criminal_record",
+            "label": "Criminal record or pending charges?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "criminal_record_details",
+            "label": "If yes, details:",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "criminal_record",
+              "equals": "Yes"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

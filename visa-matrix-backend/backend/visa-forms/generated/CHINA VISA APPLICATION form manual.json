@@ -1,0 +1,432 @@
+{
+  "country": "CHINA",
+  "visa_type": "APPLICATION form manual",
+  "name": "CHINA VISA APPLICATION form manual",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "SECTION 1 – PERSONAL INFORMATION",
+        "fields": [
+          {
+            "label": "Full Name (as in passport)",
+            "type": "text",
+            "required": true,
+            "id": "full_name"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Previous Nationality (if any)",
+            "type": "text",
+            "required": false,
+            "id": "previous_nationality"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Other"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Education Level",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Primary",
+              "Secondary",
+              "College",
+              "Bachelor",
+              "Master",
+              "Doctoral"
+            ],
+            "id": "education_level"
+          }
+        ]
+      },
+      {
+        "id": "passport_information",
+        "title": "SECTION 2 – PASSPORT INFORMATION",
+        "fields": [
+          {
+            "label": "Passport Type",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Ordinary",
+              "Diplomatic",
+              "Service",
+              "Other"
+            ],
+            "id": "passport_type"
+          },
+          {
+            "label": "Passport Number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Date of Issue",
+            "type": "date",
+            "required": true,
+            "id": "date_of_issue"
+          },
+          {
+            "label": "Date of Expiry",
+            "type": "date",
+            "required": true,
+            "id": "date_of_expiry"
+          },
+          {
+            "label": "Place of Issue",
+            "type": "text",
+            "required": true,
+            "id": "place_of_issue"
+          }
+        ]
+      },
+      {
+        "id": "contact_information",
+        "title": "SECTION 3 – CONTACT INFORMATION",
+        "fields": [
+          {
+            "label": "Home Address",
+            "type": "textarea",
+            "required": true,
+            "id": "home_address"
+          },
+          {
+            "label": "Mobile Number",
+            "type": "text",
+            "required": true,
+            "id": "mobile_number"
+          },
+          {
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Employer/School Name",
+            "type": "text",
+            "required": true,
+            "id": "employer_school_name"
+          },
+          {
+            "label": "Employer/School Address",
+            "type": "textarea",
+            "required": true,
+            "id": "employer_school_address"
+          },
+          {
+            "label": "Employer/School Phone",
+            "type": "text",
+            "required": true,
+            "id": "employer_school_phone"
+          },
+          {
+            "label": "Occupation",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Businessperson",
+              "Company Employee",
+              "Student",
+              "Self-Employed",
+              "Retired",
+              "Unemployed",
+              "Housewife/Homemaker",
+              "Other"
+            ],
+            "id": "occupation"
+          }
+        ]
+      },
+      {
+        "id": "travel_information",
+        "title": "SECTION 4 – TRAVEL INFORMATION",
+        "fields": [
+          {
+            "label": "Type of Visa Requested",
+            "type": "select",
+            "required": true,
+            "options": [
+              "L — Tourist",
+              "M — Business/Trade",
+              "F — Exchange/Visit",
+              "Z — Work",
+              "X1/X2 — Study",
+              "Q1/Q2 — Family Visit",
+              "S1/S2 — Private Affairs",
+              "G — Transit",
+              "Other"
+            ],
+            "id": "visa_type_requested"
+          },
+          {
+            "label": "Number of Entries",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Double",
+              "Multiple (6 months)",
+              "Multiple (1 year)"
+            ],
+            "id": "number_of_entries"
+          },
+          {
+            "label": "Purpose of Visit",
+            "type": "textarea",
+            "required": true,
+            "id": "purpose_of_visit"
+          },
+          {
+            "label": "Intended Date of First Entry (DD/MM/YYYY)",
+            "type": "date",
+            "required": true,
+            "id": "intended_date_of_first_entry"
+          },
+          {
+            "label": "Intended Duration of Stay (days)",
+            "type": "text",
+            "required": true,
+            "id": "intended_duration_of_stay_days"
+          },
+          {
+            "label": "Expected Travel Dates From",
+            "type": "date",
+            "required": true,
+            "id": "expected_travel_dates_from"
+          },
+          {
+            "label": "Expected Travel Dates To",
+            "type": "date",
+            "required": true,
+            "id": "expected_travel_dates_to"
+          },
+          {
+            "label": "Main Destination(s) in China",
+            "type": "textarea",
+            "required": true,
+            "id": "main_destinations_china"
+          }
+        ]
+      },
+      {
+        "id": "invitation_accommodation",
+        "title": "SECTION 5 – INVITATION / ACCOMMODATION",
+        "fields": [
+          {
+            "label": "Do you have an invitation letter?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "has_invitation_letter"
+          },
+          {
+            "label": "Inviting Person/Organization Name",
+            "type": "text",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "Yes"
+            },
+            "id": "inviting_person_org_name"
+          },
+          {
+            "label": "Inviting Person/Organization Address",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "Yes"
+            },
+            "id": "inviting_person_org_address"
+          },
+          {
+            "label": "Inviting Person/Organization Phone",
+            "type": "text",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "Yes"
+            },
+            "id": "inviting_person_org_phone"
+          },
+          {
+            "label": "Relationship to Applicant",
+            "type": "text",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "Yes"
+            },
+            "id": "relationship_to_applicant"
+          },
+          {
+            "label": "Hotel / Residence Address in China",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "No"
+            },
+            "id": "accommodation_address_china"
+          },
+          {
+            "label": "Accommodation Phone",
+            "type": "text",
+            "required": true,
+            "conditional_on": {
+              "field": "has_invitation_letter",
+              "value": "No"
+            },
+            "id": "accommodation_phone"
+          }
+        ]
+      },
+      {
+        "id": "travel_history",
+        "title": "SECTION 6 – TRAVEL HISTORY",
+        "fields": [
+          {
+            "label": "Have you visited China before?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "visited_china_before"
+          },
+          {
+            "label": "Dates of Previous Visits",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "visited_china_before",
+              "value": "Yes"
+            },
+            "id": "dates_of_previous_china_visits"
+          },
+          {
+            "label": "Old Visa Number (if known)",
+            "type": "text",
+            "required": false,
+            "conditional_on": {
+              "field": "visited_china_before",
+              "value": "Yes"
+            },
+            "id": "old_visa_number"
+          },
+          {
+            "label": "Have you visited other countries in last 12 months?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "visited_other_countries_12_months"
+          },
+          {
+            "label": "List countries visited",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "visited_other_countries_12_months",
+              "value": "Yes"
+            },
+            "id": "list_other_countries_visited"
+          }
+        ]
+      },
+      {
+        "id": "medical_security_questions",
+        "title": "SECTION 7 – MEDICAL & SECURITY QUESTIONS",
+        "fields": [
+          {
+            "label": "Do you have certain infectious diseases (e.g., TB)?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "has_infectious_diseases"
+          },
+          {
+            "label": "Have you ever been refused a visa or deported by any country?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "refused_visa_or_deported"
+          },
+          {
+            "label": "Details (If Yes)",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "refused_visa_or_deported",
+              "value": "Yes"
+            },
+            "id": "refused_visa_deported_details"
+          },
+          {
+            "label": "Do you have criminal records?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "has_criminal_records"
+          },
+          {
+            "label": "Details (If Yes)",
+            "type": "textarea",
+            "required": true,
+            "conditional_on": {
+              "field": "has_criminal_records",
+              "value": "Yes"
+            },
+            "id": "criminal_records_details"
+          }
+        ]
+      }
+    ]
+  }
+}

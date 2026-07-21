@@ -218,13 +218,14 @@ export const findVisaTypeMatch = async (value) => {
   return data ?? null;
 };
 
-export const findDuplicateForm = async ({ country_id, visa_type_id, name }) => {
+export const findDuplicateForm = async ({ country_id, visa_type_id, version }) => {
   const { data, error } = await supabase
     .from(FORM_TABLE)
-    .select("id, country_id, visa_type_id, name")
+    .select("id, country_id, visa_type_id, version, name")
     .eq("country_id", country_id)
     .eq("visa_type_id", visa_type_id)
-    .eq("name", name)
+    .eq("version", version)
+    .limit(1)
     .maybeSingle();
 
   if (error) {

@@ -1,0 +1,778 @@
+{
+  "country": "USA manual",
+  "name": "USA manual form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "applicant_personal_info",
+        "title": "Personal Information",
+        "fields": [
+          {
+            "label": "Surnames",
+            "type": "text",
+            "required": true,
+            "id": "surname"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Marital Status",
+            "type": "text",
+            "required": true,
+            "id": "marital_status"
+          }
+        ]
+      },
+      {
+        "id": "birth_nationality_id",
+        "title": "Date, Place of Birth, and Nationality",
+        "fields": [
+          {
+            "label": "City of Birth",
+            "type": "text",
+            "required": true,
+            "id": "birth_city"
+          },
+          {
+            "label": "State/Province of Birth",
+            "type": "text",
+            "required": true,
+            "id": "birth_state_province"
+          },
+          {
+            "label": "Country/Region of Birth",
+            "type": "select",
+            "required": true,
+            "id": "birth_country_region"
+          },
+          {
+            "label": "Country/Region of Origin (Nationality)",
+            "type": "select",
+            "required": true,
+            "id": "country_region_of_origin"
+          },
+          {
+            "label": "Do you hold or have you held any nationality other than the one indicated above on nationality?",
+            "type": "boolean",
+            "required": true,
+            "id": "other_nationality_held"
+          },
+          {
+            "label": "National Identification Number - Adhaar / Pan Card No:",
+            "type": "text",
+            "required": true,
+            "id": "national_id_number"
+          }
+        ]
+      },
+      {
+        "id": "visa_type",
+        "title": "Visa Type Selection",
+        "fields": [
+          {
+            "label": "Type of Visa",
+            "type": "select",
+            "required": true,
+            "options": [
+              "B1",
+              "B2",
+              "F1 / M1",
+              "F2 / M2",
+              "H1",
+              "H4",
+              "L1",
+              "L2"
+            ],
+            "id": "type_of_visa"
+          }
+        ]
+      },
+      {
+        "id": "travel_plans",
+        "title": "Travel Plans and U.S. Address",
+        "fields": [
+          {
+            "label": "Have you made specific travel plans?",
+            "type": "boolean",
+            "required": true,
+            "id": "has_specific_travel_plans"
+          },
+          {
+            "label": "Intended Date of Arrival",
+            "type": "date",
+            "required": false,
+            "conditional_logic": {
+              "field": "has_specific_travel_plans",
+              "value": true
+            },
+            "id": "intended_date_of_arrival"
+          },
+          {
+            "label": "Intended Length of Stay in U.S.",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "has_specific_travel_plans",
+              "value": true
+            },
+            "id": "intended_length_of_stay"
+          },
+          {
+            "label": "Street address Where You Will Stay in the U.S.",
+            "type": "text",
+            "required": true,
+            "id": "us_stay_street_address"
+          },
+          {
+            "label": "City",
+            "type": "text",
+            "required": true,
+            "id": "us_stay_city"
+          },
+          {
+            "label": "State",
+            "type": "text",
+            "required": true,
+            "id": "us_stay_state"
+          },
+          {
+            "label": "Zip code",
+            "type": "text",
+            "required": true,
+            "id": "us_stay_zip_code"
+          }
+        ]
+      },
+      {
+        "id": "financial_sponsor",
+        "title": "Financial Sponsor Details",
+        "fields": [
+          {
+            "label": "Who is paying for you",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Self",
+              "Other person / Company"
+            ],
+            "id": "who_is_paying"
+          },
+          {
+            "label": "Full Name of Person / Company Paying",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "who_is_paying",
+              "value": "Other person / Company"
+            },
+            "id": "sponsor_name"
+          },
+          {
+            "label": "Full address of sponsor",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "who_is_paying",
+              "value": "Other person / Company"
+            },
+            "id": "sponsor_full_address"
+          },
+          {
+            "label": "Sponsor Telephone Number",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "who_is_paying",
+              "value": "Other person / Company"
+            },
+            "id": "sponsor_tel_no"
+          },
+          {
+            "label": "Relation with you (Sponsor)",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "who_is_paying",
+              "value": "Other person / Company"
+            },
+            "id": "sponsor_relation"
+          },
+          {
+            "label": "Sponsor Email",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "who_is_paying",
+              "value": "Other person / Company"
+            },
+            "id": "sponsor_email"
+          }
+        ]
+      },
+      {
+        "id": "travel_companions",
+        "title": "Travel Companions",
+        "fields": [
+          {
+            "label": "Companion 1 Full name",
+            "type": "text",
+            "required": false,
+            "id": "companion_1_full_name"
+          },
+          {
+            "label": "Companion 1 Relation",
+            "type": "text",
+            "required": false,
+            "id": "companion_1_relation"
+          },
+          {
+            "label": "Companion 2 Full Name",
+            "type": "text",
+            "required": false,
+            "id": "companion_2_full_name"
+          },
+          {
+            "label": "Companion 2 Relation",
+            "type": "text",
+            "required": false,
+            "id": "companion_2_relation"
+          },
+          {
+            "label": "Companion 3 Full Name",
+            "type": "text",
+            "required": false,
+            "id": "companion_3_full_name"
+          },
+          {
+            "label": "Companion 3 Relation",
+            "type": "text",
+            "required": false,
+            "id": "companion_3_relation"
+          }
+        ]
+      },
+      {
+        "id": "us_visa_history",
+        "title": "US Visa and Travel History",
+        "fields": [
+          {
+            "label": "Previous refusal for USA visa",
+            "type": "boolean",
+            "required": true,
+            "id": "previous_visa_refusal"
+          },
+          {
+            "label": "Date of refusal",
+            "type": "date",
+            "required": false,
+            "conditional_logic": {
+              "field": "previous_visa_refusal",
+              "value": true
+            },
+            "id": "refusal_date"
+          },
+          {
+            "label": "Type of refusal",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "previous_visa_refusal",
+              "value": true
+            },
+            "id": "refusal_type"
+          },
+          {
+            "label": "Have you ten printed previously: Yes/No",
+            "type": "boolean",
+            "required": true,
+            "id": "ten_printed_previously"
+          },
+          {
+            "label": "Previous US Visa Number",
+            "type": "text",
+            "required": false,
+            "id": "previous_us_visa_number"
+          },
+          {
+            "label": "Latest US Visit 1 - Arrival in US",
+            "type": "date",
+            "required": false,
+            "id": "latest_visit_1_arrival"
+          },
+          {
+            "label": "Latest US Visit 1 - Length of Stay",
+            "type": "text",
+            "required": false,
+            "id": "latest_visit_1_stay"
+          },
+          {
+            "label": "Latest US Visit 2 - Arrival in US",
+            "type": "date",
+            "required": false,
+            "id": "latest_visit_2_arrival"
+          },
+          {
+            "label": "Latest US Visit 2 - Length of Stay",
+            "type": "text",
+            "required": false,
+            "id": "latest_visit_2_stay"
+          },
+          {
+            "label": "Latest US Visit 3 - Arrival in US",
+            "type": "date",
+            "required": false,
+            "id": "latest_visit_3_arrival"
+          },
+          {
+            "label": "Latest US Visit 3 - Length of Stay",
+            "type": "text",
+            "required": false,
+            "id": "latest_visit_3_stay"
+          }
+        ]
+      },
+      {
+        "id": "contact_and_social",
+        "title": "Contact and Social Media Information",
+        "fields": [
+          {
+            "label": "Current Address (If different from passport)",
+            "type": "textarea",
+            "required": false,
+            "id": "current_address"
+          },
+          {
+            "label": "Mobile Number",
+            "type": "text",
+            "required": true,
+            "id": "mobile_number"
+          },
+          {
+            "label": "Secondary Number",
+            "type": "text",
+            "required": false,
+            "id": "secondary_number"
+          },
+          {
+            "label": "Work Phone Number",
+            "type": "text",
+            "required": false,
+            "id": "work_phone_number"
+          },
+          {
+            "label": "Email ID",
+            "type": "text",
+            "required": true,
+            "id": "email_id"
+          },
+          {
+            "label": "Facebook",
+            "type": "text",
+            "required": false,
+            "id": "facebook_handle"
+          },
+          {
+            "label": "Instagram",
+            "type": "text",
+            "required": false,
+            "id": "instagram_handle"
+          },
+          {
+            "label": "Twitter",
+            "type": "text",
+            "required": false,
+            "id": "twitter_handle"
+          },
+          {
+            "label": "Any other social media",
+            "type": "text",
+            "required": false,
+            "id": "any_other_social"
+          }
+        ]
+      },
+      {
+        "id": "passport_loss_history",
+        "title": "Passport Loss History",
+        "fields": [
+          {
+            "label": "Have you ever lost your previous Passport",
+            "type": "boolean",
+            "required": true,
+            "id": "lost_previous_passport"
+          },
+          {
+            "label": "Lost Passport no",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "lost_previous_passport",
+              "value": true
+            },
+            "id": "lost_passport_no"
+          },
+          {
+            "label": "Country of issued (Lost Passport)",
+            "type": "select",
+            "required": false,
+            "conditional_logic": {
+              "field": "lost_previous_passport",
+              "value": true
+            },
+            "id": "lost_passport_country_of_issue"
+          },
+          {
+            "label": "Reason (Lost Passport)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "lost_previous_passport",
+              "value": true
+            },
+            "id": "lost_passport_reason"
+          }
+        ]
+      },
+      {
+        "id": "us_contact_host",
+        "title": "U.S. Contact / Host Information",
+        "fields": [
+          {
+            "label": "Full name of Inviting Person",
+            "type": "text",
+            "required": false,
+            "id": "inviting_person_full_name"
+          },
+          {
+            "label": "Hotel name / Inviting company Name",
+            "type": "text",
+            "required": false,
+            "id": "hotel_company_name"
+          },
+          {
+            "label": "Street address in USA (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_street_address"
+          },
+          {
+            "label": "City (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_city"
+          },
+          {
+            "label": "State (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_state"
+          },
+          {
+            "label": "Zip code (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_zip_code"
+          },
+          {
+            "label": "Contact No (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_contact_no"
+          },
+          {
+            "label": "Email Id (Host)",
+            "type": "text",
+            "required": true,
+            "id": "us_host_email_id"
+          }
+        ]
+      },
+      {
+        "id": "family_info",
+        "title": "Family Information",
+        "fields": [
+          {
+            "label": "Applicant Father Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "father_date_of_birth"
+          },
+          {
+            "label": "Applicant Mother Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "mother_date_of_birth"
+          }
+        ]
+      },
+      {
+        "id": "immediate_relatives_usa",
+        "title": "Immediate Relatives in USA",
+        "fields": [
+          {
+            "label": "Full name of relative",
+            "type": "text",
+            "required": false,
+            "id": "relative_full_name"
+          },
+          {
+            "label": "Relation with you",
+            "type": "text",
+            "required": false,
+            "id": "relative_relation"
+          },
+          {
+            "label": "Their Visa status",
+            "type": "select",
+            "required": false,
+            "options": [
+              "US Citizen",
+              "Non-Immigrant",
+              "Green Card"
+            ],
+            "id": "relative_visa_status"
+          }
+        ]
+      },
+      {
+        "id": "spouse_info",
+        "title": "Spouse Information",
+        "fields": [
+          {
+            "label": "Spouse Full Name",
+            "type": "text",
+            "required": true,
+            "id": "spouse_full_name"
+          },
+          {
+            "label": "Date of Birth (Spouse)",
+            "type": "date",
+            "required": true,
+            "id": "spouse_date_of_birth"
+          },
+          {
+            "label": "Place of Birth (Spouse)",
+            "type": "text",
+            "required": true,
+            "id": "spouse_place_of_birth"
+          }
+        ]
+      },
+      {
+        "id": "current_occupation",
+        "title": "Current Occupation Details",
+        "fields": [
+          {
+            "label": "Current Profession",
+            "type": "text",
+            "required": true,
+            "id": "current_profession"
+          },
+          {
+            "label": "Company/School Name",
+            "type": "text",
+            "required": true,
+            "id": "company_school_name"
+          },
+          {
+            "label": "Full address (Company/School)",
+            "type": "textarea",
+            "required": true,
+            "id": "company_full_address"
+          },
+          {
+            "label": "Contact no (Company/School)",
+            "type": "text",
+            "required": true,
+            "id": "company_contact_no"
+          },
+          {
+            "label": "Work Start Date",
+            "type": "date",
+            "required": true,
+            "id": "work_start_date"
+          },
+          {
+            "label": "Monthly Salary",
+            "type": "text",
+            "required": true,
+            "id": "monthly_salary"
+          },
+          {
+            "label": "Profile and duties",
+            "type": "textarea",
+            "required": true,
+            "id": "profile_and_duties"
+          }
+        ]
+      },
+      {
+        "id": "previous_occupation",
+        "title": "Previous Job Details (Last 5 Yrs.)",
+        "fields": [
+          {
+            "label": "Company Name",
+            "type": "text",
+            "required": false,
+            "id": "prev_company_name"
+          },
+          {
+            "label": "Full address",
+            "type": "textarea",
+            "required": false,
+            "id": "prev_company_full_address"
+          },
+          {
+            "label": "City",
+            "type": "text",
+            "required": false,
+            "id": "prev_company_city"
+          },
+          {
+            "label": "State",
+            "type": "text",
+            "required": false,
+            "id": "prev_company_state"
+          },
+          {
+            "label": "ZIP Code",
+            "type": "text",
+            "required": false,
+            "id": "prev_company_zip_code"
+          },
+          {
+            "label": "Contact no",
+            "type": "text",
+            "required": false,
+            "id": "prev_company_contact_no"
+          },
+          {
+            "label": "Supervisor Full Name",
+            "type": "text",
+            "required": false,
+            "id": "supervisor_full_name"
+          },
+          {
+            "label": "Designation",
+            "type": "text",
+            "required": false,
+            "id": "prev_designation"
+          },
+          {
+            "label": "Profile and Duties",
+            "type": "textarea",
+            "required": false,
+            "id": "prev_profile_and_duties"
+          },
+          {
+            "label": "Start Date",
+            "type": "date",
+            "required": false,
+            "id": "prev_work_start_date"
+          },
+          {
+            "label": "End Date",
+            "type": "date",
+            "required": false,
+            "id": "prev_work_end_date"
+          }
+        ]
+      },
+      {
+        "id": "higher_education",
+        "title": "Higher Education Details",
+        "fields": [
+          {
+            "label": "Name of college/School",
+            "type": "text",
+            "required": false,
+            "id": "college_school_name"
+          },
+          {
+            "label": "Full Address",
+            "type": "textarea",
+            "required": false,
+            "id": "college_full_address"
+          },
+          {
+            "label": "City",
+            "type": "text",
+            "required": false,
+            "id": "college_city"
+          },
+          {
+            "label": "District",
+            "type": "text",
+            "required": false,
+            "id": "college_district"
+          },
+          {
+            "label": "State",
+            "type": "text",
+            "required": false,
+            "id": "college_state"
+          },
+          {
+            "label": "Contact no",
+            "type": "text",
+            "required": false,
+            "id": "college_contact_no"
+          },
+          {
+            "label": "Course Name",
+            "type": "text",
+            "required": false,
+            "id": "course_name"
+          },
+          {
+            "label": "Course start Date",
+            "type": "date",
+            "required": false,
+            "id": "course_start_date"
+          },
+          {
+            "label": "End date",
+            "type": "date",
+            "required": false,
+            "id": "course_end_date"
+          }
+        ]
+      },
+      {
+        "id": "miscellaneous",
+        "title": "Miscellaneous Information",
+        "fields": [
+          {
+            "label": "Language Known",
+            "type": "textarea",
+            "required": false,
+            "id": "language_known"
+          },
+          {
+            "label": "Name of Countries travelling in Last 5 Yrs",
+            "type": "textarea",
+            "required": false,
+            "id": "countries_visited_last_5_yrs"
+          }
+        ]
+      }
+    ]
+  }
+}

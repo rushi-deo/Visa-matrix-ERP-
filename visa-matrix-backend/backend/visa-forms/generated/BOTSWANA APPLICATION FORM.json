@@ -1,0 +1,185 @@
+{
+  "country": "BOTSWANA",
+  "visa_type": "FORM",
+  "name": "BOTSWANA APPLICATION FORM",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Surname",
+            "type": "text",
+            "required": true,
+            "id": "surname"
+          },
+          {
+            "label": "First Name",
+            "type": "text",
+            "required": true,
+            "id": "first_name"
+          },
+          {
+            "label": "Middle Name",
+            "type": "text",
+            "required": false,
+            "id": "middle_name"
+          },
+          {
+            "label": "Previous/Maiden Surname",
+            "type": "text",
+            "required": false,
+            "id": "previous_maiden_surname"
+          },
+          {
+            "label": "Age",
+            "type": "text",
+            "required": true,
+            "id": "age"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Country of Birth",
+            "type": "text",
+            "required": true,
+            "id": "country_of_birth"
+          },
+          {
+            "label": "Place of Birth",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Separated",
+              "Widowed"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Nationality (state name of country)",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          }
+        ]
+      },
+      {
+        "id": "travel_and_visa_details",
+        "title": "Travel and Visa Details",
+        "fields": [
+          {
+            "label": "Type of Visa required",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Diplomatic",
+              "Official",
+              "Business",
+              "Tourist Visitor",
+              "Study",
+              "Transit",
+              "Emergency Investment"
+            ],
+            "id": "visa_type_required"
+          },
+          {
+            "label": "Number of Entries",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Multiple"
+            ],
+            "id": "number_of_entries"
+          },
+          {
+            "label": "Address in Botswana (Line 1)",
+            "type": "textarea",
+            "required": true,
+            "id": "address_in_botswana_line_1"
+          },
+          {
+            "label": "Address in Botswana (Line 2)",
+            "type": "textarea",
+            "required": false,
+            "id": "address_in_botswana_line_2"
+          },
+          {
+            "label": "Occupation",
+            "type": "text",
+            "required": true,
+            "id": "occupation"
+          },
+          {
+            "label": "Qualifications",
+            "type": "textarea",
+            "required": false,
+            "id": "qualifications"
+          },
+          {
+            "label": "Proposed Length of Stay on whether travelling in transit without break of journey",
+            "type": "text",
+            "required": true,
+            "id": "proposed_length_of_stay"
+          },
+          {
+            "label": "Requested Validity Period of Visa From",
+            "type": "date",
+            "required": true,
+            "id": "requested_validity_period_from"
+          }
+        ]
+      },
+      {
+        "id": "miscellaneous_details",
+        "title": "Miscellaneous Details",
+        "fields": [
+          {
+            "label": "Please indicate what money or cash (amount) will be at your disposal during your visit",
+            "type": "text",
+            "required": true,
+            "id": "money_at_disposal"
+          },
+          {
+            "label": "Particulars of Passport or other travel documents which should be submitted with this Application",
+            "type": "textarea",
+            "required": true,
+            "id": "passport_particulars"
+          },
+          {
+            "label": "Preferred method of communication",
+            "type": "text",
+            "required": false,
+            "id": "preferred_communication_method"
+          }
+        ]
+      }
+    ]
+  }
+}

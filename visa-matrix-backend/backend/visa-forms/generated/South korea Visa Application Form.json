@@ -1,0 +1,369 @@
+{
+  "country": "South Korea",
+  "visa_type": "Application Form",
+  "name": "South korea Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "entry_purpose_and_representation",
+        "title": "Purpose of Entry and Representation",
+        "fields": [
+          {
+            "id": "purpose_of_entry",
+            "label": "Purpose of Entry",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourism / Transit",
+              "Meeting, Conference",
+              "Medical Tourism",
+              "Business Trip",
+              "Study / Training",
+              "Work",
+              "Trade / Investment / Branch office",
+              "Visiting Family/Relatives/Friends",
+              "Short or Long term visit of Overseas Korean Marriage Migrant",
+              "Diplomatic / Official"
+            ]
+          },
+          {
+            "id": "representative_name",
+            "label": "Name of representative",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "representative_address",
+            "label": "Address (of representative)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "representative_phone_number",
+            "label": "Phone Number (of representative)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "representative_relationship",
+            "label": "Relationship to applicant (of representative)",
+            "type": "text",
+            "required": false,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "personal_information",
+        "title": "Personal Information",
+        "fields": [
+          {
+            "id": "family_name",
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "given_name",
+            "label": "Given Name",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "date_of_birth",
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "used_other_name",
+            "label": "Have you used any other name? (e.g. Nickname, maiden name, alias, etc.)",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "other_names_list",
+            "label": "List the other name(s) used",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "used_other_name",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "is_dual_citizen",
+            "label": "Are you a citizen of any other country?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "other_citizenships",
+            "label": "Which country/countries are you a citizen of?",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "is_dual_citizen",
+              "equals": "Yes"
+            }
+          }
+        ]
+      },
+      {
+        "id": "passport_information",
+        "title": "Passport Information",
+        "fields": [
+          {
+            "id": "passport_classification",
+            "label": "Passport Classification",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "passport_number",
+            "label": "Passport No.",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "contact_information",
+        "title": "Contact Information",
+        "fields": [
+          {
+            "id": "home_country_address",
+            "label": "Address In Home Country",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "email",
+            "label": "E-MAIL",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mobile_number",
+            "label": "Mobile No",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "education_and_occupation",
+        "title": "Education and Occupation",
+        "fields": [
+          {
+            "id": "highest_education_level",
+            "label": "Education details",
+            "type": "select",
+            "required": true,
+            "options": [
+              "High school",
+              "diploma",
+              "Graduate",
+              "Postgraduate",
+              "Others"
+            ]
+          },
+          {
+            "id": "school_name",
+            "label": "Name of School",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "current_occupation",
+            "label": "Current Occupation",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Businessperson",
+              "Sole proprietor",
+              "Officeworker",
+              "Government employee",
+              "Student",
+              "Retired",
+              "Unemployeed",
+              "Others"
+            ]
+          },
+          {
+            "id": "company_institute_school_name",
+            "label": "Name of Company / Institute / School",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "position_course",
+            "label": "Position / Course",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "company_institute_school_address",
+            "label": "Address of Company / Institute / School",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "company_institute_school_phone",
+            "label": "Phone number (Company / Institute / School)",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "trip_logistics",
+        "title": "Trip Logistics and History",
+        "fields": [
+          {
+            "id": "intended_number_of_entries",
+            "label": "Intended number of Entries to Korea with this visa",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Double",
+              "Multiple (More 3 times)"
+            ]
+          },
+          {
+            "id": "intended_period_of_stay",
+            "label": "Intended Period of Stay",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "intended_date_of_entry",
+            "label": "Intended Date of Entry",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "address_in_korea",
+            "label": "Address in Korea",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "contact_no_in_korea",
+            "label": "Contact No. in Korea",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "visited_korea_past_5_years",
+            "label": "Have you visited Korea during the past 5 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "number_of_korea_visits",
+            "label": "Number of visits (Times)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "visited_korea_past_5_years",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "purpose_of_recent_korea_visit",
+            "label": "Purpose of Recent Visit",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "visited_korea_past_5_years",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "visited_other_countries_past_5_years",
+            "label": "Have you visited any countries other than Korea during the past 5 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "list_of_other_countries_visited",
+            "label": "List the countries visited",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "visited_other_countries_past_5_years",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "traveling_with_family",
+            "label": "Are you travelling to Korea with any family member?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "funds_available_usd",
+            "label": "Funds available for your visit (in US dollars)",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+}

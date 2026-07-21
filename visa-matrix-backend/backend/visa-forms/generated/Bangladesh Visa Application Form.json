@@ -1,0 +1,529 @@
+{
+  "country": "Bangladesh",
+  "visa_type": "Application Form",
+  "name": "Bangladesh Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "PERSONAL DETAILS",
+        "fields": [
+          {
+            "label": "Full Name (as in the passport): First/Given Name (S)",
+            "type": "text",
+            "required": true,
+            "id": "first_given_name"
+          },
+          {
+            "label": "Full Name (as in the passport): Last/Surname",
+            "type": "text",
+            "required": true,
+            "id": "last_surname"
+          },
+          {
+            "label": "Permanent address",
+            "type": "textarea",
+            "required": true,
+            "id": "permanent_address"
+          },
+          {
+            "label": "Contact no (Permanent)",
+            "type": "text",
+            "required": true,
+            "id": "permanent_contact_no"
+          },
+          {
+            "label": "E-mail (Permanent)",
+            "type": "text",
+            "required": true,
+            "id": "permanent_email"
+          },
+          {
+            "label": "Address in Bangladesh",
+            "type": "textarea",
+            "id": "address_in_bangladesh"
+          },
+          {
+            "label": "Contact no (Bangladesh)",
+            "type": "text",
+            "id": "bd_contact_no"
+          },
+          {
+            "label": "E-mail (Bangladesh)",
+            "type": "text",
+            "id": "bd_email"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Others"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Place of Birth",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Present Nationality",
+            "type": "text",
+            "required": true,
+            "id": "present_nationality"
+          },
+          {
+            "label": "Nationality at Birth",
+            "type": "text",
+            "id": "nationality_at_birth"
+          },
+          {
+            "label": "Occupation",
+            "type": "text",
+            "id": "occupation"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "options": [
+              "Unmarried",
+              "Married",
+              "Widower/Widow",
+              "Divorced"
+            ],
+            "id": "marital_status"
+          }
+        ]
+      },
+      {
+        "id": "travel_document_details",
+        "title": "TRAVEL DOCUMENT DETAILS",
+        "fields": [
+          {
+            "label": "Passport No",
+            "type": "text",
+            "required": true,
+            "id": "passport_no"
+          },
+          {
+            "label": "Type of Passport",
+            "type": "text",
+            "id": "passport_type"
+          },
+          {
+            "label": "Place of Issue (Passport)",
+            "type": "text",
+            "id": "passport_place_of_issue"
+          },
+          {
+            "label": "Date of issue (Passport)",
+            "type": "date",
+            "id": "passport_date_of_issue"
+          },
+          {
+            "label": "Date of Expiry (Passport)",
+            "type": "date",
+            "id": "passport_date_of_expiry"
+          },
+          {
+            "label": "Date of last visit to Bangladesh",
+            "type": "date",
+            "id": "date_of_last_visit_to_bangladesh"
+          },
+          {
+            "label": "Last Visa No",
+            "type": "text",
+            "id": "last_visa_no"
+          },
+          {
+            "label": "Date of Issue (Last Visa)",
+            "type": "date",
+            "id": "last_visa_date_of_issue"
+          },
+          {
+            "label": "Place of Issue (Last Visa)",
+            "type": "text",
+            "id": "last_visa_place_of_issue"
+          },
+          {
+            "label": "Date of Expiry (Last Visa)",
+            "type": "date",
+            "id": "last_visa_date_of_expiry"
+          }
+        ]
+      },
+      {
+        "id": "payment_details",
+        "title": "PAYMENT DETAILS",
+        "fields": [
+          {
+            "label": "Name of the Bank and Branch",
+            "type": "text",
+            "id": "bank_name_and_branch"
+          },
+          {
+            "label": "Cheque/ Bank Transfer/ Chalan/ Scroll No",
+            "type": "text",
+            "id": "payment_reference_no"
+          },
+          {
+            "label": "Amount deposited (Taka/ US$)",
+            "type": "text",
+            "id": "amount_deposited"
+          },
+          {
+            "label": "Date of Payment",
+            "type": "date",
+            "id": "payment_date"
+          }
+        ]
+      },
+      {
+        "id": "new_visa",
+        "title": "NEW VISA",
+        "fields": [
+          {
+            "label": "Purpose of Visit",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourism",
+              "Employment",
+              "Business",
+              "Official",
+              "Diplomatic",
+              "Study",
+              "Investment",
+              "Transit",
+              "Others"
+            ],
+            "id": "purpose_of_visit"
+          },
+          {
+            "label": "Others (Please Specify)",
+            "type": "text",
+            "conditional_logic": {
+              "depends_on": "purpose_of_visit",
+              "value": "Others"
+            },
+            "id": "other_purpose_specify"
+          },
+          {
+            "label": "Duration of Proposed Stay in Bangladesh",
+            "type": "text",
+            "required": true,
+            "id": "duration_of_proposed_stay"
+          },
+          {
+            "label": "Tentative Date of Arrival in Bangladesh",
+            "type": "date",
+            "required": true,
+            "id": "tentative_date_of_arrival"
+          },
+          {
+            "label": "Intended Number of Entries",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Re Entry",
+              "Multiple"
+            ],
+            "id": "intended_number_of_entries"
+          }
+        ]
+      },
+      {
+        "id": "extension_of_visa",
+        "title": "EXTENSION OF VISA",
+        "fields": [
+          {
+            "label": "Name of the Father/Mother/Spouse/ Other (Relation)",
+            "type": "text",
+            "id": "extension_relation_name"
+          },
+          {
+            "label": "Date of Arrival (Extension)",
+            "type": "date",
+            "id": "extension_date_of_arrival"
+          },
+          {
+            "label": "Visa No (Extension)",
+            "type": "text",
+            "id": "extension_visa_no"
+          },
+          {
+            "label": "Type of Visa (Extension)",
+            "type": "text",
+            "id": "extension_type_of_visa"
+          },
+          {
+            "label": "Date of issue (Extension)",
+            "type": "date",
+            "id": "extension_date_of_issue"
+          },
+          {
+            "label": "Date of Expiry (Extension)",
+            "type": "date",
+            "id": "extension_date_of_expiry"
+          },
+          {
+            "label": "Place of Issue (Extension)",
+            "type": "text",
+            "id": "extension_place_of_issue"
+          },
+          {
+            "label": "Purpose of Extension of Visa",
+            "type": "text",
+            "id": "purpose_of_extension_of_visa"
+          },
+          {
+            "label": "Duration of Proposed Extension",
+            "type": "text",
+            "id": "duration_of_proposed_extension"
+          },
+          {
+            "label": "Intended Number of Entries (Extension)",
+            "type": "select",
+            "options": [
+              "Single",
+              "Re Entry",
+              "Multiple"
+            ],
+            "id": "extension_intended_number_of_entries"
+          }
+        ]
+      },
+      {
+        "id": "no_visa_required",
+        "title": "NO VISA REQUIRED FOR TRAVEL TO BANGLADESH",
+        "fields": [
+          {
+            "label": "Father’s name",
+            "type": "text",
+            "id": "nvr_father_name"
+          },
+          {
+            "label": "Father’s Nationality",
+            "type": "text",
+            "id": "nvr_father_nationality"
+          },
+          {
+            "label": "Mother’s name",
+            "type": "text",
+            "id": "nvr_mother_name"
+          },
+          {
+            "label": "Mother’s Nationality",
+            "type": "text",
+            "id": "nvr_mother_nationality"
+          },
+          {
+            "label": "Spouse’s name",
+            "type": "text",
+            "id": "nvr_spouse_name"
+          },
+          {
+            "label": "Spouse’s Nationality",
+            "type": "text",
+            "id": "nvr_spouse_nationality"
+          },
+          {
+            "label": "Date of Arrival in Bangladesh (NVR)",
+            "type": "date",
+            "id": "nvr_date_of_arrival"
+          },
+          {
+            "label": "Visa No (NVR)",
+            "type": "text",
+            "id": "nvr_visa_no"
+          },
+          {
+            "label": "Date of Issue (NVR)",
+            "type": "date",
+            "id": "nvr_date_of_issue"
+          },
+          {
+            "label": "Date of Expiry (NVR)",
+            "type": "date",
+            "id": "nvr_date_of_expiry"
+          },
+          {
+            "label": "Place of issue (NVR)",
+            "type": "text",
+            "id": "nvr_place_of_issue"
+          },
+          {
+            "label": "Type of Visa (NVR)",
+            "type": "text",
+            "id": "nvr_type_of_visa"
+          },
+          {
+            "label": "Reason For Proposed NVR",
+            "type": "textarea",
+            "id": "reason_for_proposed_nvr"
+          },
+          {
+            "label": "Amount of Investment (For Investor)",
+            "type": "text",
+            "id": "nvr_amount_of_investment"
+          },
+          {
+            "label": "Name and Address of Company",
+            "type": "textarea",
+            "id": "nvr_company_name_address"
+          }
+        ]
+      },
+      {
+        "id": "transit_on_arrival_visa",
+        "title": "TRANSIT/ON ARRIVAL VISA",
+        "fields": [
+          {
+            "label": "Date of Arrival in Bangladesh",
+            "type": "date",
+            "id": "toa_date_of_arrival"
+          },
+          {
+            "label": "Name of check post",
+            "type": "text",
+            "id": "toa_name_of_check_post"
+          },
+          {
+            "label": "Travelled by (Vessel’s/ Flight/Vehicle Name & No)",
+            "type": "text",
+            "id": "toa_travel_details"
+          },
+          {
+            "label": "From (Origin)",
+            "type": "text",
+            "id": "toa_from_location"
+          },
+          {
+            "label": "Purpose of Visit to Bangladesh",
+            "type": "text",
+            "id": "toa_purpose_of_visit"
+          },
+          {
+            "label": "Duration of Proposed Stay",
+            "type": "text",
+            "id": "toa_duration_of_proposed_stay"
+          }
+        ]
+      },
+      {
+        "id": "check_list",
+        "title": "CHECK LIST (Documents Submitted)",
+        "fields": [
+          {
+            "label": "Recommendation from concern Ministry/ Authority",
+            "type": "boolean",
+            "id": "checklist_recommendation_ministry"
+          },
+          {
+            "label": "Marriage Certificate",
+            "type": "boolean",
+            "id": "checklist_marriage_certificate"
+          },
+          {
+            "label": "Security Clearance/Security Certificate",
+            "type": "boolean",
+            "id": "checklist_security_clearance"
+          },
+          {
+            "label": "Birth Certificate",
+            "type": "boolean",
+            "id": "checklist_birth_certificate"
+          },
+          {
+            "label": "Father’s/ Husband’s/Mother’s Visa Copy",
+            "type": "boolean",
+            "id": "checklist_family_visa_copy"
+          },
+          {
+            "label": "Work Permit",
+            "type": "boolean",
+            "id": "checklist_work_permit"
+          },
+          {
+            "label": "Passport copy, Last Visa & Last Arrival Page",
+            "type": "boolean",
+            "id": "checklist_passport_last_visa_copy"
+          },
+          {
+            "label": "Affidavit",
+            "type": "boolean",
+            "id": "checklist_affidavit"
+          },
+          {
+            "label": "Father’s/ Husband’s/Mother’s Passport Copy",
+            "type": "boolean",
+            "id": "checklist_family_passport_copy"
+          },
+          {
+            "label": "Photo (Applicant’s Photograph Measuring 45 mm x 35mm)",
+            "type": "boolean",
+            "id": "checklist_photo"
+          },
+          {
+            "label": "N. O. C from Sri Lankan High Commission",
+            "type": "boolean",
+            "id": "checklist_noc_sri_lankan_hc"
+          },
+          {
+            "label": "Income Tax Certificate of the Company",
+            "type": "boolean",
+            "id": "checklist_company_income_tax"
+          },
+          {
+            "label": "Bi- Lateral Agreement/ Multilateral Agreement",
+            "type": "boolean",
+            "id": "checklist_bilateral_agreement"
+          },
+          {
+            "label": "TIN",
+            "type": "boolean",
+            "id": "checklist_tin"
+          },
+          {
+            "label": "Trade license of the sponsoring Company",
+            "type": "boolean",
+            "id": "checklist_sponsoring_company_trade_license"
+          },
+          {
+            "label": "TIN certificate of the company",
+            "type": "boolean",
+            "id": "checklist_company_tin_certificate"
+          },
+          {
+            "label": "Payment Slip",
+            "type": "boolean",
+            "id": "checklist_payment_slip"
+          },
+          {
+            "label": "Over stay payment Slip",
+            "type": "boolean",
+            "id": "checklist_over_stay_payment_slip"
+          },
+          {
+            "label": "Others",
+            "type": "boolean",
+            "id": "checklist_others"
+          }
+        ]
+      }
+    ]
+  }
+}

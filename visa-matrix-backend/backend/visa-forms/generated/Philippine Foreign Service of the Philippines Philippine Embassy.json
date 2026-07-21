@@ -1,0 +1,395 @@
+{
+  "country": "Philippine Foreign Service of the Philippines Philippine Embassy",
+  "name": "Philippine Foreign Service of the Philippines Philippine Embassy",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "Personal Information",
+        "fields": [
+          {
+            "label": "Surname",
+            "type": "text",
+            "required": true,
+            "id": "surname"
+          },
+          {
+            "label": "First Name",
+            "type": "text",
+            "required": true,
+            "id": "first_name"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Citizenship",
+            "type": "text",
+            "required": true,
+            "id": "citizenship"
+          },
+          {
+            "label": "Date of Birth (dd/mm/yy)",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Place of Birth",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Civil Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Registered Partnership",
+              "Separated",
+              "Divorced",
+              "Widow(er)",
+              "Other"
+            ],
+            "id": "civil_status"
+          },
+          {
+            "label": "Name of spouse",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "civil_status",
+              "is_not": "Single"
+            },
+            "id": "spouse_name"
+          },
+          {
+            "label": "Age",
+            "type": "text",
+            "required": true,
+            "id": "age"
+          },
+          {
+            "label": "National ID No.",
+            "type": "text",
+            "required": false,
+            "id": "national_id_no"
+          }
+        ]
+      },
+      {
+        "id": "contact_and_employment",
+        "title": "Contact and Employment Details",
+        "fields": [
+          {
+            "label": "Contact No.",
+            "type": "text",
+            "required": true,
+            "id": "contact_no"
+          },
+          {
+            "label": "Home Address",
+            "type": "textarea",
+            "required": true,
+            "id": "home_address"
+          },
+          {
+            "label": "Occupation",
+            "type": "text",
+            "required": true,
+            "id": "occupation"
+          },
+          {
+            "label": "Office of Employment and Address",
+            "type": "textarea",
+            "required": true,
+            "id": "office_of_employment_and_address"
+          }
+        ]
+      },
+      {
+        "id": "family_details",
+        "title": "Family Details",
+        "fields": [
+          {
+            "label": "Father's Name",
+            "type": "text",
+            "required": true,
+            "id": "father_name"
+          },
+          {
+            "label": "Mother's name",
+            "type": "text",
+            "required": true,
+            "id": "mother_name"
+          },
+          {
+            "label": "Name and ages of Children, if any",
+            "type": "textarea",
+            "required": false,
+            "id": "children_names_and_ages"
+          }
+        ]
+      },
+      {
+        "id": "travel_and_passport_details",
+        "title": "Travel and Passport Details",
+        "fields": [
+          {
+            "label": "Passport No.",
+            "type": "text",
+            "required": true,
+            "id": "passport_no"
+          },
+          {
+            "label": "Issued by",
+            "type": "text",
+            "required": true,
+            "id": "passport_issued_by"
+          },
+          {
+            "label": "Date of Issue (dd/mm/yy)",
+            "type": "date",
+            "required": true,
+            "id": "passport_date_of_issue"
+          },
+          {
+            "label": "Valid Until (dd/mm/yy)",
+            "type": "date",
+            "required": true,
+            "id": "passport_valid_until"
+          },
+          {
+            "label": "Purpose of Entry",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Leisure",
+              "Business",
+              "Others",
+              "Official Business",
+              "Wellness"
+            ],
+            "id": "purpose_of_entry"
+          },
+          {
+            "label": "Length of stay in the Philippines (days)",
+            "type": "text",
+            "required": true,
+            "id": "length_of_stay_days"
+          },
+          {
+            "label": "Port of Entry",
+            "type": "text",
+            "required": true,
+            "id": "port_of_entry"
+          },
+          {
+            "label": "Destination after the Philippines (if applicable)",
+            "type": "text",
+            "required": false,
+            "id": "destination_after_ph"
+          }
+        ]
+      },
+      {
+        "id": "documents_submitted",
+        "title": "Documents Submitted Checklist",
+        "fields": [
+          {
+            "label": "Original Passport",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_original_passport"
+          },
+          {
+            "label": "Proof of Financial Capacity",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_proof_financial_capacity"
+          },
+          {
+            "label": "Invitation letter",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_invitation_letter"
+          },
+          {
+            "label": "Air Ticket",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_air_ticket"
+          },
+          {
+            "label": "National ID",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_national_id"
+          },
+          {
+            "label": "Others (check if specifying)",
+            "type": "boolean",
+            "required": false,
+            "id": "doc_others_checkbox"
+          },
+          {
+            "label": "Others (please specify)",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "doc_others_checkbox",
+              "is_equal_to": true
+            },
+            "id": "doc_others_specify"
+          }
+        ]
+      },
+      {
+        "id": "declarations_and_history",
+        "title": "Declarations and History",
+        "fields": [
+          {
+            "label": "Have you ever been issued a Philippine visa?",
+            "type": "boolean",
+            "required": true,
+            "id": "issued_ph_visa_previously"
+          },
+          {
+            "label": "Do you have a sponsor in the Philippines?",
+            "type": "boolean",
+            "required": true,
+            "id": "has_sponsor"
+          },
+          {
+            "label": "Sponsor Name",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "has_sponsor",
+              "is_equal_to": true
+            },
+            "id": "sponsor_name"
+          },
+          {
+            "label": "Sponsor Contact No.",
+            "type": "text",
+            "required": false,
+            "conditional_logic": {
+              "field": "has_sponsor",
+              "is_equal_to": true
+            },
+            "id": "sponsor_contact_no"
+          },
+          {
+            "label": "Were you ever been refused any kind of Philippine visa before and denied admission into the Philippines?",
+            "type": "boolean",
+            "required": true,
+            "id": "refused_ph_visa"
+          },
+          {
+            "label": "If yes, state circumstances (Refused/Denied Admission)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "refused_ph_visa",
+              "is_equal_to": true
+            },
+            "id": "refused_visa_circumstances"
+          },
+          {
+            "label": "Have you ever been afflicted with a communicable or mental disease of public health significance, dangerous physical or mental disorder, or been a drug abuser or addict?",
+            "type": "boolean",
+            "required": true,
+            "id": "afflicted_with_disease_old"
+          },
+          {
+            "label": "If yes, state circumstances (Afflicted with disease)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "afflicted_with_disease_old",
+              "is_equal_to": true
+            },
+            "id": "afflicted_disease_circumstances_old"
+          },
+          {
+            "label": "Have you previously worked or do you intend to work in the Philippines?",
+            "type": "boolean",
+            "required": true,
+            "id": "intend_to_work"
+          },
+          {
+            "label": "If Yes, please provide details (Work/Intention to Work)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "intend_to_work",
+              "is_equal_to": true
+            },
+            "id": "work_details"
+          },
+          {
+            "label": "Do you have any communicable or other disease of public health significance, dangerous physical or mental disorder, or been a drug abuser or addict?",
+            "type": "boolean",
+            "required": true,
+            "id": "has_communicable_disease"
+          },
+          {
+            "label": "If Yes, please provide details (Current Disease/Disorder)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "has_communicable_disease",
+              "is_equal_to": true
+            },
+            "id": "communicable_disease_details"
+          },
+          {
+            "label": "Have you ever been arrested or convicted of any offense or crime, even though subject of a pardon, amnesty, or other legal action in the Philippines or any other country?",
+            "type": "boolean",
+            "required": true,
+            "id": "arrested_convicted"
+          },
+          {
+            "label": "If Yes, state the circumstances (Arrested/Convicted)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "arrested_convicted",
+              "is_equal_to": true
+            },
+            "id": "arrest_conviction_circumstances"
+          },
+          {
+            "label": "Have you ever served in the military or served as a Foreign Agent of a foreign government?",
+            "type": "boolean",
+            "required": true,
+            "id": "served_military"
+          },
+          {
+            "label": "If yes, state the circumstances (Military/Foreign Agent)",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "field": "served_military",
+              "is_equal_to": true
+            },
+            "id": "military_service_circumstances"
+          }
+        ]
+      }
+    ]
+  }
+}

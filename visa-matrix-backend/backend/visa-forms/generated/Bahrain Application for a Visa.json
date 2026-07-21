@@ -1,0 +1,118 @@
+{
+  "country": "Bahrain",
+  "visa_type": "for a Visa",
+  "name": "Bahrain Application for a Visa",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_and_passport_info",
+        "title": "Personal and Passport Information",
+        "fields": [
+          {
+            "label": "Passport Number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Country of Birth",
+            "type": "text",
+            "required": true,
+            "id": "country_of_birth"
+          },
+          {
+            "label": "Passport Issue Date",
+            "type": "date",
+            "required": true,
+            "id": "passport_issue_date"
+          },
+          {
+            "label": "Passport Expiry Date",
+            "type": "date",
+            "required": true,
+            "id": "passport_expiry_date"
+          },
+          {
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Father's Full Name",
+            "type": "text",
+            "required": true,
+            "id": "fathers_full_name"
+          }
+        ]
+      },
+      {
+        "id": "contact_and_employment_info",
+        "title": "Contact and Employment Information",
+        "fields": [
+          {
+            "label": "Occupation",
+            "type": "text",
+            "required": true,
+            "id": "occupation"
+          },
+          {
+            "label": "Job Title",
+            "type": "text",
+            "required": true,
+            "id": "job_title"
+          },
+          {
+            "label": "Place Of Work",
+            "type": "text",
+            "required": true,
+            "id": "place_of_work"
+          },
+          {
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Telephone number",
+            "type": "text",
+            "required": true,
+            "id": "telephone_number"
+          }
+        ]
+      }
+    ]
+  }
+}

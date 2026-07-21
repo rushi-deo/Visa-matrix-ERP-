@@ -1,0 +1,327 @@
+{
+  "country": "Hong Kong",
+  "visa_type": "Application Form",
+  "name": "Hong Kong Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Family Name/Surname",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Is there any alias in English on your passport? (*)",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": true
+              },
+              {
+                "label": "No",
+                "value": false
+              }
+            ],
+            "id": "has_passport_alias"
+          },
+          {
+            "label": "Alias in English",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "has_passport_alias",
+              "value": true
+            },
+            "id": "alias_in_english"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Place/Country of Birth",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Male",
+                "value": "Male"
+              },
+              {
+                "label": "Female",
+                "value": "Female"
+              }
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Single",
+                "value": "Single"
+              },
+              {
+                "label": "Engaged",
+                "value": "Engaged"
+              },
+              {
+                "label": "Married",
+                "value": "Married"
+              },
+              {
+                "label": "Separated",
+                "value": "Separated"
+              },
+              {
+                "label": "Widow / Widower",
+                "value": "Widow / Widower"
+              }
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "label": "Female",
+                "value": "Female"
+              },
+              {
+                "label": "Male",
+                "value": "Male"
+              }
+            ],
+            "id": "gender"
+          },
+          {
+            "label": "Child (Under 18 Years)",
+            "type": "boolean",
+            "required": false,
+            "options": [
+              {
+                "label": "Yes",
+                "value": true
+              },
+              {
+                "label": "No",
+                "value": false
+              }
+            ],
+            "id": "is_under_18"
+          },
+          {
+            "label": "Country of Residence",
+            "type": "text",
+            "required": true,
+            "id": "country_of_residence"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Other Nationalities",
+            "type": "text",
+            "required": false,
+            "id": "other_nationalities"
+          },
+          {
+            "label": "Is your residential address in India?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": true
+              },
+              {
+                "label": "No",
+                "value": false
+              }
+            ],
+            "id": "residential_address_in_india_check"
+          },
+          {
+            "label": "Residential address in India District / City",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "residential_address_in_india_check",
+              "value": true
+            },
+            "id": "indian_address_district_city"
+          },
+          {
+            "label": "Contact telephone number",
+            "type": "text",
+            "required": true,
+            "id": "contact_telephone_number"
+          }
+        ]
+      },
+      {
+        "id": "travel_history",
+        "title": "Travel History",
+        "fields": [
+          {
+            "label": "Any previous travels to the HKSAR within the past three years?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": true
+              },
+              {
+                "label": "No",
+                "value": false
+              }
+            ],
+            "id": "hksar_travel_past_three_years"
+          },
+          {
+            "label": "Please state the passport number of the Indian passport(s) you have previously used to visit the HKSAR",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "hksar_travel_past_three_years",
+              "value": true
+            },
+            "id": "previous_hksar_passport_number"
+          },
+          {
+            "label": "Month/year of last three travels",
+            "type": "textarea",
+            "required": true,
+            "condition": {
+              "field_id": "hksar_travel_past_three_years",
+              "value": true
+            },
+            "id": "last_three_hksar_travel_dates"
+          },
+          {
+            "label": "Any previous visits to foreign countries/regions within the past three years?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "label": "Yes",
+                "value": true
+              },
+              {
+                "label": "No",
+                "value": false
+              }
+            ],
+            "id": "foreign_travel_past_three_years"
+          },
+          {
+            "label": "List of foreign countries/regions visited in the past three years",
+            "type": "textarea",
+            "required": true,
+            "condition": {
+              "field_id": "foreign_travel_past_three_years",
+              "value": true
+            },
+            "id": "previous_foreign_countries"
+          }
+        ]
+      },
+      {
+        "id": "employment_details",
+        "title": "Employment Details",
+        "fields": [
+          {
+            "label": "Occupation",
+            "type": "text",
+            "required": true,
+            "id": "occupation"
+          },
+          {
+            "label": "Employment sector (*)",
+            "type": "text",
+            "required": true,
+            "id": "employment_sector"
+          },
+          {
+            "label": "Name of company / employer / school",
+            "type": "text",
+            "required": true,
+            "id": "company_name"
+          },
+          {
+            "label": "Address of office / school District / City",
+            "type": "text",
+            "required": true,
+            "id": "company_address_district_city"
+          },
+          {
+            "label": "Contact telephone number of company / employer / school",
+            "type": "text",
+            "required": true,
+            "id": "company_contact_number"
+          }
+        ]
+      },
+      {
+        "id": "visit_details",
+        "title": "Details of coming visit",
+        "fields": [
+          {
+            "label": "Purpose of visit (*)",
+            "type": "text",
+            "required": true,
+            "id": "purpose_of_visit"
+          },
+          {
+            "label": "Proposed duration of stay (days) (*)",
+            "type": "text",
+            "required": true,
+            "id": "proposed_duration_days"
+          },
+          {
+            "label": "Address of accommodation (*)",
+            "type": "textarea",
+            "required": true,
+            "id": "accommodation_address"
+          },
+          {
+            "label": "Hotel details – Name / Address / Contact No / Email Id",
+            "type": "textarea",
+            "required": false,
+            "id": "hotel_details"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,443 @@
+{
+  "country": "second SCHENGEN",
+  "visa_type": "APPLICATION FORM",
+  "name": "second SCHENGEN VISA APPLICATION FORM",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "id": "surname_family_name",
+            "label": "1. Surname (Family Name)",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "surname_at_birth",
+            "label": "2. Surname at birth (Former family name)",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "first_names",
+            "label": "3. First Name(s)",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "date_of_birth",
+            "label": "4. Date of Birth (DD/MM/YYYY)",
+            "type": "date",
+            "required": true
+          },
+          {
+            "id": "place_of_birth",
+            "label": "5. Place of Birth",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "country_of_birth",
+            "label": "6. Country of Birth",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "current_nationality",
+            "label": "7. Current Nationality",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "sex",
+            "label": "8. Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "male",
+                "label": "Male"
+              },
+              {
+                "value": "female",
+                "label": "Female"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ]
+          },
+          {
+            "id": "marital_status",
+            "label": "9. Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "single",
+                "label": "Single"
+              },
+              {
+                "value": "married",
+                "label": "Married"
+              },
+              {
+                "value": "divorced",
+                "label": "Divorced"
+              },
+              {
+                "value": "widowed",
+                "label": "Widowed"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ]
+          },
+          {
+            "id": "fathers_full_name",
+            "label": "10. Father's Full Name",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "mothers_full_name",
+            "label": "11. Mother's Full Name",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "contact_and_residence",
+        "title": "Contact and Residence Details",
+        "fields": [
+          {
+            "id": "travel_document_type",
+            "label": "12. Type of Travel Document",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "ordinary_passport",
+                "label": "Ordinary Passport"
+              },
+              {
+                "value": "diplomatic_passport",
+                "label": "Diplomatic Passport"
+              },
+              {
+                "value": "official_passport",
+                "label": "Official Passport"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ],
+            "conditional_fields": [
+              {
+                "id": "travel_document_other_text",
+                "type": "text",
+                "required": true,
+                "label": "Specify Other Travel Document",
+                "condition": {
+                  "field": "travel_document_type",
+                  "value": "other"
+                }
+              }
+            ]
+          },
+          {
+            "id": "home_address",
+            "label": "13. Applicant’s Home Address",
+            "type": "textarea",
+            "required": true
+          },
+          {
+            "id": "phone_number",
+            "label": "Phone Number",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "email_address",
+            "label": "14. Email Address",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "residence_other_than_india",
+            "label": "15. Residence in Country Other Than India",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              {
+                "value": true,
+                "label": "Yes"
+              },
+              {
+                "value": false,
+                "label": "No"
+              }
+            ],
+            "conditional_fields": [
+              {
+                "id": "residence_permit_number",
+                "type": "text",
+                "required": true,
+                "label": "Residence permit number",
+                "condition": {
+                  "field": "residence_other_than_india",
+                  "value": true
+                }
+              },
+              {
+                "id": "residence_valid_until",
+                "type": "date",
+                "required": true,
+                "label": "Valid until",
+                "condition": {
+                  "field": "residence_other_than_india",
+                  "value": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "employment_education",
+        "title": "Employment / Education Details",
+        "fields": [
+          {
+            "id": "current_occupation",
+            "label": "16. Current Occupation",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "employer_school_details",
+            "label": "17. Employer/School Name & Address",
+            "type": "textarea",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "travel_details",
+        "title": "Travel Details",
+        "fields": [
+          {
+            "id": "purpose_of_travel",
+            "label": "18. Purpose of Travel",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "tourism",
+                "label": "Tourism"
+              },
+              {
+                "value": "business",
+                "label": "Business"
+              },
+              {
+                "value": "family_friends_visit",
+                "label": "Family/Friends Visit"
+              },
+              {
+                "value": "medical",
+                "label": "Medical"
+              },
+              {
+                "value": "cultural_sports",
+                "label": "Cultural/Sports"
+              },
+              {
+                "value": "transit",
+                "label": "Transit"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ],
+            "conditional_fields": [
+              {
+                "id": "purpose_of_travel_other_text",
+                "type": "text",
+                "required": true,
+                "label": "Specify Other Purpose of Travel",
+                "condition": {
+                  "field": "purpose_of_travel",
+                  "value": "other"
+                }
+              }
+            ]
+          },
+          {
+            "id": "destination_member_states",
+            "label": "19. Destination Member State(s)",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "number_of_entries",
+            "label": "20. Number of Entries Requested",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "single",
+                "label": "Single"
+              },
+              {
+                "value": "double",
+                "label": "Double"
+              },
+              {
+                "value": "multiple",
+                "label": "Multiple"
+              }
+            ]
+          },
+          {
+            "id": "duration_of_stay_days",
+            "label": "21. Duration of Stay (days)",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "intended_travel_date_from",
+            "label": "22. Intended Travel Dates (From)",
+            "type": "date",
+            "required": true
+          },
+          {
+            "id": "intended_travel_date_to",
+            "label": "Intended Travel Dates (To)",
+            "type": "date",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "support_and_insurance",
+        "title": "Support and Insurance",
+        "fields": [
+          {
+            "id": "inviting_person_org_name",
+            "label": "23. Inviting Person/Organization (if applicable): Name",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "inviting_person_org_address",
+            "label": "Inviting Person/Organization Address",
+            "type": "textarea",
+            "required": false
+          },
+          {
+            "id": "inviting_person_org_phone",
+            "label": "Inviting Person/Organization Phone",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "who_will_cover_expenses",
+            "label": "24. Who Will Cover Your Expenses?",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "myself",
+                "label": "Myself"
+              },
+              {
+                "value": "sponsor",
+                "label": "Sponsor"
+              }
+            ],
+            "conditional_fields": [
+              {
+                "id": "sponsor_name_relationship",
+                "type": "text",
+                "required": true,
+                "label": "Sponsor Name & Relationship",
+                "condition": {
+                  "field": "who_will_cover_expenses",
+                  "value": "sponsor"
+                }
+              }
+            ]
+          },
+          {
+            "id": "means_of_support",
+            "label": "25. Means of Support",
+            "type": "select",
+            "required": true,
+            "options": [
+              {
+                "value": "cash",
+                "label": "Cash"
+              },
+              {
+                "value": "credit_card",
+                "label": "Credit card"
+              },
+              {
+                "value": "accommodation_provided",
+                "label": "Accommodation provided"
+              },
+              {
+                "value": "transport_provided",
+                "label": "Transport provided"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ],
+            "conditional_fields": [
+              {
+                "id": "means_of_support_other_text",
+                "type": "text",
+                "required": true,
+                "label": "Specify Other Means of Support",
+                "condition": {
+                  "field": "means_of_support",
+                  "value": "other"
+                }
+              }
+            ]
+          },
+          {
+            "id": "travel_insurance_provider",
+            "label": "26. Travel Insurance Provider",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "insurance_policy_number",
+            "label": "Policy Number",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "insurance_valid_until",
+            "label": "Valid until",
+            "type": "date",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

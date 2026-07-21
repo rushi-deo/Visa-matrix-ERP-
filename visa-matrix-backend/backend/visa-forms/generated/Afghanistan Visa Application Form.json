@@ -1,0 +1,332 @@
+{
+  "country": "Afghanistan",
+  "visa_type": "Application Form",
+  "name": "Afghanistan Visa Application Form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_details",
+        "title": "Personal Details",
+        "fields": [
+          {
+            "label": "Title",
+            "type": "text",
+            "required": true,
+            "id": "title"
+          },
+          {
+            "label": "Family Name",
+            "type": "text",
+            "required": true,
+            "id": "family_name"
+          },
+          {
+            "label": "Given Names",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "Father’s Full Name",
+            "type": "text",
+            "required": true,
+            "id": "father_full_name"
+          },
+          {
+            "label": "Date of Birth (Gregorian) DD / MMM / YYYY",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Country of Birth",
+            "type": "text",
+            "required": true,
+            "id": "country_of_birth"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Engaged",
+              "Married",
+              "Separated",
+              "Widow / Widower"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Female",
+              "Male"
+            ],
+            "id": "gender"
+          },
+          {
+            "label": "Child: (Under 18 Years)",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "is_minor_child"
+          },
+          {
+            "label": "Country of Residence",
+            "type": "text",
+            "required": true,
+            "id": "country_of_residence"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Other Nationalities",
+            "type": "text",
+            "required": false,
+            "id": "other_nationalities"
+          }
+        ]
+      },
+      {
+        "id": "contact_details",
+        "title": "Contact Details",
+        "fields": [
+          {
+            "label": "Current Address",
+            "type": "textarea",
+            "required": true,
+            "id": "current_address"
+          },
+          {
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Mobile",
+            "type": "text",
+            "required": true,
+            "id": "mobile_number"
+          },
+          {
+            "label": "Work Tel",
+            "type": "text",
+            "required": false,
+            "id": "work_tel"
+          },
+          {
+            "label": "Home Tel",
+            "type": "text",
+            "required": false,
+            "id": "home_tel"
+          },
+          {
+            "label": "Fax",
+            "type": "text",
+            "required": false,
+            "id": "fax_number"
+          }
+        ]
+      },
+      {
+        "id": "employment_details",
+        "title": "Employment Details",
+        "fields": [
+          {
+            "label": "Current Occupation",
+            "type": "text",
+            "required": true,
+            "id": "current_occupation"
+          },
+          {
+            "label": "Employer’s Name",
+            "type": "text",
+            "required": true,
+            "id": "employer_name"
+          },
+          {
+            "label": "Employer’s Address",
+            "type": "textarea",
+            "required": true,
+            "id": "employer_address"
+          },
+          {
+            "label": "Previous Employer’s Name",
+            "type": "text",
+            "required": false,
+            "id": "previous_employer_name"
+          },
+          {
+            "label": "Previous Employer’s Address",
+            "type": "textarea",
+            "required": false,
+            "id": "previous_employer_address"
+          }
+        ]
+      },
+      {
+        "id": "visa_details",
+        "title": "Visa Details",
+        "fields": [
+          {
+            "label": "Visa Type",
+            "type": "text",
+            "required": true,
+            "id": "visa_type"
+          },
+          {
+            "label": "Purpose of Journey",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Business",
+              "Convention / Conference",
+              "Education",
+              "Employment",
+              "Exhibition",
+              "Visiting Friends / Family",
+              "Holiday",
+              "Other"
+            ],
+            "id": "purpose_of_journey"
+          },
+          {
+            "label": "Entry Date",
+            "type": "date",
+            "required": true,
+            "id": "entry_date"
+          },
+          {
+            "label": "Point of Entry",
+            "type": "text",
+            "required": true,
+            "id": "point_of_entry"
+          },
+          {
+            "label": "Intended Duration of Stay (days)",
+            "type": "text",
+            "required": true,
+            "id": "intended_duration_days"
+          },
+          {
+            "label": "Number of Children Accompanied",
+            "type": "text",
+            "required": false,
+            "id": "children_accompanied_count"
+          },
+          {
+            "label": "Places in Afghanistan intended to visit",
+            "type": "textarea",
+            "required": true,
+            "id": "places_to_visit"
+          },
+          {
+            "label": "Complete Address in Afghanistan",
+            "type": "textarea",
+            "required": true,
+            "id": "address_in_afghanistan"
+          },
+          {
+            "label": "Have you ever visited Afghanistan before?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "visited_afghanistan_before"
+          },
+          {
+            "label": "If yes [to previous visit], please provide details",
+            "type": "textarea",
+            "required": false,
+            "conditional": {
+              "depends_on": "visited_afghanistan_before",
+              "condition": "Yes"
+            },
+            "id": "previous_visit_details"
+          },
+          {
+            "label": "Have you applied for an Afghanistan Visa before?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "applied_before"
+          },
+          {
+            "label": "If yes [to previous application], please provide details",
+            "type": "textarea",
+            "required": false,
+            "conditional": {
+              "depends_on": "applied_before",
+              "condition": "Yes"
+            },
+            "id": "previous_application_details"
+          },
+          {
+            "label": "Do you have a criminal record?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "criminal_record"
+          }
+        ]
+      },
+      {
+        "id": "passport_details",
+        "title": "Passport Details",
+        "fields": [
+          {
+            "label": "Passport Type",
+            "type": "text",
+            "required": true,
+            "id": "passport_type"
+          },
+          {
+            "label": "Passport Number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Place of Issue",
+            "type": "text",
+            "required": true,
+            "id": "place_of_issue"
+          },
+          {
+            "label": "Issue Date",
+            "type": "date",
+            "required": true,
+            "id": "issue_date"
+          },
+          {
+            "label": "Expiry Date",
+            "type": "date",
+            "required": true,
+            "id": "expiry_date"
+          }
+        ]
+      }
+    ]
+  }
+}

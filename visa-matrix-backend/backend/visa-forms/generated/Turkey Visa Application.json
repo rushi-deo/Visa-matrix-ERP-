@@ -1,0 +1,775 @@
+{
+  "country": "Turkey",
+  "visa_type": "Application",
+  "name": "Turkey Visa Application",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "Personal Information",
+        "fields": [
+          {
+            "id": "surname",
+            "label": "Surname (Family name)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "surname_at_birth",
+            "label": "Surname at birth (Former family name(s))",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "first_names",
+            "label": "First name(s) (Given name(s))",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "maiden_name",
+            "label": "Maiden Name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "date_of_birth",
+            "label": "Date of birth (year-month-day)",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "id_number",
+            "label": "ID- Number",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "place_of_birth",
+            "label": "Place of birth",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "country_of_birth",
+            "label": "Country of birth",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "current_nationality",
+            "label": "Current nationality",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "nationality_at_birth",
+            "label": "Nationality at birth, if different",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "other_nationalities",
+            "label": "Other nationalities",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "sex",
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "civil_status",
+            "label": "Civil status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Registered Partnership",
+              "Separated",
+              "Divorced",
+              "Widow(er)",
+              "Other"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "civil_status_other_specify",
+            "label": "Please specify civil status",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "civil_status",
+              "equals": "Other"
+            }
+          },
+          {
+            "id": "citizenship_at_birth",
+            "label": "Citizenship at birth",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "parent_information",
+        "title": "Parents' Full Name",
+        "fields": [
+          {
+            "id": "father_full_name",
+            "label": "Father’s Full Name",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "mother_full_name",
+            "label": "Mother’s Full Name",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "travel_document",
+        "title": "Travel Document Details",
+        "fields": [
+          {
+            "id": "document_type",
+            "label": "Type of travel document",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Ordinary passport",
+              "Diplomatic passport",
+              "Service passport",
+              "Official passport",
+              "Special passport",
+              "Other travel document"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "document_type_other_specify",
+            "label": "Please specify other travel document",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "document_type",
+              "equals": "Other travel document"
+            }
+          },
+          {
+            "id": "passport_number",
+            "label": "Passport Number",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "passport_issue_date",
+            "label": "Date of issue",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "passport_expiry_date",
+            "label": "Valid until",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "passport_issued_by",
+            "label": "Issued by (City and country)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "permission_to_return_resident_country",
+            "label": "If resident in a country other than your country of origin, have you permission to return to that country?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "resident_permit_number_and_validity",
+            "label": "Number and validity of permit",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "permission_to_return_resident_country",
+              "equals": "true"
+            }
+          }
+        ]
+      },
+      {
+        "id": "employment_and_contact",
+        "title": "Employment and Contact",
+        "fields": [
+          {
+            "id": "present_occupation",
+            "label": "Present Occupation and profession",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "work_address",
+            "label": "Present Work address",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "work_phone",
+            "label": "Work Telephone Number",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "work_email",
+            "label": "Work Email Address",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "home_address",
+            "label": "Applicant’s home address",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "home_phone",
+            "label": "Home Telephone Number",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "home_email",
+            "label": "Home Email Address",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "visa_and_trip_details",
+        "title": "Visa and Trip Details",
+        "fields": [
+          {
+            "id": "visa_type_requested",
+            "label": "Type of Visa",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Transit",
+              "Short Stay",
+              "Long Stay"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "number_of_entries",
+            "label": "Number of Entries Required",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single Entry",
+              "Multiple Entry"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "duration_of_stay_days",
+            "label": "Duration of stay – Visa is requested for (days)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "visa_refused_previously",
+            "label": "Have you ever been refused a visa for Turkey?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "refusal_when",
+            "label": "When was the visa refused?",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "visa_refused_previously",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "refusal_where",
+            "label": "Where was the visa refused?",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "visa_refused_previously",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "deported_or_required_to_leave",
+            "label": "Have you ever been deported from or required to leave Turkey?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "deportation_when",
+            "label": "When were you deported/required to leave?",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "deported_or_required_to_leave",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "deportation_where",
+            "label": "Where was the deportation/requirement to leave issued?",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "deported_or_required_to_leave",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "final_country_entry_permit",
+            "label": "In the case of transit, have you an entry permit for the final country of destination?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio",
+            "visible_if": {
+              "field": "visa_type_requested",
+              "equals": "Transit"
+            }
+          },
+          {
+            "id": "permit_valid_until",
+            "label": "Valid until",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "final_country_entry_permit",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "permit_issuing_authority",
+            "label": "Issuing authority",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "final_country_entry_permit",
+              "equals": "true"
+            }
+          },
+          {
+            "id": "purpose_of_trip",
+            "label": "Purpose of trip",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Official",
+              "Tourism",
+              "Business",
+              "Cultural/Sports",
+              "Private visit (family or friends)",
+              "Medical reasons",
+              "Other"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "purpose_of_trip_other_specify",
+            "label": "Please specify other purpose of trip",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text",
+            "visible_if": {
+              "field": "purpose_of_trip",
+              "equals": "Other"
+            }
+          },
+          {
+            "id": "arrival_date",
+            "label": "Date of arrival",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "departure_date",
+            "label": "Date of departure",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "first_entry_port_or_route",
+            "label": "Port of first entry or transit route",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "means_of_transport",
+            "label": "Means of transport",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "financial_and_host_details",
+        "title": "Financial and Host Details",
+        "fields": [
+          {
+            "id": "trip_payer",
+            "label": "Who is paying for your trip and costs of living during your stay in Turkey?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Myself",
+              "Host person(s)",
+              "Host company"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "payer_details_and_documentation",
+            "label": "(State who and how and please submit corresponding documentation)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "host_or_hotel_name",
+            "label": "Name of host or company in Turkey. If not applicable, give name of hotel or temporary address.",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "host_address",
+            "label": "Address (Host/Company/Hotel)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "host_phone_fax",
+            "label": "Telephone/Fax Number (Host/Company/Hotel)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "host_email",
+            "label": "E-mail address (Host/Company/Hotel)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "means_of_support",
+            "label": "Means of support during your stay",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Cash",
+              "Traveller's Cheque",
+              "Credit cards",
+              "Other",
+              "Accommodation"
+            ],
+            "ui": "select"
+          },
+          {
+            "id": "travel_health_insurance_valid_until",
+            "label": "Travel and/or health insurance (optional). Valid until:",
+            "type": "date",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "family_details",
+        "title": "Spouse and Children",
+        "fields": [
+          {
+            "id": "spouse_family_name",
+            "label": "Spouse's Family name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "spouse_maiden_name",
+            "label": "Spouse's Maiden name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "spouse_first_name",
+            "label": "Spouse's First name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "spouse_nationality",
+            "label": "Spouse's Nationality",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "spouse_date_of_birth",
+            "label": "Spouse's Date of birth",
+            "type": "date",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "spouse_place_of_birth",
+            "label": "Spouse's Place of birth",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_1_family_name",
+            "label": "Child 1 Family Name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_1_first_name",
+            "label": "Child 1 First name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_1_date_of_birth",
+            "label": "Child 1 Date of birth",
+            "type": "date",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_2_family_name",
+            "label": "Child 2 Family Name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_2_first_name",
+            "label": "Child 2 First name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_2_date_of_birth",
+            "label": "Child 2 Date of birth",
+            "type": "date",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_3_family_name",
+            "label": "Child 3 Family Name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_3_first_name",
+            "label": "Child 3 First name",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "child_3_date_of_birth",
+            "label": "Child 3 Date of birth",
+            "type": "date",
+            "required": false,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      },
+      {
+        "id": "declaration_and_signature",
+        "title": "Declaration and Signature",
+        "fields": [
+          {
+            "id": "certification_text",
+            "label": "Certification Statement (Read-only)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "declaration_place",
+            "label": "Place (Declaration)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "declaration_date",
+            "label": "Date (Declaration)",
+            "type": "date",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          },
+          {
+            "id": "applicant_signature",
+            "label": "Signature (for minors, signature of custodian/guardian)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "ui": "text"
+          }
+        ]
+      }
+    ]
+  }
+}

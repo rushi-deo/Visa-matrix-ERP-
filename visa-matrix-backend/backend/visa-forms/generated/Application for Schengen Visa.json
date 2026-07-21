@@ -1,0 +1,561 @@
+{
+  "country": "Application for Schengen",
+  "visa_type": "☐ No ☐ Yes.",
+  "name": "Application for Schengen Visa",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_data",
+        "title": "Personal Data",
+        "fields": [
+          {
+            "label": "Surname (Family name)",
+            "type": "text",
+            "required": true,
+            "id": "surname"
+          },
+          {
+            "label": "Surname at birth (Former family name(s))",
+            "type": "text",
+            "required": false,
+            "id": "surname_at_birth"
+          },
+          {
+            "label": "First name(s) (Given name(s))",
+            "type": "text",
+            "required": true,
+            "id": "first_name"
+          },
+          {
+            "label": "Date of birth (day- month-year)",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Place of birth",
+            "type": "text",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Country of birth",
+            "type": "text",
+            "required": true,
+            "id": "country_of_birth"
+          },
+          {
+            "label": "Current nationality",
+            "type": "text",
+            "required": true,
+            "id": "current_nationality"
+          },
+          {
+            "label": "Nationality at birth, if different",
+            "type": "text",
+            "required": false,
+            "id": "nationality_at_birth"
+          },
+          {
+            "label": "Other nationalities",
+            "type": "text",
+            "required": false,
+            "id": "other_nationalities"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Civil status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Registered Partnership",
+              "Separated",
+              "Divorced",
+              "Widow(er)",
+              "Other (please specify)"
+            ],
+            "id": "civil_status"
+          },
+          {
+            "label": "Parental authority (in case of minors)/legal guardian (surname, first name, address, if different from applicant’s, telephone No, email address, and nationality)",
+            "type": "textarea",
+            "required": false,
+            "conditional": {
+              "depends_on": "date_of_birth",
+              "condition": "applicant is a minor (inferred)"
+            },
+            "id": "legal_guardian_details"
+          }
+        ]
+      },
+      {
+        "id": "identity_travel_document",
+        "title": "Identity & Travel Document",
+        "fields": [
+          {
+            "label": "National identity number, where applicable",
+            "type": "text",
+            "required": false,
+            "id": "national_identity_number"
+          },
+          {
+            "label": "Type of travel document",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Ordinary passport",
+              "Diplomatic passport",
+              "Service passport",
+              "Official passport",
+              "Special passport",
+              "Other travel document (please specify)"
+            ],
+            "id": "travel_document_type"
+          },
+          {
+            "label": "Number of travel document",
+            "type": "text",
+            "required": true,
+            "id": "travel_document_number"
+          },
+          {
+            "label": "Date of issue",
+            "type": "date",
+            "required": true,
+            "id": "issue_date"
+          },
+          {
+            "label": "Valid until",
+            "type": "date",
+            "required": true,
+            "id": "valid_until_date"
+          },
+          {
+            "label": "Issued by (country)",
+            "type": "text",
+            "required": true,
+            "id": "issued_by_country"
+          }
+        ]
+      },
+      {
+        "id": "eu_family_member",
+        "title": "EU/EEA/CH Family Member Details (if applicable)",
+        "fields": [
+          {
+            "label": "Family relationship with an EU, EEA or CH citizen or a UK national who is a beneficiary of the EU-UK Withdrawal Agreement, if applicable",
+            "type": "select",
+            "required": false,
+            "options": [
+              "spouse",
+              "child",
+              "grandchild",
+              "dependent ascendant",
+              "registered partnership",
+              "other"
+            ],
+            "id": "family_relationship"
+          },
+          {
+            "label": "Family member's Surname (Family name)",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "family_relationship",
+              "condition": "Any option other than null"
+            },
+            "id": "family_member_surname"
+          },
+          {
+            "label": "Family member's First name(s) (Given name(s))",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "family_relationship",
+              "condition": "Any option other than null"
+            },
+            "id": "family_member_first_name"
+          },
+          {
+            "label": "Family member's Date of birth (day- month-year)",
+            "type": "date",
+            "required": false,
+            "conditional": {
+              "depends_on": "family_relationship",
+              "condition": "Any option other than null"
+            },
+            "id": "family_member_date_of_birth"
+          },
+          {
+            "label": "Family member's Nationality",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "family_relationship",
+              "condition": "Any option other than null"
+            },
+            "id": "family_member_nationality"
+          },
+          {
+            "label": "Family member's Number of travel document or ID card",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "family_relationship",
+              "condition": "Any option other than null"
+            },
+            "id": "family_member_id_number"
+          }
+        ]
+      },
+      {
+        "id": "residence_employment",
+        "title": "Residence and Employment",
+        "fields": [
+          {
+            "label": "Applicant’s home address",
+            "type": "textarea",
+            "required": true,
+            "id": "home_address"
+          },
+          {
+            "label": "Applicant’s email address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Applicant’s Telephone no.",
+            "type": "text",
+            "required": true,
+            "id": "telephone_no"
+          },
+          {
+            "label": "Residence in a country other than the country of current nationality",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "residence_other_country"
+          },
+          {
+            "label": "Residence permit or equivalent No.",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "residence_other_country",
+              "condition": "Yes"
+            },
+            "id": "residence_permit_no"
+          },
+          {
+            "label": "Residence permit Valid until",
+            "type": "date",
+            "required": false,
+            "conditional": {
+              "depends_on": "residence_other_country",
+              "condition": "Yes"
+            },
+            "id": "permit_valid_until"
+          },
+          {
+            "label": "Current occupation",
+            "type": "text",
+            "required": true,
+            "id": "current_occupation"
+          },
+          {
+            "label": "Employer and employer’s address and telephone number. For students, name and address of educational establishment",
+            "type": "textarea",
+            "required": true,
+            "id": "employment_details"
+          }
+        ]
+      },
+      {
+        "id": "trip_details",
+        "title": "Trip Details",
+        "fields": [
+          {
+            "label": "Purpose(s) of the journey",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourism",
+              "Business",
+              "Visiting family or friends",
+              "Cultural",
+              "Sports",
+              "Official visit",
+              "Medical reasons",
+              "Study",
+              "Airport transit",
+              "Other (please specify)"
+            ],
+            "id": "purpose_of_journey"
+          },
+          {
+            "label": "Additional information on purpose of stay",
+            "type": "textarea",
+            "required": false,
+            "id": "additional_purpose_info"
+          },
+          {
+            "label": "Member State of main destination (and other Member States of destination, if applicable)",
+            "type": "text",
+            "required": true,
+            "id": "main_destination_member_state"
+          },
+          {
+            "label": "Member State of first entry",
+            "type": "text",
+            "required": true,
+            "id": "first_entry_member_state"
+          },
+          {
+            "label": "Number of entries requested",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single entry",
+              "Two entries",
+              "Multiple entries"
+            ],
+            "id": "number_of_entries_requested"
+          },
+          {
+            "label": "Intended date of arrival of the first intended stay in the Schengen area",
+            "type": "date",
+            "required": true,
+            "id": "intended_arrival_date"
+          },
+          {
+            "label": "Intended date of departure from the Schengen area after the first intended stay",
+            "type": "date",
+            "required": true,
+            "id": "intended_departure_date"
+          },
+          {
+            "label": "Fingerprints collected previously for the purpose of applying for a Schengen visa",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "fingerprints_previously_collected"
+          },
+          {
+            "label": "Date [fingerprints collected], if known",
+            "type": "date",
+            "required": false,
+            "conditional": {
+              "depends_on": "fingerprints_previously_collected",
+              "condition": "Yes"
+            },
+            "id": "fingerprint_date"
+          },
+          {
+            "label": "Number of the visa [previous], if known",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "fingerprints_previously_collected",
+              "condition": "Yes"
+            },
+            "id": "previous_visa_number"
+          },
+          {
+            "label": "Entry permit for the final country of destination, where applicable",
+            "type": "boolean",
+            "required": false,
+            "options": [
+              "No",
+              "Yes"
+            ],
+            "id": "final_destination_entry_permit"
+          },
+          {
+            "label": "Permit issued by",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "final_destination_entry_permit",
+              "condition": "Yes"
+            },
+            "id": "permit_issued_by"
+          },
+          {
+            "label": "Permit valid from",
+            "type": "date",
+            "required": false,
+            "conditional": {
+              "depends_on": "final_destination_entry_permit",
+              "condition": "Yes"
+            },
+            "id": "permit_valid_from"
+          },
+          {
+            "label": "Permit valid until",
+            "type": "date",
+            "required": false,
+            "conditional": {
+              "depends_on": "final_destination_entry_permit",
+              "condition": "Yes"
+            },
+            "id": "permit_valid_until_destination"
+          }
+        ]
+      },
+      {
+        "id": "accommodation_sponsor",
+        "title": "Accommodation and Financial Sponsor",
+        "fields": [
+          {
+            "label": "Surname and first name of the inviting person(s) in the Member State(s). If not applicable, name of hotel(s) or temporary accommodation(s) in the Member State(s)",
+            "type": "text",
+            "required": true,
+            "id": "inviting_person_name"
+          },
+          {
+            "label": "Address and email address of inviting person(s)/ hotel(s)/temporary accommodation(s)",
+            "type": "textarea",
+            "required": true,
+            "id": "inviting_address_email"
+          },
+          {
+            "label": "Telephone No",
+            "type": "text",
+            "required": true,
+            "id": "inviting_telephone_no"
+          },
+          {
+            "label": "Name and address of inviting company/organisation",
+            "type": "textarea",
+            "required": true,
+            "id": "inviting_company_name"
+          },
+          {
+            "label": "Surname, first name, address, telephone No, and email address of contact person in company/organisation",
+            "type": "textarea",
+            "required": true,
+            "id": "company_contact_person"
+          },
+          {
+            "label": "Telephone No of company/organisation",
+            "type": "text",
+            "required": true,
+            "id": "company_telephone_no"
+          },
+          {
+            "label": "Cost of travelling and living during the applicant’s stay is covered:",
+            "type": "select",
+            "required": true,
+            "options": [
+              "by the applicant",
+              "by a sponsor (host, company, organisation)"
+            ],
+            "id": "cost_covered_by_main"
+          },
+          {
+            "label": "Applicant Means of support",
+            "type": "select",
+            "required": false,
+            "options": [
+              "Cash",
+              "Traveller’s cheques",
+              "Credit card",
+              "Pre-paid accommodation",
+              "Pre-paid transport",
+              "Other (please specify)"
+            ],
+            "conditional": {
+              "depends_on": "cost_covered_by_main",
+              "condition": "by the applicant"
+            },
+            "id": "applicant_means_of_support"
+          },
+          {
+            "label": "Sponsor type (if covered by sponsor)",
+            "type": "select",
+            "required": false,
+            "options": [
+              "referred to in field 30 or 31",
+              "other (please specify)"
+            ],
+            "conditional": {
+              "depends_on": "cost_covered_by_main",
+              "condition": "by a sponsor (host, company, organisation)"
+            },
+            "id": "sponsor_type"
+          },
+          {
+            "label": "Sponsor Means of support",
+            "type": "select",
+            "required": false,
+            "options": [
+              "Cash",
+              "Accommodation provided",
+              "All expenses covered during the stay",
+              "Pre-paid transport",
+              "Other (please specify)"
+            ],
+            "conditional": {
+              "depends_on": "cost_covered_by_main",
+              "condition": "by a sponsor (host, company, organisation)"
+            },
+            "id": "sponsor_means_of_support"
+          }
+        ]
+      },
+      {
+        "id": "application_filler",
+        "title": "Application Filler (If different from applicant)",
+        "fields": [
+          {
+            "label": "Surname and first name of the person filling in the application form, if different from the applicant",
+            "type": "text",
+            "required": false,
+            "id": "filler_name"
+          },
+          {
+            "label": "Address and email address of the person filling in the application form",
+            "type": "textarea",
+            "required": false,
+            "conditional": {
+              "depends_on": "filler_name",
+              "condition": "is not empty"
+            },
+            "id": "filler_address_email"
+          },
+          {
+            "label": "Telephone No",
+            "type": "text",
+            "required": false,
+            "conditional": {
+              "depends_on": "filler_name",
+              "condition": "is not empty"
+            },
+            "id": "filler_telephone_no"
+          }
+        ]
+      }
+    ]
+  }
+}

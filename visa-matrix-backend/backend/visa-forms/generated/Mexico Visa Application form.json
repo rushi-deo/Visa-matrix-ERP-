@@ -1,0 +1,249 @@
+{
+  "country": "Mexico",
+  "visa_type": "Application form",
+  "name": "Mexico Visa Application form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "I. Personal Information",
+        "fields": [
+          {
+            "label": "Given name(s): (As shown on passport or travel document)",
+            "type": "text",
+            "required": true,
+            "id": "given_names"
+          },
+          {
+            "label": "First Surname",
+            "type": "text",
+            "required": true,
+            "id": "first_surname"
+          },
+          {
+            "label": "Second Surname: (As shown on passport or travel document)",
+            "type": "text",
+            "required": true,
+            "id": "second_surname"
+          },
+          {
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Female",
+              "Male",
+              "Choose no specification"
+            ],
+            "id": "sex"
+          },
+          {
+            "label": "Date of Birth (DD/MM/AAAA)",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Age",
+            "type": "text",
+            "required": true,
+            "id": "age"
+          },
+          {
+            "label": "Country/ territory of birth",
+            "type": "text",
+            "required": true,
+            "id": "country_of_birth"
+          },
+          {
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "id": "nationality"
+          },
+          {
+            "label": "Passport/ Travel Document Number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Issuing country",
+            "type": "text",
+            "required": true,
+            "id": "passport_issuing_country"
+          },
+          {
+            "label": "Date issued (DD/MM/AAAA)",
+            "type": "date",
+            "required": true,
+            "id": "passport_date_issued"
+          },
+          {
+            "label": "Date of expiry (DD/MM/AAAA)",
+            "type": "date",
+            "required": true,
+            "id": "passport_date_expiry"
+          }
+        ]
+      },
+      {
+        "id": "additional_information",
+        "title": "II. Additional Information",
+        "fields": [
+          {
+            "label": "Marital status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Common law"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "Current residential address",
+            "type": "textarea",
+            "required": true,
+            "id": "residential_address"
+          },
+          {
+            "label": "Phone number",
+            "type": "text",
+            "required": true,
+            "id": "phone_number"
+          },
+          {
+            "label": "E-mail address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Occupation",
+            "type": "text",
+            "required": true,
+            "id": "occupation"
+          },
+          {
+            "label": "Company name or institution",
+            "type": "text",
+            "required": true,
+            "id": "company_or_institution"
+          },
+          {
+            "label": "Country of residence",
+            "type": "text",
+            "required": true,
+            "id": "country_of_residence"
+          },
+          {
+            "label": "Legal migratory status",
+            "type": "boolean",
+            "required": true,
+            "id": "legal_migratory_status"
+          },
+          {
+            "label": "Have you ever been convicted of a criminal offence in Mexico/ other country",
+            "type": "boolean",
+            "required": true,
+            "id": "criminal_offence_convicted"
+          },
+          {
+            "label": "If you selected YES, please provide an explanation",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "show_if": "criminal_offence_convicted",
+              "value": true
+            },
+            "id": "criminal_offence_explanation"
+          }
+        ]
+      },
+      {
+        "id": "purpose_and_information_of_your_travel",
+        "title": "III. Purpose and Information of your Travel",
+        "fields": [
+          {
+            "label": "Date you plan to travel to Mexico (DD/MM/AAAA)",
+            "type": "date",
+            "required": true,
+            "id": "date_of_travel"
+          },
+          {
+            "label": "City/ state of entry",
+            "type": "text",
+            "required": true,
+            "id": "city_state_of_entry"
+          },
+          {
+            "label": "Length of stay in Mexico",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Less than 180 days",
+              "Between 180 days and 4 years",
+              "Definitive"
+            ],
+            "id": "length_of_stay"
+          },
+          {
+            "label": "Have you visited Mexico before?",
+            "type": "boolean",
+            "required": true,
+            "id": "visited_mexico_before"
+          },
+          {
+            "label": "Have you ever been ordered to leave Mexico?",
+            "type": "boolean",
+            "required": true,
+            "id": "ordered_to_leave_mexico"
+          },
+          {
+            "label": "If you selected YES, please provide an explanation",
+            "type": "textarea",
+            "required": false,
+            "conditional_logic": {
+              "show_if": "ordered_to_leave_mexico",
+              "value": true
+            },
+            "id": "ordered_to_leave_mexico_explanation"
+          },
+          {
+            "label": "Type of Visa (check category that applies)",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Visitor/ Tourist",
+              "Long-term Visitor/Tourist",
+              "Work Visa",
+              "Visitor conducting adoption proceedings",
+              "Student",
+              "Temporary Residence",
+              "Permanent Residence",
+              "Diplomatic",
+              "Official",
+              "Service"
+            ],
+            "id": "visa_type"
+          },
+          {
+            "label": "Passport Type",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Ordinary / Regular",
+              "No Ordinary / Special",
+              "Laissez-Passer"
+            ],
+            "id": "passport_type"
+          }
+        ]
+      }
+    ]
+  }
+}

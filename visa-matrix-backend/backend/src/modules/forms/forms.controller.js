@@ -56,7 +56,7 @@ export const importFormsController = asyncHandler(async (req, res) => {
   const data = await importFormsRecord({
     body: req.body,
     file: req.files?.find((file) => file.fieldname === "file") || null,
-    files: req.files?.filter((file) => file.fieldname === "files") || [],
+    files: req.files || [],
     records: req.body?.records,
     record: req.body?.record,
   });

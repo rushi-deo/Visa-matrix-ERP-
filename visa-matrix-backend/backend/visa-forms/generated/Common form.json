@@ -1,0 +1,842 @@
+{
+  "country": "Common",
+  "name": "Common form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "personal_information",
+        "title": "1. Personal Information",
+        "fields": [
+          {
+            "label": "First Name (as per passport)",
+            "type": "text",
+            "required": true,
+            "id": "first_name"
+          },
+          {
+            "label": "Middle Name",
+            "type": "text",
+            "required": false,
+            "id": "middle_name"
+          },
+          {
+            "label": "Last Name / Surname",
+            "type": "text",
+            "required": true,
+            "id": "last_name"
+          },
+          {
+            "label": "Gender",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female",
+              "Other",
+              "Prefer not to say"
+            ],
+            "id": "gender"
+          },
+          {
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "date_of_birth"
+          },
+          {
+            "label": "Place of Birth (City, State, Country)",
+            "type": "textarea",
+            "required": true,
+            "id": "place_of_birth"
+          },
+          {
+            "label": "Current Nationality",
+            "type": "text",
+            "required": true,
+            "id": "current_nationality"
+          },
+          {
+            "label": "Previous Nationality (if any)",
+            "type": "text",
+            "required": false,
+            "id": "previous_nationality"
+          },
+          {
+            "label": "Marital Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Separated"
+            ],
+            "id": "marital_status"
+          },
+          {
+            "label": "National ID / Aadhaar",
+            "type": "text",
+            "required": false,
+            "id": "national_id_aadhaar"
+          }
+        ]
+      },
+      {
+        "id": "passport_information",
+        "title": "2. Passport Information",
+        "fields": [
+          {
+            "label": "Passport Number",
+            "type": "text",
+            "required": true,
+            "id": "passport_number"
+          },
+          {
+            "label": "Passport Type",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Regular",
+              "Diplomatic",
+              "Official"
+            ],
+            "id": "passport_type"
+          },
+          {
+            "label": "Place of Issue (City)",
+            "type": "text",
+            "required": true,
+            "id": "place_of_issue"
+          },
+          {
+            "label": "Country of Issue",
+            "type": "text",
+            "required": true,
+            "id": "country_of_issue"
+          },
+          {
+            "label": "Passport Issue Date",
+            "type": "date",
+            "required": true,
+            "id": "passport_issue_date"
+          },
+          {
+            "label": "Passport Expiry Date",
+            "type": "date",
+            "required": true,
+            "id": "passport_expiry_date"
+          },
+          {
+            "label": "Have you held any previous passport?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "held_previous_passport"
+          },
+          {
+            "label": "Previous Passport Number",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "held_previous_passport",
+              "value": "Yes"
+            },
+            "id": "previous_passport_number"
+          },
+          {
+            "label": "Issue Date (Previous Passport)",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "held_previous_passport",
+              "value": "Yes"
+            },
+            "id": "previous_issue_date"
+          },
+          {
+            "label": "Expiry Date (Previous Passport)",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "held_previous_passport",
+              "value": "Yes"
+            },
+            "id": "previous_expiry_date"
+          }
+        ]
+      },
+      {
+        "id": "contact_information",
+        "title": "3. Contact Information",
+        "fields": [
+          {
+            "label": "Mobile Number",
+            "type": "text",
+            "required": true,
+            "id": "mobile_number"
+          },
+          {
+            "label": "Alternate Phone Number",
+            "type": "text",
+            "required": false,
+            "id": "alternate_phone_number"
+          },
+          {
+            "label": "Email Address",
+            "type": "text",
+            "required": true,
+            "id": "email_address"
+          },
+          {
+            "label": "Current Residential Address",
+            "type": "textarea",
+            "required": true,
+            "id": "current_residential_address"
+          },
+          {
+            "label": "City (Current)",
+            "type": "text",
+            "required": true,
+            "id": "current_city"
+          },
+          {
+            "label": "State (Current)",
+            "type": "text",
+            "required": true,
+            "id": "current_state"
+          },
+          {
+            "label": "Country (Current)",
+            "type": "text",
+            "required": true,
+            "id": "current_country"
+          },
+          {
+            "label": "Postal Code (Current)",
+            "type": "text",
+            "required": true,
+            "id": "current_postal_code"
+          },
+          {
+            "label": "Permanent Address is same as Current Address?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "permanent_address_same_as_current"
+          },
+          {
+            "label": "Permanent Address",
+            "type": "textarea",
+            "required": true,
+            "condition": {
+              "field_id": "permanent_address_same_as_current",
+              "value": "No"
+            },
+            "id": "permanent_address"
+          },
+          {
+            "label": "City (Permanent)",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "permanent_address_same_as_current",
+              "value": "No"
+            },
+            "id": "permanent_city"
+          },
+          {
+            "label": "State (Permanent)",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "permanent_address_same_as_current",
+              "value": "No"
+            },
+            "id": "permanent_state"
+          },
+          {
+            "label": "Country (Permanent)",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "permanent_address_same_as_current",
+              "value": "No"
+            },
+            "id": "permanent_country"
+          },
+          {
+            "label": "Postal Code (Permanent)",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "permanent_address_same_as_current",
+              "value": "No"
+            },
+            "id": "permanent_postal_code"
+          }
+        ]
+      },
+      {
+        "id": "family_information",
+        "title": "4. Family Information",
+        "fields": [
+          {
+            "label": "Father Full Name",
+            "type": "text",
+            "required": true,
+            "id": "father_full_name"
+          },
+          {
+            "label": "Father Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "father_date_of_birth"
+          },
+          {
+            "label": "Father Nationality",
+            "type": "text",
+            "required": true,
+            "id": "father_nationality"
+          },
+          {
+            "label": "Father Current Address",
+            "type": "textarea",
+            "required": true,
+            "id": "father_current_address"
+          },
+          {
+            "label": "Mother Full Name",
+            "type": "text",
+            "required": true,
+            "id": "mother_full_name"
+          },
+          {
+            "label": "Mother Date of Birth",
+            "type": "date",
+            "required": true,
+            "id": "mother_date_of_birth"
+          },
+          {
+            "label": "Mother Nationality",
+            "type": "text",
+            "required": true,
+            "id": "mother_nationality"
+          },
+          {
+            "label": "Mother Current Address",
+            "type": "textarea",
+            "required": true,
+            "id": "mother_current_address"
+          },
+          {
+            "label": "Are you currently married? (Used for Spouse section)",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "conditional_control_of": [
+              "marital_status",
+              "Married"
+            ],
+            "id": "is_married"
+          },
+          {
+            "label": "Spouse Full Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "is_married",
+              "value": "Yes"
+            },
+            "id": "spouse_full_name"
+          },
+          {
+            "label": "Spouse Date of Birth",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "is_married",
+              "value": "Yes"
+            },
+            "id": "spouse_date_of_birth"
+          },
+          {
+            "label": "Spouse Nationality",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "is_married",
+              "value": "Yes"
+            },
+            "id": "spouse_nationality"
+          },
+          {
+            "label": "Spouse Passport Number (if available)",
+            "type": "text",
+            "required": false,
+            "condition": {
+              "field_id": "is_married",
+              "value": "Yes"
+            },
+            "id": "spouse_passport_number"
+          },
+          {
+            "label": "Do you have any children?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "has_children"
+          },
+          {
+            "label": "Child 1 Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "has_children",
+              "value": "Yes"
+            },
+            "id": "child_name"
+          },
+          {
+            "label": "Child 1 Date of Birth",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "has_children",
+              "value": "Yes"
+            },
+            "id": "child_date_of_birth"
+          },
+          {
+            "label": "Child 1 Passport Number",
+            "type": "text",
+            "required": false,
+            "condition": {
+              "field_id": "has_children",
+              "value": "Yes"
+            },
+            "id": "child_passport_number"
+          }
+        ]
+      },
+      {
+        "id": "travel_information",
+        "title": "5. Travel Information",
+        "fields": [
+          {
+            "label": "Previous International Travel",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "previous_international_travel"
+          },
+          {
+            "label": "Countries Visited",
+            "type": "textarea",
+            "required": false,
+            "condition": {
+              "field_id": "previous_international_travel",
+              "value": "Yes"
+            },
+            "id": "countries_visited"
+          },
+          {
+            "label": "Visa Refusal History",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "visa_refusal_history"
+          }
+        ]
+      },
+      {
+        "id": "employment_information",
+        "title": "6. Employment Information",
+        "fields": [
+          {
+            "label": "Current Employment Status",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Employed",
+              "Self-Employed",
+              "Student",
+              "Unemployed"
+            ],
+            "id": "employment_status"
+          },
+          {
+            "label": "Company Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "company_name"
+          },
+          {
+            "label": "Company Address",
+            "type": "textarea",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "company_address"
+          },
+          {
+            "label": "Job Title / Position",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "job_title_position"
+          },
+          {
+            "label": "Employment Start Date",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "employment_start_date"
+          },
+          {
+            "label": "Monthly Salary",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "monthly_salary"
+          },
+          {
+            "label": "Work Email",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "work_email"
+          },
+          {
+            "label": "Work Phone",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Employed"
+            },
+            "id": "work_phone"
+          },
+          {
+            "label": "Business Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Self-Employed"
+            },
+            "id": "business_name"
+          },
+          {
+            "label": "Business Type",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Self-Employed"
+            },
+            "id": "business_type"
+          },
+          {
+            "label": "Business Address",
+            "type": "textarea",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Self-Employed"
+            },
+            "id": "business_address"
+          },
+          {
+            "label": "Annual Income",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Self-Employed"
+            },
+            "id": "annual_income_self_employed"
+          },
+          {
+            "label": "University / College Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Student"
+            },
+            "id": "university_college_name"
+          },
+          {
+            "label": "Course Name",
+            "type": "text",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Student"
+            },
+            "id": "course_name"
+          },
+          {
+            "label": "Study Start Date",
+            "type": "date",
+            "required": true,
+            "condition": {
+              "field_id": "employment_status",
+              "value": "Student"
+            },
+            "id": "study_start_date"
+          }
+        ]
+      },
+      {
+        "id": "financial_information",
+        "title": "7. Financial Information",
+        "fields": [
+          {
+            "label": "Bank Name",
+            "type": "text",
+            "required": true,
+            "id": "bank_name"
+          },
+          {
+            "label": "Account Type",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Savings",
+              "Current"
+            ],
+            "id": "account_type"
+          },
+          {
+            "label": "Average Balance",
+            "type": "text",
+            "required": true,
+            "id": "average_balance"
+          },
+          {
+            "label": "Annual Income",
+            "type": "text",
+            "required": true,
+            "id": "annual_income_financial"
+          },
+          {
+            "label": "Income Tax Return Filed",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "income_tax_return_filed"
+          }
+        ]
+      },
+      {
+        "id": "emergency_contact",
+        "title": "8. Emergency Contact",
+        "fields": [
+          {
+            "label": "Emergency Contact Name",
+            "type": "text",
+            "required": true,
+            "id": "emergency_contact_name"
+          },
+          {
+            "label": "Relationship",
+            "type": "text",
+            "required": true,
+            "id": "emergency_contact_relationship"
+          },
+          {
+            "label": "Phone Number",
+            "type": "text",
+            "required": true,
+            "id": "emergency_contact_phone_number"
+          },
+          {
+            "label": "Address",
+            "type": "textarea",
+            "required": true,
+            "id": "emergency_contact_address"
+          }
+        ]
+      },
+      {
+        "id": "immigration_background",
+        "title": "9. Immigration Background",
+        "fields": [
+          {
+            "label": "Ever deported from any country?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "ever_deported"
+          },
+          {
+            "label": "Ever arrested or convicted?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "ever_arrested_or_convicted"
+          },
+          {
+            "label": "Ever overstayed visa?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "ever_overstayed_visa"
+          },
+          {
+            "label": "Any ongoing immigration case?",
+            "type": "boolean",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "id": "ongoing_immigration_case"
+          }
+        ]
+      },
+      {
+        "id": "document_upload",
+        "title": "10. Document Upload Section",
+        "fields": [
+          {
+            "label": "Passport Front Page",
+            "type": "file_upload",
+            "required": true,
+            "id": "passport_front_page_upload"
+          },
+          {
+            "label": "Passport Last Page",
+            "type": "file_upload",
+            "required": true,
+            "id": "passport_last_page_upload"
+          },
+          {
+            "label": "Photograph",
+            "type": "file_upload",
+            "required": true,
+            "id": "photograph_upload"
+          },
+          {
+            "label": "Aadhaar / National ID",
+            "type": "file_upload",
+            "required": false,
+            "id": "aadhaar_national_id_upload"
+          },
+          {
+            "label": "PAN Card",
+            "type": "file_upload",
+            "required": false,
+            "id": "pan_card_upload"
+          },
+          {
+            "label": "Bank Statement",
+            "type": "file_upload",
+            "required": true,
+            "id": "bank_statement_upload"
+          },
+          {
+            "label": "Salary Slips",
+            "type": "file_upload",
+            "required": true,
+            "id": "salary_slips_upload"
+          },
+          {
+            "label": "Income Tax Return",
+            "type": "file_upload",
+            "required": true,
+            "id": "income_tax_return_upload"
+          },
+          {
+            "label": "Employment Letter",
+            "type": "file_upload",
+            "required": true,
+            "id": "employment_letter_upload"
+          },
+          {
+            "label": "Invitation Letter",
+            "type": "file_upload",
+            "required": false,
+            "id": "invitation_letter_upload"
+          },
+          {
+            "label": "Travel Itinerary",
+            "type": "file_upload",
+            "required": true,
+            "id": "travel_itinerary_upload"
+          },
+          {
+            "label": "Hotel Booking",
+            "type": "file_upload",
+            "required": true,
+            "id": "hotel_booking_upload"
+          },
+          {
+            "label": "Flight Reservation",
+            "type": "file_upload",
+            "required": true,
+            "id": "flight_reservation_upload"
+          },
+          {
+            "label": "Travel Insurance",
+            "type": "file_upload",
+            "required": true,
+            "id": "travel_insurance_upload"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "country": "UK",
+  "visa_type": "Application form",
+  "name": "UK Visa Application form",
+  "version": 1,
+  "status": "draft",
+  "form_schema": {
+    "sections": [
+      {
+        "id": "visit_details",
+        "title": "UK Visa and Travel Details",
+        "fields": [
+          {
+            "id": "visitor_visa_type",
+            "label": "Which type of Visitor Visa are you applying for?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Tourist",
+              "Visit friend(s)",
+              "Other"
+            ]
+          },
+          {
+            "id": "other_visa_type_details",
+            "label": "Please specify 'Other' visa type",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "visitor_visa_type",
+              "equals": "Other"
+            }
+          },
+          {
+            "id": "visa_validity_period",
+            "label": "How long do you want your visa to be valid for?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "6 months",
+              "2 years",
+              "11 months (for private medical treatment & English language study only)",
+              "5 years",
+              "10 years",
+              "1 month (for permitted paid engagements)",
+              "12 months (for academics doing research on sabbatical leave and their accompanying child, spouse or partner)"
+            ]
+          },
+          {
+            "id": "main_purpose_of_visit",
+            "label": "What is the main purpose of your visit to the UK?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "intended_stay_duration",
+            "label": "How long do you intend to stay in the UK?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "travel_date_to_uk",
+            "label": "On which date do you wish to travel to the UK?",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "leave_date_from_uk",
+            "label": "On which date will you leave the UK?",
+            "type": "date",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "personal_details_part_1",
+        "title": "Part 1: Personal Details",
+        "fields": [
+          {
+            "id": "given_names",
+            "label": "Given name(s) (as shown in your passport)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "family_name",
+            "label": "Family name (as shown in your passport)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "other_names",
+            "label": "Other names (including any other names you are known by and/or any other names that you have been known by)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "sex",
+            "label": "Sex",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Male",
+              "Female"
+            ]
+          },
+          {
+            "id": "marital_status",
+            "label": "Marital status?",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Separated",
+              "Civil Partnership"
+            ]
+          },
+          {
+            "id": "date_of_birth",
+            "label": "Date of Birth",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "place_of_birth",
+            "label": "Place of Birth",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "country_of_birth",
+            "label": "Country of Birth",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "nationality",
+            "label": "Nationality",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "has_other_nationality",
+            "label": "Do you hold, or have you ever held, any other nationality or nationalities?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "other_nationality_details",
+            "label": "If ‘Yes’ please provide details",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "has_other_nationality",
+              "equals": "Yes"
+            }
+          }
+        ]
+      },
+      {
+        "id": "passport_information",
+        "title": "Passport Information",
+        "fields": [
+          {
+            "id": "passport_number",
+            "label": "Current passport or travel document number",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "passport_place_of_issue",
+            "label": "Place of Issue",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "passport_issuing_authority",
+            "label": "Issuing Authority",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "passport_date_of_issue",
+            "label": "Date of Issue",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "passport_date_of_expiry",
+            "label": "Date of Expiry",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "is_first_passport",
+            "label": "Is this your first passport?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "previous_passport_details",
+            "label": "Please give details of any previous passports, covering the last 10 years, including where these passports are now.",
+            "type": "text",
+            "required": false,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "contact_details_part_3",
+        "title": "Part 3: Your Contact Details",
+        "fields": [
+          {
+            "id": "residential_address",
+            "label": "Your full residential address and postal code",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "address_years_of_residence",
+            "label": "How long have you lived at this address?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "home_phone_number",
+            "label": "Home (landline) telephone number",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "mobile_phone_number",
+            "label": "Your mobile telephone number",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "email_address",
+            "label": "Email address",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "alt_contact_details",
+            "label": "Contact details if different from those given in question 3.1",
+            "type": "text",
+            "required": false,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "family_details_part_4",
+        "title": "Part 4: Your Family",
+        "fields": [
+          {
+            "id": "father_given_names",
+            "label": "Father’s given name(s)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "father_family_name",
+            "label": "Father’s family name",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "father_date_of_birth",
+            "label": "Father’s date of birth",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "father_birth_place",
+            "label": "Father’s place and country of birth",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "father_nationality",
+            "label": "Father’s nationality/nationalities",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mother_given_names",
+            "label": "Mother’s given name(s)",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mother_family_name",
+            "label": "Mother’s family name",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mother_date_of_birth",
+            "label": "Mother’s date of birth",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mother_nationality",
+            "label": "Mother’s nationality/nationalities",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "mother_birth_place",
+            "label": "Mother’s place and country of birth",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "spouse_full_name",
+            "label": "Full name of spouse/partner (If single go to 4.16)",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "spouse_nationality",
+            "label": "Spouse/partner’s nationality/nationalities",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "spouse_date_of_birth",
+            "label": "Spouse/partner’s date of birth",
+            "type": "date",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "spouse_lives_with_applicant",
+            "label": "Does your spouse/partner currently live with you at the address?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "spouse_travelling_with_applicant",
+            "label": "Will your spouse/partner be travelling with you?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "has_children",
+            "label": "Do you have any children?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "children_details",
+            "label": "Please provide full details for each of your children.",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "has_children",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "all_children_live_with_applicant",
+            "label": "Do all your children currently live with you at the address?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio",
+            "visible_if": {
+              "field": "has_children",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "travelling_children_list",
+            "label": "Please list any of your children who will be travelling with you to the UK?",
+            "type": "text",
+            "required": false,
+            "options": [],
+            "visible_if": {
+              "field": "has_children",
+              "equals": "Yes"
+            }
+          },
+          {
+            "id": "other_children_travelling",
+            "label": "Will any other children be travelling with you?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "other_children_details",
+            "label": "If yes please provide full details about the child/children (non-applicant children travelling)",
+            "type": "text",
+            "required": true,
+            "options": [],
+            "visible_if": {
+              "field": "other_children_travelling",
+              "equals": "Yes"
+            }
+          }
+        ]
+      },
+      {
+        "id": "finances_employment_part_5",
+        "title": "Part 5: Finances and Employment",
+        "fields": [
+          {
+            "id": "personal_circumstances",
+            "label": "What are your current personal circumstances?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "present_occupation",
+            "label": "What is your present work or job or occupation?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "employer_name",
+            "label": "What is the name of the company or organization you work for?",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "job_start_date",
+            "label": "When did you start this job?",
+            "type": "date",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "work_address",
+            "label": "What is your work address?",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "employer_phone",
+            "label": "What are your employer’s telephone numbers?",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "employer_email",
+            "label": "What is your employer’s email address?",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "additional_jobs_details",
+            "label": "Please give details of any additional job(s) or occupation(s) you have",
+            "type": "text",
+            "required": false,
+            "options": []
+          },
+          {
+            "id": "monthly_income_after_tax",
+            "label": "What is your total monthly income from all sources of employment or occupation after tax?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "receives_other_income",
+            "label": "Do you receive income from any other sources, including friends or family?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "has_savings_property_other_income",
+            "label": "Do you have savings, property or other income (for example from stocks & shares)?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "monthly_dependent_support",
+            "label": "How much of your total monthly income is given to your family members and other dependents?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "monthly_living_costs",
+            "label": "How much do you spend each month on living costs?",
+            "type": "text",
+            "required": true,
+            "options": []
+          },
+          {
+            "id": "travel_payer",
+            "label": "Who will pay for your travel to the UK?",
+            "type": "text",
+            "required": true,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "travel_history_part_6",
+        "title": "Previous Applications And Travel History",
+        "fields": [
+          {
+            "id": "travelled_to_uk_10_years",
+            "label": "Have you travelled to the UK in the last 10 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "travelled_outside_residence_10_years",
+            "label": "Have you travelled outside your country of residence, excluding to the UK, in the last 10 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "refused_visa_any_country",
+            "label": "Have you ever been refused a visa for any country, including the UK?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "granted_uk_visa_10_years",
+            "label": "Have you been granted any UK visas in the last 10 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          },
+          {
+            "id": "refused_entry_uk_10_years",
+            "label": "Have you been refused entry on arrival to the UK in the last 10 years?",
+            "type": "radio",
+            "required": true,
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "ui": "radio"
+          }
+        ]
+      }
+    ]
+  }
+}
