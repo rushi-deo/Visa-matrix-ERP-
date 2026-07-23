@@ -23,10 +23,11 @@ interface Props<T> {
   pageSize?: number;
   rowAction?: (row: T) => React.ReactNode;
   onRowClick?: (row: T) => void;
+  selectedRowId?: string | null;
   toolbar?: React.ReactNode;
 }
 
-export function DataTable<T extends { id: string }>({ data, columns, searchKeys, pageSize = 10, rowAction, onRowClick, toolbar }: Props<T>) {
+export function DataTable<T extends { id: string }>({ data, columns, searchKeys, pageSize = 10, rowAction, onRowClick, selectedRowId, toolbar }: Props<T>) {
   const [q, setQ] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [sortKey, setSortKey] = React.useState<string | null>(null);
@@ -93,7 +94,8 @@ export function DataTable<T extends { id: string }>({ data, columns, searchKeys,
               </TableCell></TableRow>
             ) : rows.map((row) => (
               <TableRow key={row.id} onClick={() => onRowClick?.(row)}
-                className={onRowClick ? "cursor-pointer" : ""}>
+                className={`${onRowClick ? "cursor-pointer" : ""} ${selectedRowId === row.id ? "bg-primary/10 hover:bg-primary/15" : ""}`}
+                aria-selected={selectedRowId === row.id}>
                 {columns.map((c) => (
                   <TableCell key={c.key} className={c.className}>
                     {c.render ? c.render(row) : String((row as any)[c.key] ?? "")}

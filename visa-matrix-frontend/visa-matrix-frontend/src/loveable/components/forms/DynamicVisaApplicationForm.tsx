@@ -57,41 +57,48 @@ const normalizeInitialValues = (sections: VisaSection[]) => sections.reduce<Reco
   return values;
 }, {});
 
-function FieldControl({ field, value, onChange }: { field: VisaField; value: unknown; onChange: (value: unknown) => void }) {
+function FieldControl({ field, value, onChange, readOnly }: { field: VisaField; value: unknown; onChange: (value: unknown) => void; readOnly?: boolean }) {
   const type = fieldType(field);
   const options = Array.isArray(field.options) ? field.options : [];
   const hasOptions = options.length > 1;
+  if (readOnly && type === "file") {
+    const file = typeof value === "object" && value !== null ? value as { name?: string; url?: string; downloadUrl?: string; download_url?: string } : null;
+    const url = typeof value === "string" ? value : file?.url ?? file?.downloadUrl ?? file?.download_url;
+    const name = typeof value === "string" ? value.split("/").pop() : file?.name;
+    return url ? <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 px-3 py-3 text-sm"><span className="truncate">{name || "Uploaded file"}</span><a href={url} target="_blank" rel="noreferrer" className="font-medium text-primary hover:underline">View</a><a href={url} download={name || true} className="font-medium text-primary hover:underline">Download</a></div> : <div className="rounded-lg border border-border bg-muted/30 px-3 py-3 text-sm text-muted-foreground">{name || "No file uploaded"}</div>;
+  }
   const common = {
     id: field.id,
     name: field.id,
     value: String(value ?? ""),
+    disabled: readOnly,
     onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => onChange(event.target.value),
   };
 
   if (type === "checkbox") {
-    return <label className="flex items-center gap-3 rounded-lg border border-border px-3 py-3 text-sm"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-primary" />{field.label}</label>;
+    return <label className="flex items-center gap-3 rounded-lg border border-border px-3 py-3 text-sm"><input type="checkbox" checked={Boolean(value)} onChange={(event) => onChange(event.target.checked)} disabled={readOnly} className="size-4 accent-primary" />{field.label}</label>;
   }
   if (type === "boolean") {
-    return <div className="flex flex-wrap gap-3">{(hasOptions ? options : ["Yes", "No"]).map((option) => <label key={optionValue(option)} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm"><input type="radio" name={field.id} checked={String(value ?? "") === optionValue(option)} onChange={() => onChange(optionValue(option))} className="accent-primary" />{optionLabel(option)}</label>)}</div>;
+    return <div className="flex flex-wrap gap-3">{(hasOptions ? options : ["Yes", "No"]).map((option) => <label key={optionValue(option)} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm"><input type="radio" name={field.id} checked={String(value ?? "") === optionValue(option)} onChange={() => onChange(optionValue(option))} disabled={readOnly} className="accent-primary" />{optionLabel(option)}</label>)}</div>;
   }
   if (type === "radio") {
-    return <div className="flex flex-wrap gap-3">{options.map((option) => <label key={optionValue(option)} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm"><input type="radio" name={field.id} checked={String(value ?? "") === optionValue(option)} onChange={() => onChange(optionValue(option))} className="accent-primary" />{optionLabel(option)}</label>)}</div>;
+    return <div className="flex flex-wrap gap-3">{options.map((option) => <label key={optionValue(option)} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm"><input type="radio" name={field.id} checked={String(value ?? "") === optionValue(option)} onChange={() => onChange(optionValue(option))} disabled={readOnly} className="accent-primary" />{optionLabel(option)}</label>)}</div>;
   }
   if (type === "file") {
-    return <label htmlFor={field.id} className="flex min-h-24 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 text-sm text-muted-foreground hover:bg-muted/60"><FileUp className="size-4" />{value instanceof File ? value.name : "Choose a file"}<input id={field.id} name={field.id} type="file" onChange={(event) => onChange(event.target.files?.[0] ?? null)} className="sr-only" /></label>;
+    return <label htmlFor={field.id} className="flex min-h-24 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 text-sm text-muted-foreground hover:bg-muted/60"><FileUp className="size-4" />{value instanceof File ? value.name : "Choose a file"}<input id={field.id} name={field.id} type="file" onChange={(event) => onChange(event.target.files?.[0] ?? null)} disabled={readOnly} className="sr-only" /></label>;
   }
   if (type === "textarea") return <Textarea {...common} value={String(value ?? "")} rows={4} />;
   if (type === "select" || hasOptions) return <select {...common} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"><option value="">Select an option</option>{options.map((option) => <option key={optionValue(option)} value={optionValue(option)}>{optionLabel(option)}</option>)}</select>;
   const htmlType = ["number", "email", "date", "tel"].includes(type) ? type : "text";
-  return <Input {...common} type={htmlType} />;
+  return <Input {...common} type={htmlType} readOnly={readOnly} />;
 }
 
-export function DynamicVisaApplicationForm({ config, countryName, visaTypeName }: { config: FormConfig; countryName?: string; visaTypeName?: string }) {
+export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, readOnly = false, initialValues = {} }: { config: FormConfig; countryName?: string; visaTypeName?: string; readOnly?: boolean; initialValues?: Record<string, unknown> }) {
   const sections = config.form_schema?.sections ?? [];
   const draftKey = `visa-matrix:draft:${countryName ?? "country"}:${visaTypeName ?? "visa"}`;
   const [step, setStep] = React.useState(0);
   const [reviewing, setReviewing] = React.useState(false);
-  const [values, setValues] = React.useState<Record<string, unknown>>(() => normalizeInitialValues(sections));
+  const [values, setValues] = React.useState<Record<string, unknown>>(() => ({ ...normalizeInitialValues(sections), ...initialValues }));
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const section = sections[step];
 
@@ -119,8 +126,8 @@ export function DynamicVisaApplicationForm({ config, countryName, visaTypeName }
       {sections.map((item, index) => <React.Fragment key={item.id ?? index}><button type="button" onClick={() => index < step && setStep(index)} className="flex items-center gap-2" aria-current={index === step ? "step" : undefined}><span className={cn("grid size-9 place-items-center rounded-full border text-sm font-semibold", index < step ? "border-emerald-600 bg-emerald-600 text-white" : index === step ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground")}>{index < step ? <Check className="size-4" /> : index + 1}</span><span className={cn("text-sm", index === step ? "font-semibold text-foreground" : "text-muted-foreground")}>{item.title ?? `Section ${index + 1}`}</span></button>{index < sections.length - 1 && <span className={cn("h-px w-8", index < step ? "bg-emerald-600" : "bg-border")} />}</React.Fragment>)}
     </div></div>
     <Card className="border-border/80 shadow-sm"><CardHeader className="border-b border-border/70 pb-5"><div className="flex items-start justify-between gap-4"><div><CardTitle className="text-xl">{section?.title ?? "Application details"}</CardTitle><CardDescription className="mt-1">{section?.description ?? "Complete the information below to continue your application."}</CardDescription></div><span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Step {step + 1} of {sections.length}</span></div></CardHeader><CardContent className="space-y-5 pt-6">
-      {(section?.fields ?? []).filter((field) => isVisible(field, values)).map((field) => <div key={field.id} className="space-y-2"><label htmlFor={field.id} className="text-sm font-medium text-foreground">{field.label ?? field.id}{field.required && <span className="ml-1 text-destructive">*</span>}</label>{(field.help_text || field.helpText) && <p className="text-xs text-muted-foreground">{field.help_text || field.helpText}</p>}<FieldControl field={field} value={values[field.id]} onChange={(value) => updateValue(field.id, value)} />{errors[field.id] && <p className="text-xs text-destructive">{errors[field.id]}</p>}</div>)}
-      <div className="flex flex-col-reverse gap-3 border-t border-border/70 pt-5 sm:flex-row sm:items-center sm:justify-between"><Button type="button" variant="outline" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ChevronLeft className="size-4" />Previous</Button><div className="flex flex-col gap-2 sm:flex-row"><Button type="button" variant="ghost" onClick={saveDraft}><Save className="size-4" />Save Draft</Button>{step < sections.length - 1 ? <Button type="button" onClick={() => validateSection() && setStep((current) => current + 1)}>Next<ChevronRight className="size-4" /></Button> : <Button type="button" onClick={() => validateSection() && setReviewing(true)}>Review &amp; Submit<ChevronRight className="size-4" /></Button>}</div></div>
+      {(section?.fields ?? []).filter((field) => isVisible(field, values)).map((field) => <div key={field.id} className="space-y-2"><label htmlFor={field.id} className="text-sm font-medium text-foreground">{field.label ?? field.id}{field.required && <span className="ml-1 text-destructive">*</span>}</label>{(field.help_text || field.helpText) && <p className="text-xs text-muted-foreground">{field.help_text || field.helpText}</p>}<FieldControl field={field} value={values[field.id]} onChange={(value) => updateValue(field.id, value)} readOnly={readOnly} />{errors[field.id] && <p className="text-xs text-destructive">{errors[field.id]}</p>}</div>)}
+      <div className="flex gap-3 border-t border-border/70 pt-5"><Button type="button" variant="outline" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ChevronLeft className="size-4" />Previous</Button>{step < sections.length - 1 ? <Button type="button" onClick={() => readOnly ? setStep((current) => current + 1) : validateSection() && setStep((current) => current + 1)}>Next<ChevronRight className="size-4" /></Button> : null}{!readOnly && <div className="ml-auto flex gap-2"><Button type="button" variant="ghost" onClick={saveDraft}><Save className="size-4" />Save Draft</Button>{step === sections.length - 1 ? <Button type="button" onClick={() => validateSection() && setReviewing(true)}>Review &amp; Submit<ChevronRight className="size-4" /></Button> : null}</div>}</div>
     </CardContent></Card>
   </div>;
 }

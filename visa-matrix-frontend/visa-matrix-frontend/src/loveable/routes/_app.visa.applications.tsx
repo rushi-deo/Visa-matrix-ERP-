@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ModulePage } from "@/components/common/ModulePage";
 import apiClient, {
   extractResponseData,
@@ -8,8 +8,9 @@ import * as React from "react";
 import ApplicationCreateDialog from "@/components/applications/ApplicationCreateDialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 import type { Column } from "@/components/common/DataTable";
+import { ApplicantWorkspace } from "@/components/applicant-workspace/ApplicantWorkspace";
+import { WorkspaceDivider } from "@/components/applicant-workspace/WorkspaceDivider";
 type Application = {
   id: string;
   application_number: string;
@@ -27,27 +28,24 @@ export const Route = createFileRoute("/_app/visa/applications")({
   component: Page,
 });
 function Page() {
-  const navigate = useNavigate();
   const [applications, setApplications] = React.useState<Application[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [createOpen, setCreateOpen] = React.useState(false);
+  const [selectedApplicationId, setSelectedApplicationId] =
+    React.useState<string | null>(null);
+  const [leftPanelWidth, setLeftPanelWidth] = React.useState(58);
+  const [isFullScreen, setIsFullScreen] = React.useState(false);
+  const workspaceOpen = selectedApplicationId !== null;
   const cols: Column<Application>[] = [
     {
       key: "application_number",
       header: "Application Number",
       sortable: true,
       render: (r) => (
-        <button
-          type="button"
-          className="font-medium text-primary hover:underline"
-          onClick={(event) => {
-            event.stopPropagation();
-            navigate({ to: "/visa/applications/$id", params: { id: r.id } });
-          }}
-        >
+        <span className="font-medium text-primary hover:underline">
           {r.application_number || r.id}
-        </button>
+        </span>
       ),
     },
     {
@@ -55,16 +53,9 @@ function Page() {
       header: "Customer Name",
       sortable: true,
       render: (r) => (
-        <button
-          type="button"
-          className="text-left text-foreground hover:underline"
-          onClick={(event) => {
-            event.stopPropagation();
-            navigate({ to: "/visa/applications/$id", params: { id: r.id } });
-          }}
-        >
+        <span className="text-left text-foreground hover:underline">
           {r.customer_name || "-"}
-        </button>
+        </span>
       ),
     },
     {
@@ -119,7 +110,13 @@ function Page() {
 
   return (
     <>
-      <ModulePage
+      <div className="flex min-h-[calc(100vh-8rem)] w-full overflow-hidden rounded-lg border bg-background">
+        {!isFullScreen ? (
+          <div
+            className="min-w-0 overflow-auto p-6"
+            style={{ width: workspaceOpen ? `${leftPanelWidth}%` : "100%" }}
+          >
+            <ModulePage
         title="Visa Applications"
         description="Track and manage every visa case across countries."
         data={applications}
@@ -138,6 +135,7 @@ function Page() {
           console.log("New Application clicked");
           setCreateOpen(true);
         }}
+        selectedRowId={selectedApplicationId}
         isLoading={loading}
         error={error ?? undefined}
         emptyMessage={
@@ -145,22 +143,33 @@ function Page() {
             ? "No applications found."
             : undefined
         }
-        rowAction={(r) => (
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={(event) => {
-              event.stopPropagation();
-              navigate({ to: "/visa/applications/$id", params: { id: r.id } });
+        onRowClick={(r) => {
+          setSelectedApplicationId(r.id);
+        }}
+            />
+          </div>
+        ) : null}
+        {workspaceOpen && !isFullScreen ? (
+          <WorkspaceDivider
+            onDrag={(deltaX) => {
+              setLeftPanelWidth((current) =>
+                Math.min(75, Math.max(25, current + (deltaX / window.innerWidth) * 100)),
+              );
             }}
-          >
-            <Eye className="size-4" />
-          </Button>
-        )}
-        onRowClick={(r) =>
-          navigate({ to: "/visa/applications/$id", params: { id: r.id } })
-        }
-      />
+          />
+        ) : null}
+        {workspaceOpen ? (
+          <ApplicantWorkspace
+            applicationId={selectedApplicationId}
+            isFullScreen={isFullScreen}
+            onToggleFullScreen={() => setIsFullScreen((current) => !current)}
+            onClose={() => {
+              setSelectedApplicationId(null);
+              setIsFullScreen(false);
+            }}
+          />
+        ) : null}
+      </div>
       <ApplicationCreateDialog
         open={createOpen}
         onOpenChange={(v) => setCreateOpen(v)}
