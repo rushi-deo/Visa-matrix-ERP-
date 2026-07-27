@@ -1,11 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ModulePage } from "@/components/common/ModulePage";
 import apiClient, {
   extractResponseData,
   API_ENDPOINTS,
 } from "@erp/services/apiClient";
 import * as React from "react";
-import ApplicationCreateDialog from "@/components/applications/ApplicationCreateDialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
 import type { Column } from "@/components/common/DataTable";
@@ -28,15 +27,21 @@ export const Route = createFileRoute("/_app/visa/applications")({
   component: Page,
 });
 function Page() {
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [applications, setApplications] = React.useState<Application[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [createOpen, setCreateOpen] = React.useState(false);
   const [selectedApplicationId, setSelectedApplicationId] =
     React.useState<string | null>(null);
   const [leftPanelWidth, setLeftPanelWidth] = React.useState(58);
   const [isFullScreen, setIsFullScreen] = React.useState(false);
   const workspaceOpen = selectedApplicationId !== null;
+
+  if (pathname !== "/visa/applications") {
+    return <Outlet />;
+  }
+
   const cols: Column<Application>[] = [
     {
       key: "application_number",
@@ -131,10 +136,7 @@ function Page() {
           "stage",
         ]}
         primaryAction="New Application"
-        onPrimaryAction={() => {
-          console.log("New Application clicked");
-          setCreateOpen(true);
-        }}
+        onPrimaryAction={() => navigate({ to: "/visa/applications/new" })}
         selectedRowId={selectedApplicationId}
         isLoading={loading}
         error={error ?? undefined}
@@ -170,24 +172,6 @@ function Page() {
           />
         ) : null}
       </div>
-      <ApplicationCreateDialog
-        open={createOpen}
-        onOpenChange={(v) => setCreateOpen(v)}
-        onCreated={async () => {
-          // refresh table
-          setLoading(true);
-          try {
-            const resp = await apiClient.get(API_ENDPOINTS.applications);
-            const data = extractResponseData(resp);
-            const items = Array.isArray(data?.items) ? data.items : [];
-            setApplications(items);
-          } catch (err: any) {
-            console.error("Failed to refresh applications:", err);
-          } finally {
-            setLoading(false);
-          }
-        }}
-      />
     </>
   );
 }

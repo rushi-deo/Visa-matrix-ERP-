@@ -93,7 +93,7 @@ function FieldControl({ field, value, onChange, readOnly }: { field: VisaField; 
   return <Input {...common} type={htmlType} readOnly={readOnly} />;
 }
 
-export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, readOnly = false, initialValues = {} }: { config: FormConfig; countryName?: string; visaTypeName?: string; readOnly?: boolean; initialValues?: Record<string, unknown> }) {
+export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, readOnly = false, initialValues = {}, onValuesChange, onSaveDraft, onSubmit }: { config: FormConfig; countryName?: string; visaTypeName?: string; readOnly?: boolean; initialValues?: Record<string, unknown>; onValuesChange?: (values: Record<string, unknown>) => void; onSaveDraft?: (values: Record<string, unknown>) => void | Promise<void>; onSubmit?: (values: Record<string, unknown>) => void | Promise<void> }) {
   const sections = config.form_schema?.sections ?? [];
   const draftKey = `visa-matrix:draft:${countryName ?? "country"}:${visaTypeName ?? "visa"}`;
   const [step, setStep] = React.useState(0);
@@ -103,7 +103,11 @@ export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, 
   const section = sections[step];
 
   const updateValue = (id: string, value: unknown) => {
-    setValues((current) => ({ ...current, [id]: value }));
+    setValues((current) => {
+      const next = { ...current, [id]: value };
+      onValuesChange?.(next);
+      return next;
+    });
     setErrors((current) => ({ ...current, [id]: "" }));
   };
   const validateSection = () => {
@@ -117,9 +121,10 @@ export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, 
   };
   const saveDraft = () => {
     window.localStorage.setItem(draftKey, JSON.stringify(values, (_, value) => value instanceof File ? { name: value.name, type: value.type } : value));
+    return onSaveDraft?.(values);
   };
 
-  if (reviewing) return <ReviewPanel sections={sections} values={values} onBack={() => setReviewing(false)} onSave={saveDraft} />;
+  if (reviewing) return <ReviewPanel sections={sections} values={values} onBack={() => setReviewing(false)} onSave={saveDraft} onSubmit={onSubmit} />;
 
   return <div className="space-y-6">
     <div className="overflow-x-auto pb-1"><div className="flex min-w-max items-center justify-center gap-2 px-2">
@@ -132,6 +137,6 @@ export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, 
   </div>;
 }
 
-function ReviewPanel({ sections, values, onBack, onSave }: { sections: VisaSection[]; values: Record<string, unknown>; onBack: () => void; onSave: () => void }) {
-  return <Card className="border-border/80 shadow-sm"><CardHeader><CardTitle>Review application</CardTitle><CardDescription>Check your answers before submitting.</CardDescription></CardHeader><CardContent className="space-y-6">{sections.map((section) => <section key={section.id} className="space-y-3"><h3 className="font-semibold">{section.title}</h3><dl className="grid gap-3 sm:grid-cols-2">{(section.fields ?? []).map((field) => <div key={field.id} className="rounded-lg bg-muted/40 px-3 py-2"><dt className="text-xs text-muted-foreground">{field.label ?? field.id}</dt><dd className="mt-1 break-words text-sm">{values[field.id] instanceof File ? (values[field.id] as File).name : String(values[field.id] ?? "Not provided")}</dd></div>)}</dl></section>)}<div className="flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:justify-between"><Button type="button" variant="outline" onClick={onBack}><ChevronLeft className="size-4" />Back to edit</Button><div className="flex gap-2"><Button type="button" variant="ghost" onClick={onSave}><Save className="size-4" />Save Draft</Button><Button type="button">Submit application</Button></div></div></CardContent></Card>;
+function ReviewPanel({ sections, values, onBack, onSave, onSubmit }: { sections: VisaSection[]; values: Record<string, unknown>; onBack: () => void; onSave: () => void | Promise<void>; onSubmit?: (values: Record<string, unknown>) => void | Promise<void> }) {
+  return <Card className="border-border/80 shadow-sm"><CardHeader><CardTitle>Review application</CardTitle><CardDescription>Check your answers before submitting.</CardDescription></CardHeader><CardContent className="space-y-6">{sections.map((section) => <section key={section.id} className="space-y-3"><h3 className="font-semibold">{section.title}</h3><dl className="grid gap-3 sm:grid-cols-2">{(section.fields ?? []).map((field) => <div key={field.id} className="rounded-lg bg-muted/40 px-3 py-2"><dt className="text-xs text-muted-foreground">{field.label ?? field.id}</dt><dd className="mt-1 break-words text-sm">{values[field.id] instanceof File ? (values[field.id] as File).name : String(values[field.id] ?? "Not provided")}</dd></div>)}</dl></section>)}<div className="flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:justify-between"><Button type="button" variant="outline" onClick={onBack}><ChevronLeft className="size-4" />Back to edit</Button><div className="flex gap-2"><Button type="button" variant="ghost" onClick={onSave}><Save className="size-4" />Save Draft</Button><Button type="button" onClick={() => onSubmit?.(values)}>Submit application</Button></div></div></CardContent></Card>;
 }

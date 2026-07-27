@@ -487,10 +487,9 @@ export const publishFormRecord = async (id) => {
     throw new AppError("Form not found.", 404);
   }
 
-  return updateForm(id, {
-    status: "published",
-    version: Number(current.version || 1),
-  });
+  // Canonical imported schemas do not carry a separate publication status;
+  // every row in form_schemas is an available published definition.
+  return current;
 };
 
 export const importFormsRecord = async (input = {}) => {
