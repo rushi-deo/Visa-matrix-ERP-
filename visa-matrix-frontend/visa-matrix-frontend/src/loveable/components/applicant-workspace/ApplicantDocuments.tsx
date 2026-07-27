@@ -5,7 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { toast } from "sonner";
-import { fallbackChecklistCatalog, fetchDocuments, uploadDocuments } from "@erp/services/documents.service";
+import {
+  fallbackChecklistCatalog,
+  fetchDocuments,
+  uploadDocuments,
+} from "@erp/services/documents.service";
 import { isUploadTypeSupported, supportedUploadTypes } from "@erp/services/erpService";
 
 interface ApplicantDocumentsProps {

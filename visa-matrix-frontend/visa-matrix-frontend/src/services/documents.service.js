@@ -1,84 +1,70 @@
-import { supabase } from "../supabase";
-import { getChecklistCatalog, getVisaDocumentChecklists } from "./mockApi";
+import apiClient, { extractResponseData } from "./apiClient";
+
+export const fallbackChecklistCatalog = [];
+export const fallbackVisaDocumentChecklists = [];
 
 const normalizeDocument = (document = {}) => ({
   ...document,
-  id: document.id ?? document.document_id ?? `DOC-${Date.now()}`,
+  id: document.id ?? document.document_id ?? "",
   documentName:
     document.documentName ??
     document.document_name ??
+    document.document_type ??
+    document.document_type_name ??
     document.type ??
     "Document",
-  applicationId: document.applicationId ?? document.application_id ?? "",
-  uploadedBy: document.uploadedBy ?? document.uploaded_by ?? "Operations Team",
+  applicationId:
+    document.applicationId ??
+    document.application_id ??
+    "",
+  uploadedBy:
+    document.uploadedBy ??
+    document.uploaded_by ??
+    "Operations Team",
   uploadDate:
     document.uploadDate ??
     document.upload_date ??
     document.uploaded_at ??
-    new Date().toISOString().slice(0, 10),
-  fileName: document.fileName ?? document.file_name ?? "file",
-  fileType: document.fileType ?? document.file_type ?? "FILE",
+    "",
+  fileName:
+    document.fileName ??
+    document.file_name ??
+    "",
+  fileType:
+    document.fileType ??
+    document.file_type ??
+    "",
+  url:
+    document.url ??
+    document.file_url ??
+    document.download_url ??
+    "",
 });
 
-export const fallbackChecklistCatalog = getChecklistCatalog();
-export const fallbackVisaDocumentChecklists = getVisaDocumentChecklists();
-
-function getDocumentsTable() {
-  if (!supabase) {
-    throw new Error("Supabase client is not configured.");
-  }
-
-  return supabase.from("documents");
-}
-
 export async function fetchDocuments(options = {}) {
-  const includeMeta =
-    options &&
-    typeof options === "object" &&
-    !Array.isArray(options) &&
-    options.includeMeta === true;
-
   try {
-    const { data, error } = await supabase
-      .from("documents")
-      .select("*");
+    const applicationId =
+      typeof options === "object"
+        ? options.applicationId
+        : options;
 
-    if (error) {
-      console.error("Documents fetch error:", error);
-      return includeMeta ? { data: [], error } : [];
-    }
+    const response = await apiClient.get("/documents", {
+      params: applicationId
+        ? { applicationId }
+        : {},
+    });
 
-    const normalizedDocuments = Array.isArray(data)
-      ? data.map(normalizeDocument)
-      : [];
+    const payload = extractResponseData(response);
 
-    console.log("Documents:", normalizedDocuments);
-    return includeMeta
-      ? { data: normalizedDocuments, error: null }
-      : normalizedDocuments;
+    const documents = Array.isArray(payload)
+      ? payload
+      : payload?.data ?? [];
+
+    return documents.map(normalizeDocument);
   } catch (error) {
     console.error("Documents fetch error:", error);
-    return includeMeta ? { data: [], error } : [];
+    return [];
   }
-}
-
-export function buildUploadedDocumentRows({
-  applicationId,
-  documentName,
-  uploadedBy,
-  files = [],
-}) {
-  const today = new Date().toISOString().slice(0, 10);
-
-  return files.map((file, index) => ({
-    id: `DOC-${Date.now().toString().slice(-4)}${index}`,
-    documentName,
-    applicationId,
-    uploadedBy,
-    uploadDate: today,
-    fileName: file.name,
-    fileType: file.name.split(".").pop()?.toUpperCase() ?? "FILE",
-  }));
 }
 
 export async function uploadDocuments({
@@ -87,19 +73,44 @@ export async function uploadDocuments({
   uploadedBy,
   files = [],
 }) {
-  const nextDocuments = buildUploadedDocumentRows({
-    applicationId,
-    documentName,
-    uploadedBy,
-    files,
-  });
+  const uploaded = [];
 
-  const { data, error } = await getDocumentsTable().insert(nextDocuments).select();
-  console.log("Supabase documents upload response:", data);
+  for (const file of files) {
+    const formData = new FormData();
 
-  if (error) {
-    throw error;
+    formData.append("applicationId", applicationId);
+    formData.append("documentType", documentName);
+    formData.append("file", file);
+
+    const response = await apiClient.post(
+      "/documents/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    uploaded.push(
+      normalizeDocument(extractResponseData(response))
+    );
   }
 
-  return Array.isArray(data) ? data.map(normalizeDocument) : nextDocuments;
+  return uploaded;
+}
+
+export async function updateDocument(id, payload) {
+  const response = await apiClient.put(
+    `/documents/${id}`,
+    payload
+  );
+
+  return normalizeDocument(extractResponseData(response));
+}
+
+export async function deleteDocument(id) {
+  await apiClient.delete(`/documents/${id}`);
+
+  return true;
 }
