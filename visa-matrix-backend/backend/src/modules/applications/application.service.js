@@ -4,6 +4,7 @@ import logger from "../../core/logger.js";
 import { createRollbackTransaction } from "../../core/transaction.js";
 import { createInvoice } from "../../services/invoice.service.js";
 import { generateQuotation } from "../../services/quotation.service.js";
+import { eventPublisher } from "../../platform/events/index.js";
 import {
   createApplication,
   deleteApplicationById,
@@ -52,6 +53,26 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
 
   try {
     application = await createApplication(tenantPayload);
+    try {
+      eventPublisher.publish({
+        module: "applications",
+        action: "created",
+        entityType: "application",
+        entityId: application.id,
+        actorId: authContext.userId || null,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          source: "application.service.createApplicationRecord",
+          status: resolveApplicationStatus(application),
+          tenantId: authContext.tenantId || null,
+        },
+      });
+    } catch (eventError) {
+      logger.error("Application creation event publish failed", {
+        applicationId: application.id,
+        error: eventError instanceof Error ? eventError.message : eventError,
+      });
+    }
     return application;
     transaction.addRollback("delete_application", () =>
       deleteApplicationById(application.id)

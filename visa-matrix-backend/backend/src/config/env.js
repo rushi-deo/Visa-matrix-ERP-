@@ -4,8 +4,13 @@ import dotenv from "dotenv";
 
 const configDirectory = path.dirname(fileURLToPath(import.meta.url));
 const envPath = path.resolve(configDirectory, "../../.env");
+// The React client and the API are deployed as one ERP application.  During
+// the VITE_ -> server-variable migration, retain the client project settings
+// as a backend-only fallback so both halves use the same Supabase project.
+const applicationEnvPath = path.resolve(configDirectory, "../../../.env");
 
 dotenv.config({ path: envPath });
+dotenv.config({ path: applicationEnvPath });
 
 const parseInteger = (value, fallback) => {
   const parsed = Number.parseInt(value, 10);
@@ -35,10 +40,14 @@ const env = {
   logLevel: process.env.LOG_LEVEL || "info",
   jwtSecret: process.env.JWT_SECRET || process.env.APP_JWT_SECRET || "change-me",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
-  supabaseUrl: process.env.SUPABASE_URL,
+  supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
   supabaseServiceRoleKey:
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY,
-  supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
+    process.env.VITE_SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.VITE_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY,
+  supabaseAnonKey:
+    process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || null,
   supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET || "visa-documents",
   uploadsMaxFileSizeBytes: parseInteger(
     process.env.UPLOAD_MAX_FILE_SIZE_BYTES,

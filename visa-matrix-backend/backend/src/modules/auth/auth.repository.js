@@ -2,6 +2,7 @@ import supabase from "../../config/supabase.js";
 import {
   AuthenticationError,
   ConflictError,
+  ExternalServiceError,
   fromSupabaseError,
   NotFoundError,
 } from "../../core/errors.js";
@@ -72,7 +73,16 @@ export const signInWithPassword = async ({ email, password }) => {
   });
 
   if (error) {
-    throw new AuthenticationError("Invalid email or password.");
+    // Only a credential rejection is safe to present as an invalid login.
+    // Network, DNS, project, or provider configuration failures must not be
+    // mistaken for a bad password.
+    if (error.code === "invalid_credentials") {
+      throw new AuthenticationError("Invalid email or password.");
+    }
+
+    throw new ExternalServiceError(
+      "Authentication service is temporarily unavailable. Please try again later.",
+    );
   }
 
   return data;
