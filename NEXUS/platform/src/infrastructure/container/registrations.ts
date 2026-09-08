@@ -1,5 +1,6 @@
 import { createAutomationManager } from '../../automation/manager.js';
 import { createBrainPlanner } from '../../brain/planner.js';
+import { createConnectorManager } from '../../connectors/manager.js';
 import { createEngineManager } from '../../engines/core/manager.js';
 import { createEventBus } from '../../events/event-bus.js';
 import { createKnowledgeManager } from '../../knowledge/manager.js';
@@ -24,6 +25,7 @@ import { PlannerToken } from './service-tokens.js';
 import {
   AgentManagerToken,
   AutomationManagerToken,
+  ConnectorManagerToken,
   EngineManagerToken,
   EventBusToken,
   KnowledgeManagerToken,
@@ -62,6 +64,7 @@ export const registerCoreServices = (container: Container): void => {
   container.register(EngineManagerToken, { lifetime: 'singleton', factory: () => createEngineManager() });
   container.register(PluginManagerToken, { lifetime: 'singleton', factory: () => createPluginManager() });
   container.register(ProviderManagerToken, { lifetime: 'singleton', factory: () => createProviderManager() });
+  container.register(ConnectorManagerToken, { lifetime: 'singleton', factory: () => createConnectorManager() });
 
   container.register(AutomationManagerToken, {
     lifetime: 'singleton',

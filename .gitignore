@@ -6,3 +6,6 @@ coverage/
 .vscode/
 .vs/
 *.tsbuildinfo
+
+# Generated NEXUS test output
+/NEXUS/platform/test-output.log

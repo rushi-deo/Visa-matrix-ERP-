@@ -1,4 +1,5 @@
 import type { AutomationManager } from '../../automation/types.js';
+import type { ConnectorManager } from '../../connectors/types.js';
 import type { EngineManager } from '../../engines/core/types.js';
 import type { EventBus } from '../../events/event-bus.js';
 import type { KnowledgeManager } from '../../knowledge/types.js';
@@ -22,5 +23,6 @@ export const AgentManagerToken = createToken<AgentManager>('agent.manager');
 export const EngineManagerToken = createToken<EngineManager>('engine.manager');
 export const PluginManagerToken = createToken<PluginManager>('plugin.manager');
 export const ProviderManagerToken = createToken<ProviderManager>('provider.manager');
+export const ConnectorManagerToken = createToken<ConnectorManager>('connector.manager');
 export const AutomationManagerToken = createToken<AutomationManager>('automation.manager');
 export const PlannerToken = createToken<(context: ExecutionContext) => Promise<ExecutionPlan>>('planner');

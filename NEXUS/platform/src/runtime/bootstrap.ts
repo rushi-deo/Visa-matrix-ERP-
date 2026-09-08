@@ -1,7 +1,8 @@
 import { createPlatformConfig } from '../config/service.js';
+import { createVisaMatrixBackendConnector } from '../connectors/visa-matrix-backend.js';
 import { createContainer } from '../infrastructure/container/container.js';
 import { registerCoreServices } from '../infrastructure/container/registrations.js';
-import { ProviderManagerToken, RuntimeToken } from '../infrastructure/container/service-tokens.js';
+import { ConnectorManagerToken, ProviderManagerToken, RuntimeToken } from '../infrastructure/container/service-tokens.js';
 import { createAnthropicProvider, createOpenAIProvider } from '../providers/adapters.js';
 import { createLoggerFactory } from '../shared/logger.js';
 import { createPlatformRuntime } from './runtime.js';
@@ -21,6 +22,23 @@ export const createBootstrap = (): Bootstrap => ({
 
       // register runtime instance so other services can resolve it
       container.register(RuntimeToken, { lifetime: 'singleton', factory: () => runtime });
+
+      if (config.visaMatrixErpBaseUrl && config.nexusInternalToken) {
+        const connectorManager = container.resolve(ConnectorManagerToken);
+        connectorManager.register(
+          'visa-matrix-backend',
+          createVisaMatrixBackendConnector(
+            { name: 'visa-matrix-backend', environment: config.nodeEnv },
+            {
+              baseUrl: config.visaMatrixErpBaseUrl,
+              internalToken: config.nexusInternalToken,
+              ...(config.visaMatrixErpTimeoutMs
+                ? { timeoutMs: config.visaMatrixErpTimeoutMs }
+                : {}),
+            },
+          ),
+        );
+      }
 
       if (config.openaiApiKey) {
         const providerManager = container.resolve(ProviderManagerToken);
