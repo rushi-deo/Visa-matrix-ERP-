@@ -1,0 +1,21 @@
+{
+  "records": {
+    "memory-test-persistence": {
+      "memory-persistence": {
+        "record": {
+          "metadata": {
+            "id": "memory-persistence",
+            "version": "1",
+            "type": "session",
+            "createdAt": "2026-08-20T08:43:18.584Z",
+            "updatedAt": "2026-08-20T08:43:18.584Z",
+            "tags": []
+          },
+          "content": "persistent"
+        },
+        "archived": false,
+        "expired": false
+      }
+    }
+  }
+}

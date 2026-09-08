@@ -1,0 +1,91 @@
+{
+  "documents": {
+    "docs": {
+      "doc-1": {
+        "document": {
+          "metadata": {
+            "id": "doc-1",
+            "version": "1",
+            "source": "docs",
+            "tags": [
+              "tenant-a"
+            ],
+            "createdAt": "2026-08-20T08:43:16.679Z",
+            "updatedAt": "2026-08-20T08:43:16.681Z"
+          },
+          "title": "Alpha",
+          "content": "Alpha content"
+        },
+        "deleted": false
+      },
+      "doc-2": {
+        "document": {
+          "metadata": {
+            "id": "doc-2",
+            "version": "1",
+            "source": "docs",
+            "tags": [
+              "tenant-a"
+            ],
+            "createdAt": "2026-08-20T08:43:16.702Z",
+            "updatedAt": "2026-08-20T08:43:16.702Z"
+          },
+          "title": "Beta v2",
+          "content": "Beta content updated"
+        },
+        "deleted": true
+      },
+      "left-1": {
+        "document": {
+          "metadata": {
+            "id": "left-1",
+            "version": "1",
+            "source": "docs",
+            "tags": [
+              "tenant-a"
+            ],
+            "createdAt": "2026-08-20T08:43:16.711Z",
+            "updatedAt": "2026-08-20T08:43:16.711Z"
+          },
+          "title": "Left",
+          "content": "Left content"
+        },
+        "deleted": false
+      },
+      "right-1": {
+        "document": {
+          "metadata": {
+            "id": "right-1",
+            "version": "1",
+            "source": "docs",
+            "tags": [
+              "tenant-b"
+            ],
+            "createdAt": "2026-08-20T08:43:16.714Z",
+            "updatedAt": "2026-08-20T08:43:16.715Z"
+          },
+          "title": "Right",
+          "content": "Right content"
+        },
+        "deleted": false
+      },
+      "persist-1": {
+        "document": {
+          "metadata": {
+            "id": "persist-1",
+            "version": "1",
+            "source": "docs",
+            "tags": [
+              "tenant-a"
+            ],
+            "createdAt": "2026-08-20T08:43:16.724Z",
+            "updatedAt": "2026-08-20T08:43:16.724Z"
+          },
+          "title": "Persistent",
+          "content": "Persistent content"
+        },
+        "deleted": false
+      }
+    }
+  }
+}
