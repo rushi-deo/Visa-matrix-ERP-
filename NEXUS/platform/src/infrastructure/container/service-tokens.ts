@@ -1,0 +1,26 @@
+import type { AutomationManager } from '../../automation/types.js';
+import type { EngineManager } from '../../engines/core/types.js';
+import type { EventBus } from '../../events/event-bus.js';
+import type { KnowledgeManager } from '../../knowledge/types.js';
+import type { MemoryManager } from '../../memory/types.js';
+import type { ExecutionContext, ExecutionPlan } from '../../orchestration/types.js';
+import type { PluginManager } from '../../plugins/manager.js';
+import type { ProviderManager } from '../../providers/types.js';
+import type { PlatformRuntime } from '../../runtime/types.js';
+import { createToken } from '../../shared/di.js';
+import type { ToolManager } from '../../tools/types.js';
+import type { WorkforceManager } from '../../workforce/types.js';
+import type { AgentManager } from '../../workforce/types.js';
+
+export const RuntimeToken = createToken<PlatformRuntime>('platform.runtime');
+export const EventBusToken = createToken<EventBus<Record<string, unknown>>>('events.bus');
+export const MemoryManagerToken = createToken<MemoryManager>('memory.manager');
+export const KnowledgeManagerToken = createToken<KnowledgeManager>('knowledge.manager');
+export const ToolManagerToken = createToken<ToolManager>('tool.manager');
+export const WorkforceManagerToken = createToken<WorkforceManager>('workforce.manager');
+export const AgentManagerToken = createToken<AgentManager>('agent.manager');
+export const EngineManagerToken = createToken<EngineManager>('engine.manager');
+export const PluginManagerToken = createToken<PluginManager>('plugin.manager');
+export const ProviderManagerToken = createToken<ProviderManager>('provider.manager');
+export const AutomationManagerToken = createToken<AutomationManager>('automation.manager');
+export const PlannerToken = createToken<(context: ExecutionContext) => Promise<ExecutionPlan>>('planner');
