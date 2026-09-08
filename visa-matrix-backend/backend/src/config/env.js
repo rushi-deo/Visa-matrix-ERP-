@@ -35,6 +35,7 @@ const env = {
   logLevel: process.env.LOG_LEVEL || "info",
   jwtSecret: process.env.JWT_SECRET || process.env.APP_JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  nexusInternalToken: process.env.NEXUS_INTERNAL_TOKEN || null,
   // Server credentials must never be read from VITE_ variables.  VITE_ values
   // are embedded in the browser bundle by Vite.
   supabaseUrl: process.env.SUPABASE_URL,

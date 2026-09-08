@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
+    "test": "node --test",
     "worker": "node src/server.js",
     "seed:admin": "node seed-admin.js",
     "convert:forms": "node tools/form-converter/index.js",

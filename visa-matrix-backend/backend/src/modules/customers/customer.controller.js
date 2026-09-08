@@ -10,12 +10,12 @@ import {
 } from "./customer.service.js";
 
 export const listCustomersController = asyncHandler(async (req, res) => {
-  const data = await getCustomers(req.query);
+  const data = await getCustomers(req.query, req.user);
   return sendSuccess(res, data);
 });
 
 export const getCustomerByIdController = asyncHandler(async (req, res) => {
-  const data = await getCustomer(req.params.id);
+  const data = await getCustomer(req.params.id, req.user);
   return sendSuccess(res, data);
 });
 
@@ -24,7 +24,7 @@ export const createCustomerController = asyncHandler(async (req, res) => {
   throw new RequestValidationError("Request body cannot be empty.");
 }
 
-const data = await createCustomerRecord(req.body);
+const data = await createCustomerRecord(req.body, req.user);
   return sendCreated(res, data, "Customer created successfully.");
 });
 
@@ -33,14 +33,14 @@ export const updateCustomerController = asyncHandler(async (req, res) => {
   throw new RequestValidationError("Request body cannot be empty.");
 }
 
-const data = await updateCustomerRecord(req.params.id, req.body);
+const data = await updateCustomerRecord(req.params.id, req.body, req.user);
   return sendSuccess(res, data, {
     message: "Customer updated successfully.",
   });
 });
 
 export const deleteCustomerController = asyncHandler(async (req, res) => {
-  const data = await deleteCustomerRecord(req.params.id);
+  const data = await deleteCustomerRecord(req.params.id, req.user);
   return sendSuccess(res, data, {
     message: "Customer deleted successfully.",
   });

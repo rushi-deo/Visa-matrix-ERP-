@@ -10,4 +10,11 @@ export const loadEnvironment = (env: NodeJS.ProcessEnv = process.env): ConfigSou
   ...(env.OPENAI_PROJECT ? { OPENAI_PROJECT: env.OPENAI_PROJECT } : {}),
   ...(env.ANTHROPIC_API_KEY ? { ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY } : {}),
   ...(env.ANTHROPIC_MODEL ? { ANTHROPIC_MODEL: env.ANTHROPIC_MODEL } : {}),
+  ...(env.VISA_MATRIX_ERP_BASE_URL
+    ? { VISA_MATRIX_ERP_BASE_URL: env.VISA_MATRIX_ERP_BASE_URL }
+    : {}),
+  ...(env.VISA_MATRIX_ERP_TIMEOUT_MS
+    ? { VISA_MATRIX_ERP_TIMEOUT_MS: env.VISA_MATRIX_ERP_TIMEOUT_MS }
+    : {}),
+  ...(env.NEXUS_INTERNAL_TOKEN ? { NEXUS_INTERNAL_TOKEN: env.NEXUS_INTERNAL_TOKEN } : {}),
 });

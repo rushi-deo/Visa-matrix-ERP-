@@ -10,6 +10,8 @@ export const requestLogger = (req, res, next) => {
       statusCode: res.statusCode,
       durationMs: Date.now() - startedAt,
       ip: req.ip,
+      requestId: req.requestId,
+      correlationId: req.correlationId,
     });
   });
 

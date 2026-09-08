@@ -43,8 +43,10 @@ import testSecureRoutes from "./routes/testSecureRoutes.js";
 import validationRoutes from "./routes/validation.js";
 import visaFeesRoutes from "./routes/visaFees.routes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
+import nexusIntegrationRoutes from "./modules/integrations/nexus.routes.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { globalRateLimiter } from "./middleware/rateLimiter.js";
+import { requestContext } from "./middleware/requestContext.js";
 import { requestLogger } from "./middleware/requestLogger.js";
 import { startEmailWorker } from "./jobs/emailJob.js";
 import { startNotificationWorker } from "./jobs/notificationJob.js";
@@ -68,7 +70,13 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Nexus-Internal-Token",
+    "X-Request-ID",
+    "X-Correlation-ID",
+  ],
 };
 
 const startWorkers = () => {
@@ -103,6 +111,7 @@ export const createServerApp = () => {
   app.use(globalRateLimiter);
   app.use(express.json({ limit: env.requestSizeLimit }));
   app.use(express.urlencoded({ extended: true, limit: env.requestSizeLimit }));
+  app.use(requestContext);
   app.use(requestLogger);
 
   app.get("/health", (_req, res) => {
@@ -129,6 +138,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/auth`, authRoutes);
   app.use(`${env.apiPrefix}/users`, userRoutes);
   app.use(`${env.apiPrefix}/customers`, customerRoutes);
+  app.use(`${env.apiPrefix}/integrations/nexus`, nexusIntegrationRoutes);
   app.use(`${env.apiPrefix}/leads`, leadRoutes);
   app.use(`${env.apiPrefix}/application`, legacyApplicationRoutes);
   app.use(`${env.apiPrefix}/public/applications`, publicApplicationsRoutes);

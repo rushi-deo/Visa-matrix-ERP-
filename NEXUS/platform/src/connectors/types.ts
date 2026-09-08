@@ -20,6 +20,7 @@ export type ConnectorHealth = Readonly<{
 export type ConnectorContext = Readonly<{
   correlationId?: string;
   requestId?: string;
+  authorization?: string;
 }>;
 
 export interface Connector {

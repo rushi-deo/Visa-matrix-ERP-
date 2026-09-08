@@ -10,6 +10,9 @@ export type PlatformConfig = Readonly<{
   openaiProject?: string;
   anthropicApiKey?: string;
   anthropicModel?: string;
+  visaMatrixErpBaseUrl?: string;
+  visaMatrixErpTimeoutMs?: number;
+  nexusInternalToken?: string;
 }>;
 
 export type ConfigSource = Readonly<{
@@ -22,4 +25,7 @@ export type ConfigSource = Readonly<{
   OPENAI_PROJECT?: string;
   ANTHROPIC_API_KEY?: string;
   ANTHROPIC_MODEL?: string;
+  VISA_MATRIX_ERP_BASE_URL?: string;
+  VISA_MATRIX_ERP_TIMEOUT_MS?: string;
+  NEXUS_INTERNAL_TOKEN?: string;
 }>;
