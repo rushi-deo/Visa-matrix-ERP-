@@ -1,17 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = (
-  process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
-)?.trim();
-const supabaseServiceRoleKey = (
-  process.env.SUPABASE_SERVICE_ROLE_KEY ??
-  process.env.SUPABASE_ANON_KEY ??
-  process.env.VITE_SUPABASE_ANON_KEY
-)?.trim();
+// Browser code may use only the public anon key.  Authentication itself is
+// handled by the API; this client remains for the existing public data views.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
 export const supabase =
-  supabaseUrl && supabaseServiceRoleKey
-    ? createClient(supabaseUrl, supabaseServiceRoleKey)
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
 export default supabase;

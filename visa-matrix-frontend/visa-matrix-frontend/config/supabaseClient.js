@@ -1,19 +1,10 @@
-import { fileURLToPath } from "node:url";
-import { config as loadEnv } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
-loadEnv({
-  path: fileURLToPath(new URL("../.env", import.meta.url)),
-  override: false,
-  quiet: true,
-});
-
-const SUPABASE_URL = (
-  process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
-)?.trim();
-const SUPABASE_SERVICE_ROLE_KEY = (
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)?.trim();
+// This module is imported by browser bundles. A service-role key would grant
+// unrestricted database access to every visitor, so only public Vite values
+// are valid here.
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL?.trim();
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
 const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
   if (!value) {
@@ -27,23 +18,23 @@ const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
   return `${value.slice(0, visibleStart)}...${value.slice(-visibleEnd)}`;
 };
 
-export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 export const getSupabaseConfigStatus = () => ({
   status: isSupabaseConfigured ? "configured" : "missing_env",
   url: maskSensitiveValue(SUPABASE_URL),
-  serviceRoleKey: maskSensitiveValue(SUPABASE_SERVICE_ROLE_KEY),
+  anonKey: maskSensitiveValue(SUPABASE_ANON_KEY),
 });
 
 if (isSupabaseConfigured) {
   console.info(
-    "[Supabase] Client configured with key type: service_role.",
+    "[Supabase] Client configured with a public anon key.",
     getSupabaseConfigStatus(),
   );
 } else {
-  console.warn("[Supabase] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.", getSupabaseConfigStatus());
+  console.warn("[Supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY.", getSupabaseConfigStatus());
 }
 
 export const supabase = isSupabaseConfigured
-  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;

@@ -9,6 +9,22 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
+function loginErrorMessage(authError: any) {
+  if (!authError?.response) {
+    return "Unable to reach the Visa Matrix server. Check your connection and try again.";
+  }
+
+  if (authError.response.status >= 500) {
+    return "The authentication service is temporarily unavailable. Please try again later.";
+  }
+
+  return (
+    authError.response.data?.message ??
+    authError.response.data?.error ??
+    "Unable to sign in with those credentials."
+  );
+}
+
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
 function LoginPage() {
@@ -32,11 +48,7 @@ function LoginPage() {
       toast.success("Welcome back!");
       navigate({ to: "/dashboard" });
     } catch (authError) {
-      const message =
-        authError?.response?.data?.message ??
-        authError?.response?.data?.error ??
-        authError?.message ??
-        "Unable to sign in with those credentials.";
+      const message = loginErrorMessage(authError);
       setError(message);
       toast.error(message);
     } finally {

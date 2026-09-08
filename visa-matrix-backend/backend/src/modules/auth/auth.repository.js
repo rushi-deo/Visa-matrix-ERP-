@@ -67,10 +67,19 @@ export const deleteAuthUser = async (authUserId) => {
 };
 
 export const signInWithPassword = async ({ email, password }) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  let result;
+
+  try {
+    result = await supabase.auth.signInWithPassword({ email, password });
+  } catch (error) {
+    // The Supabase SDK throws for transport failures (DNS, TLS, timeout),
+    // rather than returning its normal { data, error } result.
+    throw new ExternalServiceError(
+      "Authentication service is temporarily unavailable. Please try again later.",
+    );
+  }
+
+  const { data, error } = result;
 
   if (error) {
     // Only a credential rejection is safe to present as an invalid login.
