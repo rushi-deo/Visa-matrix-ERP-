@@ -126,7 +126,7 @@ export const createRequestCoordinator = (container?: Container): RequestCoordina
       knowledge,
       worker,
       workflow: { id: 'workflow', name: 'workflow', steps: [] },
-      tools: { requestId: request.id, correlationId: request.id },
+      tools: { requestId: request.id, correlationId: request.correlationId ?? request.id },
     });
   },
 });

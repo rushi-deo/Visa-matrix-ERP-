@@ -1,9 +1,10 @@
 import type { BrainContext } from '../brain/types.js';
+import type { IntegrationExecutionRequest } from '../connectors/types.js';
 import type { EngineManager } from '../engines/core/types.js';
 import type { EventBus } from '../events/event-bus.js';
 import { createContainer } from '../infrastructure/container/container.js';
 import { registerCoreServices } from '../infrastructure/container/registrations.js';
-import { AgentManagerToken, AutomationManagerToken, EngineManagerToken, EventBusToken, KnowledgeManagerToken, MemoryManagerToken, PlannerToken, PluginManagerToken, RuntimeToken, ToolManagerToken } from '../infrastructure/container/service-tokens.js';
+import { AgentManagerToken, AutomationManagerToken, ConnectorManagerToken, EngineManagerToken, EventBusToken, KnowledgeManagerToken, MemoryManagerToken, PlannerToken, PluginManagerToken, RuntimeToken, ToolManagerToken } from '../infrastructure/container/service-tokens.js';
 import type { KnowledgeDocument, KnowledgeManager } from '../knowledge/types.js';
 import type { MemoryManager, MemoryRecord, MemoryType } from '../memory/types.js';
 import type { PluginManager } from '../plugins/manager.js';
@@ -42,6 +43,30 @@ const publishLifecycle = async (
   } catch {
     // Lifecycle telemetry is best-effort.
   }
+};
+
+const getIntegrationFailureDetails = (error: unknown): string => {
+  if (error instanceof Error && 'code' in error && typeof error.code === 'string') {
+    return error.code;
+  }
+
+  return 'INTEGRATION_EXECUTION_FAILED';
+};
+
+const getPlannerRequest = (request: ExecutionRequest): ExecutionRequest => {
+  if (!request.integration?.authorization) {
+    return request;
+  }
+
+  const integration: IntegrationExecutionRequest = {
+    connector: request.integration.connector,
+    request: request.integration.request,
+    ...(request.integration.correlationId
+      ? { correlationId: request.integration.correlationId }
+      : {}),
+  };
+
+  return { ...request, integration };
 };
 
 export interface ExecutionPipeline {
@@ -119,6 +144,7 @@ export const createExecutionPipeline = (): ExecutionPipeline => {
 
     const enhancedContext: ExecutionContext = {
       ...cloneExecutionContext(context),
+      request: getPlannerRequest(context.request),
       metadata: {
         ...(context.metadata ?? {}),
         memory: memRecords,
@@ -144,6 +170,31 @@ export const createExecutionPipeline = (): ExecutionPipeline => {
   plan: async (context) => pipeline.createPlan(context),
   execute: async (context, plan) => {
     const container = context.runtime.getContext().container;
+    const integration = context.request.integration;
+
+    if (integration) {
+      const connectorManager = container.resolve(ConnectorManagerToken);
+      const connector = connectorManager.get(integration.connector);
+
+      if (!connector) {
+        return { ok: false, details: 'INTEGRATION_CONNECTOR_NOT_FOUND' };
+      }
+
+      try {
+        const response = await connector.request(integration.request, {
+          requestId: context.requestId ?? context.request.id,
+          correlationId: context.correlationId ?? integration.correlationId ?? context.request.id,
+          ...(integration.authorization ? { authorization: integration.authorization } : {}),
+        });
+
+        return response.ok
+          ? { ok: true, details: 'INTEGRATION_EXECUTION_SUCCEEDED' }
+          : { ok: false, details: 'INTEGRATION_EXECUTION_FAILED' };
+      } catch (error) {
+        return { ok: false, details: getIntegrationFailureDetails(error) };
+      }
+    }
+
     const toolManager = container.resolve(ToolManagerToken) as ToolManager;
     const agentManager = container.resolve(AgentManagerToken) as AgentManager;
     const automationManager = container.resolve(AutomationManagerToken);

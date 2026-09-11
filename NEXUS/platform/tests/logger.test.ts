@@ -13,6 +13,8 @@ describe('logger', () => {
       expect.objectContaining({
         level: 'info',
         message: 'platform.ready',
+        correlationId: 'corr-1',
+        requestId: 'req-1',
         context: {
           correlationId: 'corr-1',
           requestId: 'req-1',

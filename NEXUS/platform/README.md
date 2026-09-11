@@ -4,7 +4,7 @@ Production-ready engineering foundation for the NEXUS AI Platform.
 
 ## Overview
 
-This repository contains the reusable core platform SDK and event platform that future product modules will build on. It intentionally excludes business logic, AI reasoning, workflows, memory logic, knowledge graph implementation, OCR, vector search, ERP connectors, and authentication or authorization behavior.
+This repository contains the reusable core platform SDK and event platform that future product modules will build on. It intentionally excludes business logic, AI reasoning, workflows, memory logic, knowledge graph implementation, OCR, vector search, and authentication or authorization behavior. The current platform includes a typed Visa Matrix ERP connector boundary; application-specific authentication and authorization remain in the ERP backend.
 
 ## Core SDK
 
@@ -319,6 +319,8 @@ pnpm install
 ```bash
 pnpm dev
 ```
+
+NEXUS is a library/runtime integration point rather than a standalone HTTP server. Configure `VISA_MATRIX_ERP_BASE_URL` and `NEXUS_INTERNAL_TOKEN` together to register the Visa Matrix ERP connector. The ERP boundary also requires a valid user bearer token with `customers:view`; request and correlation IDs are forwarded by the connector.
 
 ## Testing
 

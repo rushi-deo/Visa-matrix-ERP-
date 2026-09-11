@@ -34,4 +34,21 @@ describe('configuration', () => {
       anthropicModel: 'claude-test',
     });
   });
+
+  it('rejects incomplete or malformed ERP configuration', () => {
+    expect(() => validateConfig({
+      NODE_ENV: 'testing',
+      PORT: '8080',
+      LOG_LEVEL: 'info',
+      VISA_MATRIX_ERP_BASE_URL: 'http://erp.example.test',
+    })).toThrowError('ERP connector requires both base URL and internal token');
+
+    expect(() => validateConfig({
+      NODE_ENV: 'testing',
+      PORT: '8080',
+      LOG_LEVEL: 'info',
+      VISA_MATRIX_ERP_BASE_URL: 'not-a-url',
+      NEXUS_INTERNAL_TOKEN: 'test-token',
+    })).toThrowError('Invalid VISA_MATRIX_ERP_BASE_URL value');
+  });
 });

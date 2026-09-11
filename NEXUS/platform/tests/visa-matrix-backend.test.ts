@@ -138,4 +138,12 @@ describe('Visa Matrix ERP connector', () => {
       ),
     ).rejects.toMatchObject({ status: 502, code: 'ERP_INVALID_RESPONSE' });
   });
+
+  it('reports readiness only after connector initialization', async () => {
+    const instance = connector();
+
+    await expect(instance.health()).resolves.toEqual({ ok: false });
+    await instance.connect({ requestId: 'bootstrap', correlationId: 'bootstrap' });
+    await expect(instance.health()).resolves.toEqual({ ok: true });
+  });
 });

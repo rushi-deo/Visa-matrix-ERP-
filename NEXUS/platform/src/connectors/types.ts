@@ -8,6 +8,13 @@ export type ConnectorRequest = Readonly<{
   payload?: Record<string, unknown>;
 }>;
 
+export type IntegrationExecutionRequest = Readonly<{
+  connector: string;
+  request: ConnectorRequest;
+  authorization?: string;
+  correlationId?: string;
+}>;
+
 export type ConnectorResponse = Readonly<{
   ok: boolean;
   payload?: Record<string, unknown>;

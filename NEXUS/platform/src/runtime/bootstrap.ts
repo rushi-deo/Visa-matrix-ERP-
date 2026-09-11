@@ -9,8 +9,7 @@ import { createPlatformRuntime } from './runtime.js';
 import type { Bootstrap } from './types.js';
 
 export const createBootstrap = (): Bootstrap => ({
-  bootstrap: async () =>
-    (() => {
+  bootstrap: async () => {
       const container = createContainer();
       registerCoreServices(container);
       const config = createPlatformConfig();
@@ -64,6 +63,25 @@ export const createBootstrap = (): Bootstrap => ({
         ));
       }
 
+      await runtime.initialize();
+      await runtime.configure();
+      await runtime.build();
+      await runtime.start();
+
+      const connectorManager = container.resolve(ConnectorManagerToken);
+      const erpConnector = connectorManager.get('visa-matrix-backend');
+      if (erpConnector) {
+        await connectorManager.connect('visa-matrix-backend', {
+          requestId: 'nexus-bootstrap',
+          correlationId: 'nexus-bootstrap',
+        });
+        const health = await connectorManager.health('visa-matrix-backend');
+        if (!health.ok) {
+          throw new Error('Visa Matrix ERP connector is not ready');
+        }
+      }
+
+      await runtime.ready();
       return runtime;
-    })(),
+    },
 });

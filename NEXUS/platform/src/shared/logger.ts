@@ -22,12 +22,15 @@ export interface Logger {
 export type LoggerTransport = (entry: LogEntry) => void;
 
 const write = (level: LogLevel, message: string, context: LogContext | undefined, transport: LoggerTransport): void => {
+  const requestId = typeof context?.requestId === 'string' ? context.requestId : undefined;
+  const correlationId = typeof context?.correlationId === 'string' ? context.correlationId : undefined;
+
   transport({
     timestamp: new Date().toISOString(),
     level,
     message,
-    correlationId: undefined,
-    requestId: undefined,
+    correlationId,
+    requestId,
     context,
   });
 };

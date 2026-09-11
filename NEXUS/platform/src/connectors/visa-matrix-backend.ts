@@ -100,6 +100,7 @@ export class VisaMatrixBackendConnector implements Connector {
   private readonly baseUrl: string;
   private readonly internalToken: string;
   private readonly timeoutMs: number;
+  private connected = false;
 
   public constructor(
     configuration: ConnectorConfiguration,
@@ -112,7 +113,9 @@ export class VisaMatrixBackendConnector implements Connector {
     this.timeoutMs = validateConfiguration(options);
   }
 
-  public async connect(_context: ConnectorContext): Promise<void> {}
+  public async connect(_context: ConnectorContext): Promise<void> {
+    this.connected = true;
+  }
 
   public async request(
     request: ConnectorRequest,
@@ -209,7 +212,7 @@ export class VisaMatrixBackendConnector implements Connector {
   }
 
   public async health(): Promise<ConnectorHealth> {
-    return { ok: true };
+    return { ok: this.connected };
   }
 }
 

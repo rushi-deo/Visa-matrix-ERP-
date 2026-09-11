@@ -22,5 +22,6 @@ describe('runtime', () => {
   it('bootstraps a runtime instance', async () => {
     const runtime = await createBootstrap().bootstrap();
     expect(runtime.getContext().config.port).toBeTypeOf('number');
+    expect(runtime.getStage()).toBe('ready');
   });
 });

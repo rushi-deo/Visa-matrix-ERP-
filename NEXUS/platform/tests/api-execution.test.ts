@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { executeNexusRequest } from '../src/api/execution.js';
 
@@ -97,5 +97,72 @@ describe('NEXUS public execution API', () => {
     expect(response.ok).toBe(false);
     expect(response.plan).toEqual({ id: 'plan', steps: ['research-agent'] });
     expect(response.result).toEqual(expect.objectContaining({ ok: false }));
+  });
+
+  it('executes a typed ERP integration through the public API', async () => {
+    process.env = {
+      ...originalEnv,
+      NODE_ENV: 'testing',
+      VISA_MATRIX_ERP_BASE_URL: 'http://erp.example.test',
+      NEXUS_INTERNAL_TOKEN: 'test-internal-token',
+    };
+    const fetchMock = vi.fn(async (_url: string | URL, init?: RequestInit) => {
+      expect(init?.headers).toEqual({
+        'Content-Type': 'application/json',
+        'X-Nexus-Internal-Token': 'test-internal-token',
+        'X-Request-ID': 'request-integration-1',
+        'X-Correlation-ID': 'correlation-integration-1',
+        Authorization: 'Bearer user-jwt',
+      });
+      return new Response(JSON.stringify({
+        success: true,
+        data: { id: '123e4567-e89b-12d3-a456-426614174000' },
+        requestId: 'request-integration-1',
+        correlationId: 'correlation-integration-1',
+      }), { status: 200 });
+    });
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    const response = await executeNexusRequest({
+      id: 'request-integration-1',
+      message: 'Retrieve the customer record',
+      integration: {
+        connector: 'visa-matrix-backend',
+        request: {
+          action: 'customer.get',
+          payload: { customerId: '123e4567-e89b-12d3-a456-426614174000' },
+        },
+        authorization: 'Bearer user-jwt',
+        correlationId: 'correlation-integration-1',
+      },
+    });
+
+    expect(response).toEqual(expect.objectContaining({
+      ok: true,
+      requestId: 'request-integration-1',
+      result: { ok: true, details: 'INTEGRATION_EXECUTION_SUCCEEDED' },
+    }));
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it('does not expose integration authorization to the planner provider', async () => {
+    const inputs = configureProvider([JSON.stringify({ id: 'plan', steps: [] })]);
+    process.env = {
+      ...originalEnv,
+      NODE_ENV: 'testing',
+      OPENAI_API_KEY: 'test-key',
+      OPENAI_MODEL: 'gpt-test',
+    };
+
+    await executeNexusRequest({
+      message: 'Plan this integration request',
+      integration: {
+        connector: 'visa-matrix-backend',
+        request: { action: 'customer.get', payload: { customerId: '123e4567-e89b-12d3-a456-426614174000' } },
+        authorization: 'Bearer secret-user-jwt',
+      },
+    });
+
+    expect(JSON.stringify(inputs[0])).not.toContain('secret-user-jwt');
   });
 });

@@ -22,6 +22,30 @@ const normalizeMode = (value: string): RuntimeMode => {
   return value as RuntimeMode;
 };
 
+const validateErpConfiguration = (source: ConfigSource): void => {
+  const hasBaseUrl = Boolean(source.VISA_MATRIX_ERP_BASE_URL);
+  const hasInternalToken = Boolean(source.NEXUS_INTERNAL_TOKEN);
+
+  if (hasBaseUrl !== hasInternalToken) {
+    throw new ConfigurationError('ERP connector requires both base URL and internal token', {
+      code: 'CONFIG_INCOMPLETE_ERP_CONNECTOR',
+    });
+  }
+
+  if (hasBaseUrl) {
+    try {
+      const url = new URL(source.VISA_MATRIX_ERP_BASE_URL as string);
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        throw new Error('unsupported protocol');
+      }
+    } catch {
+      throw new ConfigurationError('Invalid VISA_MATRIX_ERP_BASE_URL value', {
+        code: 'CONFIG_INVALID_ERP_BASE_URL',
+      });
+    }
+  }
+};
+
 export const validateConfig = (source: ConfigSource): PlatformConfig => {
   const nodeEnv = normalizeMode(source.NODE_ENV ?? 'development');
   if (!allowedModes.has(nodeEnv)) {
@@ -36,6 +60,8 @@ export const validateConfig = (source: ConfigSource): PlatformConfig => {
       code: 'CONFIG_INVALID_PORT',
     });
   }
+
+  validateErpConfiguration(source);
 
   return {
     nodeEnv,

@@ -1,5 +1,6 @@
 import type { WorkflowDefinition, WorkflowResult } from '../automation/types.js';
 import type { BrainContext, BrainPlanner } from '../brain/types.js';
+import type { IntegrationExecutionRequest } from '../connectors/types.js';
 import type { EventBus } from '../events/event-bus.js';
 import type { KnowledgeManager } from '../knowledge/types.js';
 import type { MemoryManager } from '../memory/types.js';
@@ -11,9 +12,11 @@ import type { WorkerContext } from '../workforce/types.js';
 
 export type ExecutionRequest = Readonly<{
   id: string;
+  correlationId?: string;
   source: 'internal' | 'external' | 'scheduled' | 'event' | 'api';
   payload?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
+  integration?: IntegrationExecutionRequest;
 }>;
 
 export type ExecutionUser = Readonly<{
@@ -38,6 +41,7 @@ export type ExecutionContext = Readonly<{
   workflow: WorkflowDefinition;
   tools: ToolContext;
   requestId?: string;
+  correlationId?: string;
   sessionId?: string;
   conversationId?: string;
   user?: ExecutionUser;
@@ -62,6 +66,7 @@ export type ExecutionContextInput = Readonly<{
   workflow?: WorkflowDefinition;
   tools?: ToolContext;
   requestId?: string;
+  correlationId?: string;
   sessionId?: string;
   conversationId?: string;
   user?: ExecutionUser;
