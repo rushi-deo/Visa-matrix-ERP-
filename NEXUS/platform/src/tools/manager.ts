@@ -1,9 +1,9 @@
-import type {
+﻿import type {
   Tool,
-  ToolContext,
   ToolExecutor,
   ToolManager,
-  ToolRegistry
+  ToolRegistry,
+  ToolContext,
 } from './types.js';
 
 export const createToolRegistry = (): ToolRegistry => {
@@ -14,7 +14,15 @@ export const createToolRegistry = (): ToolRegistry => {
       tools.set(tool.definition.name, tool);
     },
     get: (name) => tools.get(name),
-    list: () => [...tools.values()].map((tool) => ({ name: tool.definition.name, version: tool.definition.version })),
+    list: () =>
+      [...tools.values()].map((tool) => ({
+        name: tool.definition.name,
+        version: tool.definition.version,
+        ...(tool.definition.kind ? { kind: tool.definition.kind } : {}),
+        ...(tool.definition.requiresConfirmation !== undefined
+          ? { requiresConfirmation: tool.definition.requiresConfirmation }
+          : {}),
+      })),
   };
 };
 
@@ -28,15 +36,23 @@ const validateToolName = (name: string): void => {
   }
 };
 
-export const createToolManager = (registry: ToolRegistry = createToolRegistry()): ToolManager => ({
+export const createToolManager = (
+  registry: ToolRegistry = createToolRegistry(),
+): ToolManager => ({
   register: (tool) => {
     registry.register(tool);
   },
-  discover: (name) => registry.list().find((tool) => tool.name === name),
+
+  discover: (name) =>
+    registry.list().find((tool) => tool.name === name),
+
   validate: (name, _context) => Boolean(registry.get(name)),
+
   execute: async (name: string, context: ToolContext) => {
     validateToolName(name);
+
     const tool = registry.get(name);
+
     if (!tool) {
       throw new Error(`Tool not registered: ${name}`);
     }

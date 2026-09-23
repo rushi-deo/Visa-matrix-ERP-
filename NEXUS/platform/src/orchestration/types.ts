@@ -89,6 +89,7 @@ export type ExecutionPlan = Readonly<{
 export type ExecutionResult = Readonly<{
   ok: boolean;
   details?: string;
+  payload?: Record<string, unknown>;
 }>;
 
 export type ExecutionHistory = Readonly<{

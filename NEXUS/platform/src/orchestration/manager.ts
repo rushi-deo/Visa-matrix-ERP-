@@ -1,4 +1,4 @@
-import type { BrainContext, BrainSession } from '../brain/types.js';
+﻿import type { BrainContext, BrainSession } from '../brain/types.js';
 import type { EngineManager } from '../engines/core/types.js';
 import type { EventBus } from '../events/event-bus.js';
 import { createContainer } from '../infrastructure/container/container.js';
@@ -126,7 +126,18 @@ export const createRequestCoordinator = (container?: Container): RequestCoordina
       knowledge,
       worker,
       workflow: { id: 'workflow', name: 'workflow', steps: [] },
-      tools: { requestId: request.id, correlationId: request.correlationId ?? request.id },
+      tools: {
+        requestId: request.id,
+        correlationId: request.correlationId ?? request.id,
+        ...(request.payload ? { payload: request.payload } : {}),
+        ...(typeof request.metadata?.confirmationId === 'string'
+          ? { confirmationId: request.metadata.confirmationId }
+          : {}),
+        ...(request.metadata?.confirmed === true ? { confirmed: true } : {}),
+        ...(typeof request.metadata?.authorization === 'string'
+          ? { authorization: request.metadata.authorization }
+          : {}),
+      },
     });
   },
 });
@@ -266,3 +277,4 @@ export const createAgentCoordinator = (): AgentCoordinator => ({
 export const createToolCoordinator = (): ToolCoordinator => ({
   execute: async (_context) => ({ ok: true }),
 });
+

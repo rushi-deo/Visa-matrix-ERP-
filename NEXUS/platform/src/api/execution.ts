@@ -1,4 +1,4 @@
-import type { IntegrationExecutionRequest } from '../connectors/types.js';
+﻿import type { IntegrationExecutionRequest } from '../connectors/types.js';
 import { createRequestCoordinator } from '../orchestration/manager.js';
 import { createExecutionPipeline } from '../orchestration/pipeline.js';
 import type { ExecutionPlan, ExecutionRequest } from '../orchestration/types.js';
@@ -8,7 +8,11 @@ export type NexusRequest = Readonly<{
   id?: string;
   correlationId?: string;
   message: string;
+  payload?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
+  authorization?: string;
+  confirmationId?: string;
+  confirmed?: boolean;
   integration?: IntegrationExecutionRequest;
 }>;
 
@@ -37,9 +41,14 @@ export const executeNexusRequest = async (request: NexusRequest): Promise<NexusR
     id: requestId,
     ...(correlationId ? { correlationId } : {}),
     source: 'api',
-    payload: { message: request.message },
+    payload: request.payload ?? { message: request.message },
     ...(request.integration ? { integration: request.integration } : {}),
-    ...(request.metadata ? { metadata: request.metadata } : {}),
+    metadata: {
+      ...(request.metadata ?? {}),
+      ...(request.authorization ? { authorization: request.authorization } : {}),
+      ...(request.confirmationId ? { confirmationId: request.confirmationId } : {}),
+      ...(request.confirmed === true ? { confirmed: true } : {}),
+    },
   };
 
   try {

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+﻿import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { executeNexusRequest } from '../src/api/execution.js';
 
@@ -137,11 +137,27 @@ describe('NEXUS public execution API', () => {
       },
     });
 
-    expect(response).toEqual(expect.objectContaining({
-      ok: true,
-      requestId: 'request-integration-1',
-      result: { ok: true, details: 'INTEGRATION_EXECUTION_SUCCEEDED' },
-    }));
+    expect(response.ok).toBe(true);
+    expect(response.requestId).toBe('request-integration-1');
+
+    expect(response.result).toEqual(
+      expect.objectContaining({
+        ok: true,
+      }),
+    );
+
+    const result = response.result as {
+      ok: boolean;
+      payload?: {
+        data?: {
+          id?: string;
+        };
+      };
+    };
+
+    expect(result.payload?.data?.id).toBe(
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
     expect(fetchMock).toHaveBeenCalledOnce();
   });
 

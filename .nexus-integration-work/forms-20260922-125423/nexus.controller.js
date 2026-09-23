@@ -1,0 +1,322 @@
+﻿import { recordAuditEvent, createAuditContext } from "../../core/audit.js";
+import {
+  AppError,
+  asyncHandler,
+  ForbiddenError,
+  NotFoundError,
+  RequestValidationError,
+} from "../../core/errors.js";
+import { getCustomer } from "../customers/customer.service.js";
+import {
+  getCountries as getVisaCatalogCountries,
+  getVisaTypesByCountry,
+  getVisaRequirements,
+} from "../visa-catalog/visaCatalog.service.js";
+import { getVisaRule } from "../visaRules/visaRule.service.js";
+
+const SAFE_CUSTOMER_FIELDS = [
+  "id",
+  "full_name",
+  "first_name",
+  "middle_name",
+  "last_name",
+  "email",
+  "phone",
+  "nationality",
+  "status",
+  "country_id",
+];
+
+const toSafeCustomer = (customer) =>
+  Object.fromEntries(
+    SAFE_CUSTOMER_FIELDS.filter((field) => customer[field] !== undefined).map(
+      (field) => [field, customer[field]],
+    ),
+  );
+
+const auditCustomerRead = (req, resourceId, status, errorMessage = null) =>
+  recordAuditEvent({
+    action: "customer.read",
+    correlationId: req.correlationId,
+    context: createAuditContext(req),
+    errorMessage,
+    ipAddress: req.ip,
+    organizationId: req.user?.organization_id || null,
+    requestId: req.requestId,
+    resourceId,
+    resourceType: "customer",
+    status,
+    userAgent: req.get("user-agent") || null,
+  });
+
+const toSafeIntegrationError = (error) => {
+  if (
+    error instanceof NotFoundError ||
+    error instanceof ForbiddenError ||
+    error instanceof RequestValidationError
+  ) {
+    return error;
+  }
+
+  return new AppError("Customer integration request failed.", 500);
+};
+
+export const customerGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    const { customerId } = req.body;
+
+    try {
+      const customer = await getCustomer(customerId, req.user);
+      await auditCustomerRead(req, customerId, "completed");
+
+      return res.status(200).json({
+        success: true,
+        data: toSafeCustomer(customer),
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      await auditCustomerRead(
+        req,
+        customerId,
+        "failed",
+        error instanceof Error ? error.message : "Customer read failed.",
+      ).catch(() => undefined);
+
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const applicationGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    const { applicationId } = req.body;
+
+    try {
+      const application = await getApplication(applicationId, req.user);
+
+      await recordAuditEvent({
+        action: "application.read",
+        correlationId: req.correlationId,
+        context: createAuditContext(req),
+        ipAddress: req.ip,
+        organizationId: req.user?.organization_id || null,
+        requestId: req.requestId,
+        resourceId: applicationId,
+        resourceType: "application",
+        status: "completed",
+        userAgent: req.get("user-agent") || null,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: application,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      await recordAuditEvent({
+        action: "application.read",
+        correlationId: req.correlationId,
+        context: createAuditContext(req),
+        errorMessage:
+          error instanceof Error
+            ? error.message
+            : "Application read failed.",
+        ipAddress: req.ip,
+        organizationId: req.user?.organization_id || null,
+        requestId: req.requestId,
+        resourceId: applicationId,
+        resourceType: "application",
+        status: "failed",
+        userAgent: req.get("user-agent") || null,
+      }).catch(() => undefined);
+
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const applicationListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const applications = await getApplications(req.body || {});
+
+      await recordAuditEvent({
+        action: "application.list",
+        correlationId: req.correlationId,
+        context: createAuditContext(req),
+        ipAddress: req.ip,
+        organizationId: req.user?.organization_id || null,
+        requestId: req.requestId,
+        resourceType: "application",
+        status: "completed",
+        userAgent: req.get("user-agent") || null,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: applications,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      await recordAuditEvent({
+        action: "application.list",
+        correlationId: req.correlationId,
+        context: createAuditContext(req),
+        errorMessage:
+          error instanceof Error
+            ? error.message
+            : "Application list failed.",
+        ipAddress: req.ip,
+        organizationId: req.user?.organization_id || null,
+        requestId: req.requestId,
+        resourceType: "application",
+        status: "failed",
+        userAgent: req.get("user-agent") || null,
+      }).catch(() => undefined);
+
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const documentGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const document = await getDocument(req.body.documentId, req.user);
+
+      return res.status(200).json({
+        success: true,
+        data: document,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const documentListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const documents = await getDocuments(req.body || {});
+
+      return res.status(200).json({
+        success: true,
+        data: documents,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const leadGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const lead = await getLead(req.body.leadId);
+
+      return res.status(200).json({
+        success: true,
+        data: lead,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const leadListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const leads = await getAllLeads(req.body || {});
+
+      return res.status(200).json({
+        success: true,
+        data: leads,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const countryListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const data = await getVisaCatalogCountries();
+
+      return res.status(200).json({
+        success: true,
+        data,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const visaTypeListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const data = await getVisaTypesByCountry(req.body.countryId);
+
+      return res.status(200).json({
+        success: true,
+        data,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const visaRequirementsGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const data = await getVisaRequirements({
+        countryId: req.body.countryId,
+        visaTypeId: req.body.visaTypeId,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const visaRulesGetIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const data = await getVisaRule(req.body.visaRuleId);
+
+      return res.status(200).json({
+        success: true,
+        data,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
+  },
+);

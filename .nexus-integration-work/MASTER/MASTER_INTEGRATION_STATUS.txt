@@ -1,0 +1,93 @@
+============================================================
+ VISA MATRIX ERP <-> NEXUS MASTER INTEGRATION
+============================================================
+Started: 09/22/2026 12:31:23
+============================================================
+
+ROADMAP
+01 Customers
+02 Applications
+03 Documents
+04 Leads
+05 Visa-Rules-Requirements
+06 Forms
+07 Invoices
+08 Payments
+09 Tasks
+10 Workflows
+11 NEXUS-Tool-Registration
+12 Agent-Planner
+13 Write-Actions-Confirmations
+14 NEXUS-API
+15 ERP-NEXUS-UI
+16 Full-End-To-End-Test
+
+[CHECK] Project structure OK.
+[CHECK] Integration boundary files OK.
+
+CURRENT CAPABILITY STATUS
+[CONNECTED] customer.get
+[CONNECTED] customer.list
+[CONNECTED] application.get
+[CONNECTED] ERP application.get route
+[CONNECTED] ERP customer.get route
+[PENDING]   ERP customer.list route
+
+[PASS] Existing integration gate passed.
+
+ERP MODULES DISCOVERED
+  - admin
+  - applications
+  - auth
+  - communication
+  - countries
+  - customers
+  - departments
+  - documents
+  - forms
+  - integrations
+  - invoices
+  - leads
+  - notifications
+  - payments
+  - Quotation
+  - reports
+  - tasks
+  - users
+  - visa-catalog
+  - visaRules
+  - workflows
+
+============================================================
+MASTER CHECKPOINT
+============================================================
+
+COMPLETED:
+  Customers
+  Applications (application.get)
+
+NEXT EXECUTION TARGET:
+  application.list
+  Documents
+  Leads
+  Visa / Rules / Requirements
+  Forms
+  Invoices
+  Payments
+  Tasks
+  Workflows
+  NEXUS Tool Registration
+  Agent / Planner
+  Write Actions + Confirmations
+  NEXUS API
+  ERP NEXUS UI
+  Full End-To-End Test
+
+IMPORTANT:
+This runner does NOT blindly rewrite source code.
+It verifies the live architecture and integration contract,
+runs the existing test gate, and records the exact state.
+
+============================================================
+Completed: 09/22/2026 12:31:28
+============================================================

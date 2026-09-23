@@ -1,0 +1,26 @@
+NEXUS -> Visa Matrix ERP Integration Snapshot
+Generated: 2026-09-22 11:53:19
+
+Canonical NEXUS:
+C:\Users\Admin\Visa Matrix ERP\NEXUS\Platform
+
+Canonical ERP:
+C:\Users\Admin\Visa Matrix ERP\visa-matrix-backend\backend
+
+Current integration:
+customer.get
+
+Required integration groups:
+Customers
+Leads
+Applications
+Documents
+Visa Catalog / Rules
+Forms
+Invoices
+Payments
+Tasks
+Workflows
+
+Next implementation stage:
+ERP capability layer + NEXUS tool registration + end-to-end tests

@@ -1,10 +1,12 @@
-import { createPlatformConfig } from '../config/service.js';
+﻿import { createPlatformConfig } from '../config/service.js';
 import { createVisaMatrixBackendConnector } from '../connectors/visa-matrix-backend.js';
 import { createContainer } from '../infrastructure/container/container.js';
 import { registerCoreServices } from '../infrastructure/container/registrations.js';
-import { ConnectorManagerToken, ProviderManagerToken, RuntimeToken } from '../infrastructure/container/service-tokens.js';
+import { ConnectorManagerToken, ProviderManagerToken, RuntimeToken, ToolManagerToken } from '../infrastructure/container/service-tokens.js';
 import { createAnthropicProvider, createOpenAIProvider } from '../providers/adapters.js';
 import { createLoggerFactory } from '../shared/logger.js';
+import { createErpTool } from '../tools/erp-tool.js';
+import { createConfirmationManager } from '../security/confirmation/manager.js';
 import { createPlatformRuntime } from './runtime.js';
 import type { Bootstrap } from './types.js';
 
@@ -39,6 +41,54 @@ export const createBootstrap = (): Bootstrap => ({
         );
       }
 
+      const toolManager = container.resolve(ToolManagerToken);
+      const erpConnectorManager = container.resolve(ConnectorManagerToken);
+
+      if (erpConnectorManager.get('visa-matrix-backend')) {
+        const confirmationManager = createConfirmationManager();
+
+        const erpTools = [
+          'customer.get',
+          'application.get',
+          'application.list',
+          'document.get',
+          'document.list',
+          'lead.get',
+          'lead.list',
+          'country.list',
+          'visa-type.list',
+          'visa-requirements.get',
+          'visa-rules.get',
+          'form.list',
+          'form.get',
+          'form.getByCountryVisa',
+          'invoice.get',
+          'invoice.list',
+          'payment.get',
+          'payment.list',
+          'task.get',
+          'task.list',
+          'workflow.get',
+          'workflow.list',
+        ];
+
+        for (const action of erpTools) {
+          toolManager.register(createErpTool(erpConnectorManager, action, action));
+        }
+
+        toolManager.register(
+          createErpTool(
+            erpConnectorManager,
+            'customer.create',
+            'customer.create',
+            {
+              kind: 'write',
+              requiresConfirmation: true,
+              confirmationManager,
+            },
+          ),
+        );
+      }
       if (config.openaiApiKey) {
         const providerManager = container.resolve(ProviderManagerToken);
         providerManager.register('openai', createOpenAIProvider(
@@ -85,3 +135,6 @@ export const createBootstrap = (): Bootstrap => ({
       return runtime;
     },
 });
+
+
+

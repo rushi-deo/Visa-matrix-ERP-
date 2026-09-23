@@ -1,5 +1,6 @@
-import type { ExecutionContext, ExecutionPlan } from '../orchestration/types.js';
+﻿import type { ExecutionContext, ExecutionPlan } from '../orchestration/types.js';
 import type { ProviderManager, ProviderRequest } from '../providers/types.js';
+import type { ToolManager } from '../tools/types.js';
 
 const plannerModel = {
   name: 'brain-planner',
@@ -29,7 +30,7 @@ const ensurePlanShape = (value: unknown): ExecutionPlan => {
   };
 };
 
-export const createBrainPlanner = (manager: ProviderManager) => {
+export const createBrainPlanner = (manager: ProviderManager, toolManager?: ToolManager) => {
   return async (context: ExecutionContext): Promise<ExecutionPlan> => {
     const request: ProviderRequest = {
       model: plannerModel,
@@ -58,3 +59,4 @@ export const createBrainPlanner = (manager: ProviderManager) => {
 };
 
 export default createBrainPlanner;
+

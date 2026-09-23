@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+﻿import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   VisaMatrixBackendConnector,
@@ -66,6 +66,81 @@ describe('Visa Matrix ERP connector', () => {
     expect(result.payload?.success).toBe(true);
   });
 
+  it('forwards customer.create requests to the ERP integration boundary', async () => {
+    const fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
+      expect(url).toBe('http://erp.example.test/api/integrations/nexus/customer.create');
+      expect(init?.method).toBe('POST');
+      expect(init?.headers).toEqual({
+        'Content-Type': 'application/json',
+        'X-Nexus-Internal-Token': 'test-internal-token',
+        'X-Request-ID': 'request-create-123',
+        'X-Correlation-ID': 'correlation-create-456',
+        Authorization: 'Bearer user-jwt',
+      });
+      expect(init?.body).toBe(
+        JSON.stringify({
+          full_name: 'NEXUS Test Customer',
+          email: 'nexus-test@example.com',
+          phone: '+919999999999',
+          passport_number: 'P1234567',
+          nationality: 'Indian',
+        }),
+      );
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            id: '123e4567-e89b-12d3-a456-426614174000',
+            full_name: 'NEXUS Test Customer',
+          },
+          requestId: 'request-create-123',
+          correlationId: 'correlation-create-456',
+        }),
+        { status: 201 },
+      );
+    });
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    const result = await connector().request(
+      {
+        action: 'customer.create',
+        payload: {
+          full_name: 'NEXUS Test Customer',
+          email: 'nexus-test@example.com',
+          phone: '+919999999999',
+          passport_number: 'P1234567',
+          nationality: 'Indian',
+        },
+      },
+      {
+        authorization: 'Bearer user-jwt',
+        requestId: 'request-create-123',
+        correlationId: 'correlation-create-456',
+      },
+    );
+
+    expect(result.ok).toBe(true);
+    expect(result.payload?.success).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects an invalid customer.create payload', async () => {
+    await expect(
+      connector().request(
+        {
+          action: 'customer.create',
+          payload: {
+            email: 'missing-name@example.com',
+          },
+        },
+        {},
+      ),
+    ).rejects.toMatchObject({
+      code: 'ERP_INVALID_CUSTOMER_CREATE_REQUEST',
+    });
+  });
   it('rejects unsupported actions and extra customer.get fields', async () => {
     await expect(
       connector().request({ action: 'customer.list' }, {}),

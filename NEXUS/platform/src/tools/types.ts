@@ -1,16 +1,27 @@
+﻿export type ToolKind = 'read' | 'write';
+
 export type ToolDefinition = Readonly<{
   name: string;
   version: string;
+  kind?: ToolKind;
+  requiresConfirmation?: boolean;
 }>;
 
 export type ToolContext = Readonly<{
   requestId?: string;
   correlationId?: string;
+  payload?: Record<string, unknown>;
+  confirmationId?: string;
+  confirmed?: boolean;
+  authorization?: string;
 }>;
 
 export type ToolResult = Readonly<{
   ok: boolean;
   details?: string;
+  payload?: Record<string, unknown>;
+  confirmationRequired?: boolean;
+  confirmationId?: string;
 }>;
 
 export type ToolPermission = Readonly<{
@@ -20,6 +31,8 @@ export type ToolPermission = Readonly<{
 export type ToolDiscovery = Readonly<{
   name: string;
   version: string;
+  kind?: ToolKind;
+  requiresConfirmation?: boolean;
 }>;
 
 export interface Tool {
@@ -43,3 +56,4 @@ export interface ToolManager {
 export interface ToolExecutor {
   execute(tool: Tool, context: ToolContext): Promise<ToolResult>;
 }
+

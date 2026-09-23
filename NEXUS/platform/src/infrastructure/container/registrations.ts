@@ -1,4 +1,5 @@
-import { createAutomationManager } from '../../automation/manager.js';
+﻿import { createAutomationManager } from '../../automation/manager.js';
+import { createConfirmationManager } from '../../security/confirmation/manager.js';
 import { createBrainPlanner } from '../../brain/planner.js';
 import { createConnectorManager } from '../../connectors/manager.js';
 import { createEngineManager } from '../../engines/core/manager.js';
@@ -22,6 +23,7 @@ import { createResearchAgent } from '../../workforce/research-agent.js';
 import { createSupervisorAgent } from '../../workforce/supervisor-agent.js';
 import { createVisaAgent } from '../../workforce/visa-agent.js';
 import { PlannerToken } from './service-tokens.js';
+import { ConfirmationManagerToken } from './confirmation-token.js';
 import {
   AgentManagerToken,
   AutomationManagerToken,
@@ -43,6 +45,11 @@ export const registerCoreServices = (container: Container): void => {
   container.register(KnowledgeManagerToken, { lifetime: 'singleton', factory: () => createKnowledgeManager() });
 
   container.register(ToolManagerToken, { lifetime: 'singleton', factory: () => createToolManager() });
+
+  container.register(ConfirmationManagerToken, {
+    lifetime: 'singleton',
+    factory: () => createConfirmationManager(),
+  });
 
   container.register(WorkforceManagerToken, { lifetime: 'singleton', factory: () => createWorkforceManager() });
   container.register(AgentManagerToken, {
@@ -77,8 +84,11 @@ export const registerCoreServices = (container: Container): void => {
   // Planner (AI) wiring
   container.register(PlannerToken, {
     lifetime: 'singleton',
-    factory: (c) => createBrainPlanner(c.resolve(ProviderManagerToken)),
+    factory: (c) => createBrainPlanner(c.resolve(ProviderManagerToken), c.resolve(ToolManagerToken)),
   });
 };
 
 export type { Container };
+
+
+

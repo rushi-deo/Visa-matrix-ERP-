@@ -53,7 +53,11 @@ describe('pipeline integration execution', () => {
 
     const result = await createExecutionPipeline().execute(context, { id: 'plan', steps: [] });
 
-    expect(result).toEqual({ ok: true, details: 'INTEGRATION_EXECUTION_SUCCEEDED' });
+    expect(result).toEqual({
+  ok: true,
+  payload: { success: true },
+  details: 'INTEGRATION_EXECUTION_SUCCEEDED',
+});
     expect(request).toHaveBeenCalledWith(integration.request, {
       requestId: 'request-123',
       correlationId: 'correlation-456',
