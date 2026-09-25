@@ -177,10 +177,8 @@ describe('NEXUS public execution API', () => {
             id: '223e4567-e89b-12d3-a456-426614174000',
             full_name: 'NEXUS Confirmation Test',
           },
-          requestId: 'request-customer-create-1',
-          correlationId: 'correlation-customer-create-1',
         }),
-        { status: 200 },
+        { status: 201 },
       );
     });
 
@@ -266,7 +264,6 @@ describe('NEXUS public execution API', () => {
     expect(JSON.stringify(inputs[0])).not.toContain('secret-user-jwt');
   });
 });
-
 
 
 

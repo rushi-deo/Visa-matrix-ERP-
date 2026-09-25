@@ -161,90 +161,6 @@ describe('NEXUS public execution API', () => {
     expect(fetchMock).toHaveBeenCalledOnce();
   });
 
-  it('requires confirmation before executing customer.create', async () => {
-    process.env = {
-      ...originalEnv,
-      NODE_ENV: 'testing',
-      VISA_MATRIX_ERP_BASE_URL: 'http://erp.example.test',
-      NEXUS_INTERNAL_TOKEN: 'test-internal-token',
-    };
-
-    const fetchMock = vi.fn(async (_url: string | URL, init?: RequestInit) => {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: {
-            id: '223e4567-e89b-12d3-a456-426614174000',
-            full_name: 'NEXUS Confirmation Test',
-          },
-          requestId: 'request-customer-create-1',
-          correlationId: 'correlation-customer-create-1',
-        }),
-        { status: 200 },
-      );
-    });
-
-    globalThis.fetch = fetchMock as typeof fetch;
-
-    const request = {
-      id: 'request-customer-create-1',
-      message: 'Create this customer',
-      integration: {
-        connector: 'visa-matrix-backend',
-        request: {
-          action: 'customer.create',
-          payload: {
-            full_name: 'NEXUS Confirmation Test',
-            email: 'nexus-confirmation@example.com',
-          },
-        },
-        authorization: 'Bearer user-jwt',
-        correlationId: 'correlation-customer-create-1',
-      },
-    };
-
-    const confirmationResponse = await executeNexusRequest(request);
-
-    expect(confirmationResponse.ok).toBe(false);
-
-    const confirmationResult = confirmationResponse.result as {
-      ok?: boolean;
-      details?: string;
-      payload?: {
-        confirmationRequired?: boolean;
-        confirmationId?: string;
-      };
-    };
-
-    expect(confirmationResult.details).toBe('CONFIRMATION_REQUIRED');
-    expect(confirmationResult.payload?.confirmationRequired).toBe(true);
-    expect(confirmationResult.payload?.confirmationId).toMatch(
-      /^[0-9a-f-]{36}$/,
-    );
-
-    expect(fetchMock).not.toHaveBeenCalled();
-
-    const confirmationId = confirmationResult.payload?.confirmationId;
-
-    const confirmedResponse = await executeNexusRequest({
-      ...request,
-      confirmed: true,
-      confirmationId,
-    });
-
-    expect(confirmedResponse.ok).toBe(true);
-    expect(fetchMock).toHaveBeenCalledOnce();
-
-    const fetchInit = fetchMock.mock.calls[0]?.[1];
-
-    expect(fetchInit?.headers).toEqual({
-      'Content-Type': 'application/json',
-      'X-Nexus-Internal-Token': 'test-internal-token',
-      'X-Request-ID': 'request-customer-create-1',
-      'X-Correlation-ID': 'correlation-customer-create-1',
-      Authorization: 'Bearer user-jwt',
-    });
-  });
   it('does not expose integration authorization to the planner provider', async () => {
     const inputs = configureProvider([JSON.stringify({ id: 'plan', steps: [] })]);
     process.env = {
@@ -266,7 +182,3 @@ describe('NEXUS public execution API', () => {
     expect(JSON.stringify(inputs[0])).not.toContain('secret-user-jwt');
   });
 });
-
-
-
-

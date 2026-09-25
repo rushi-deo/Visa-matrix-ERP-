@@ -1,5 +1,4 @@
-﻿import type { ConnectorManager } from '../connectors/types.js';
-import type { BrainContext } from '../brain/types.js';
+﻿import type { BrainContext } from '../brain/types.js';
 import type { IntegrationExecutionRequest } from '../connectors/types.js';
 import type { EngineManager } from '../engines/core/types.js';
 import type { EventBus } from '../events/event-bus.js';
@@ -174,75 +173,17 @@ export const createExecutionPipeline = (): ExecutionPipeline => {
     const integration = context.request.integration;
 
     if (integration) {
-      const action = integration.request.action;
-      const payload = integration.request.payload;
-      const metadata = context.request.metadata ?? {};
-      const confirmationId =
-        typeof metadata.confirmationId === 'string'
-          ? metadata.confirmationId
-          : undefined;
-      const confirmed = metadata.confirmed === true;
+      const connectorManager = container.resolve(ConnectorManagerToken);
+      const connector = connectorManager.get(integration.connector);
+
+      if (!connector) {
+        return {
+          ok: false,
+          details: 'INTEGRATION_CONNECTOR_NOT_FOUND',
+        };
+      }
 
       try {
-        const toolManager = container.resolve(ToolManagerToken) as ToolManager;
-        const discoveredTool = toolManager.discover(action);
-
-        // Registered write actions must use ToolManager so confirmation
-        // and write-policy enforcement remain active.
-        if (discoveredTool?.kind === 'write') {
-          const toolResult = await toolManager.execute(action, {
-            requestId: context.requestId ?? context.request.id,
-            correlationId:
-              context.correlationId ??
-              integration.correlationId ??
-              context.request.id,
-            ...(payload ? { payload } : {}),
-            ...(confirmationId ? { confirmationId } : {}),
-            ...(confirmed ? { confirmed: true } : {}),
-            ...(integration.authorization
-              ? { authorization: integration.authorization }
-              : {}),
-          });
-
-          const resultPayload = {
-            ...(toolResult.payload ?? {}),
-            ...(toolResult.confirmationRequired
-              ? {
-                  confirmationRequired: true,
-                  ...(toolResult.confirmationId
-                    ? { confirmationId: toolResult.confirmationId }
-                    : {}),
-                }
-              : {}),
-          };
-
-          return {
-            ok: toolResult.ok,
-            ...(Object.keys(resultPayload).length > 0
-              ? { payload: resultPayload }
-              : {}),
-            details:
-              toolResult.details ??
-              (toolResult.ok
-                ? 'INTEGRATION_EXECUTION_SUCCEEDED'
-                : 'INTEGRATION_EXECUTION_FAILED'),
-          };
-        }
-
-        // Read integrations continue through ConnectorManager.
-        const connectorManager = container.resolve(
-          ConnectorManagerToken,
-        ) as ConnectorManager;
-
-        const connector = connectorManager.get(integration.connector);
-
-        if (!connector) {
-          return {
-            ok: false,
-            details: 'INTEGRATION_CONNECTOR_NOT_FOUND',
-          };
-        }
-
         const response = await connector.request(
           integration.request,
           {
@@ -570,8 +511,6 @@ export const createRequestRouter = (): RequestRouter => ({
     });
   },
 });
-
-
 
 
 
