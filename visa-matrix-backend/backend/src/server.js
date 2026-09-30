@@ -1,4 +1,4 @@
-
+﻿
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "node:url";
@@ -162,9 +162,13 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/communication`, communicationRoutes);
   app.use(`${env.apiPrefix}/reports`, reportRoutes);
   app.use(`${env.apiPrefix}/admin`, adminRoutes);
-  app.use(`${env.apiPrefix}/debug-db`, debugDbRoutes);
+  if (!env.isProduction) {
+    app.use(`${env.apiPrefix}/debug-db`, debugDbRoutes);
+  }
   app.use(`${env.apiPrefix}/pdf`, pdfRoutes);
-  app.use(`${env.apiPrefix}/test`, testSecureRoutes);
+  if (!env.isProduction) {
+    app.use(`${env.apiPrefix}/test`, testSecureRoutes);
+  }
   app.use(`${env.apiPrefix}/visa-fees`, visaFeesRoutes);
 app.use(`${env.apiPrefix}/quotations`, quotationRoutes);
   app.use(`${env.apiPrefix}/departments`, departmentRoutes);
@@ -206,3 +210,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
 }
 
 export default app;
+
