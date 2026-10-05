@@ -3,6 +3,9 @@ import multer from "multer";
 import env from "../../config/env.js";
 import { z } from "zod";
 import { requestValidator } from "../../middleware/requestValidator.js";
+import { authenticateUser } from "../../middleware/auth.js";
+import { authorizeRoles } from "../../middleware/rbac.middleware.js";
+
 import {
   createFormController,
   deleteFormController,
@@ -15,6 +18,8 @@ import {
 } from "./forms.controller.js";
 
 const router = Router();
+
+router.use(authenticateUser);
 
 const paramsSchema = z.object({
   id: z.string().uuid(),
@@ -68,50 +73,66 @@ const importUpload = multer({
   },
 });
 
+/* =========================================================
+   FORM READ ACCESS
+   ========================================================= */
+
 router.get(
   "/",
+  authorizeRoles("Super Admin", "Admin", "Visa Officer"),
   requestValidator({ query: querySchema }),
   listFormsController,
 );
 
 router.get(
   "/country/:countryId/visa-type/:visaTypeId",
+  authorizeRoles("Super Admin", "Admin", "Visa Officer"),
   requestValidator({ params: countryVisaParamsSchema }),
   getFormByCountryVisaController,
 );
 
 router.get(
   "/:id",
+  authorizeRoles("Super Admin", "Admin", "Visa Officer"),
   requestValidator({ params: paramsSchema }),
   getFormByIdController,
 );
 
+/* =========================================================
+   FORM ADMINISTRATION
+   ========================================================= */
+
 router.post(
   "/",
+  authorizeRoles("Super Admin", "Admin"),
   requestValidator({ body: bodySchema }),
   createFormController,
 );
 
 router.post(
   "/import",
+  authorizeRoles("Super Admin", "Admin"),
   importUpload.any(),
   importFormsController,
 );
 
 router.put(
   "/:id",
+  authorizeRoles("Super Admin", "Admin"),
   requestValidator({ params: paramsSchema, body: bodySchema }),
   updateFormController,
 );
 
 router.delete(
   "/:id",
+  authorizeRoles("Super Admin", "Admin"),
   requestValidator({ params: paramsSchema }),
   deleteFormController,
 );
 
 router.post(
   "/:id/publish",
+  authorizeRoles("Super Admin", "Admin"),
   requestValidator({ params: paramsSchema }),
   publishFormController,
 );

@@ -30,7 +30,10 @@ const env = {
   apiPrefix: process.env.API_PREFIX || "/api",
   appName: process.env.APP_NAME || "Visa Matrix ERP API",
   baseUrl: process.env.BASE_URL || "http://localhost:5000",
-  corsOrigins: parseList(process.env.CORS_ORIGIN, ["*"]),
+  corsOrigins: parseList(
+    process.env.CORS_ORIGIN,
+    process.env.NODE_ENV === "production" ? [] : ["*"],
+  ),
   requestSizeLimit: process.env.REQUEST_SIZE_LIMIT || "10mb",
   logLevel: process.env.LOG_LEVEL || "info",
   jwtSecret: process.env.JWT_SECRET || process.env.APP_JWT_SECRET,

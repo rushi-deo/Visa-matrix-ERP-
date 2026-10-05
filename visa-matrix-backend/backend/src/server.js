@@ -1,4 +1,4 @@
-﻿
+
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "node:url";
@@ -37,7 +37,7 @@ import adminRoutes from "./modules/admin/admin.routes.js";
 import debugDbRoutes from "./routes/debugDb.routes.js";
 import formRoutes from "./modules/forms/forms.routes.js";
 import legacyApplicationRoutes from "./routes/applicationRoutes.js";
-import publicApplicationsRoutes from "./routes/publicApplications.js";
+
 import pdfRoutes from "./routes/pdf.routes.js";
 import testSecureRoutes from "./routes/testSecureRoutes.js";
 import validationRoutes from "./routes/validation.js";
@@ -54,13 +54,14 @@ import { startWorkflowWorker } from "./jobs/workflowJob.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const activeWorkers = [];
-const allowedCorsOrigins = ["http://localhost:5173", ...env.corsOrigins];
+const allowedCorsOrigins = env.isProduction
+  ? env.corsOrigins
+  : ["http://localhost:5173", ...env.corsOrigins];
 
 const corsOptions = {
   origin: (origin, callback) => {
     if (
       !origin ||
-      allowedCorsOrigins.includes("*") ||
       allowedCorsOrigins.includes(origin)
     ) {
       return callback(null, true);
@@ -141,7 +142,7 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/integrations/nexus`, nexusIntegrationRoutes);
   app.use(`${env.apiPrefix}/leads`, leadRoutes);
   app.use(`${env.apiPrefix}/application`, legacyApplicationRoutes);
-  app.use(`${env.apiPrefix}/public/applications`, publicApplicationsRoutes);
+
   app.use(`${env.apiPrefix}/applications`, applicationRoutes);
   app.use(`${env.apiPrefix}/countries`, countryRoutes);
   app.use(`${env.apiPrefix}/visa-catalog`, visaCatalogRoutes);
@@ -210,4 +211,3 @@ if (process.argv[1] && path.resolve(process.argv[1]) === currentFilePath) {
 }
 
 export default app;
-

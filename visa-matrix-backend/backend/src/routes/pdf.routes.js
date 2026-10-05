@@ -1,10 +1,19 @@
 import { Router } from "express";
+import env from "../config/env.js";
+import { authenticateUser } from "../middleware/auth.js";
 import { downloadPdf } from "../controllers/pdf.controller.js";
 import { generateInvoicePdf, sampleInvoiceData } from "../services/pdf.service.js";
 
 const router = Router();
 
 router.get("/test-pdf", async (_req, res) => {
+  if (env.isProduction) {
+    return res.status(404).json({
+      success: false,
+      message: "Not found",
+    });
+  }
+
   try {
     console.log("[PDF] GET /api/pdf/test-pdf requested");
 
@@ -37,6 +46,10 @@ router.get("/test-pdf", async (_req, res) => {
   }
 });
 
-router.post("/download-pdf", downloadPdf);
+router.post(
+  "/download-pdf",
+  authenticateUser,
+  downloadPdf,
+);
 
 export default router;
