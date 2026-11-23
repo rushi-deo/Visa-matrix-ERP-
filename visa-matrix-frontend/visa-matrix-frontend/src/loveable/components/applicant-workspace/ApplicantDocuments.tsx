@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { toast } from "sonner";
+import { getSignedDocumentUrl } from "@/lib/document-url.mjs";
 import {
   fallbackChecklistCatalog,
   fetchDocuments,
@@ -18,7 +19,6 @@ interface ApplicantDocumentsProps {
 }
 
 const valueOrDash = (value: unknown) => value === null || value === undefined || value === "" ? "-" : String(value);
-const getDocumentUrl = (document: ApiRecord) => readApiString(document, ["url", "fileUrl", "file_url", "publicUrl", "public_url", "downloadUrl", "download_url"]);
 const getCategory = (document: ApiRecord) => readApiString(document, ["category", "documentCategory", "document_category"]) ?? "Other";
 
 export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
@@ -121,7 +121,7 @@ export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
       {Object.entries(groupedDocuments).map(([documentCategory, categoryDocuments]) => (
         <section key={documentCategory} className="space-y-3"><h3 className="text-sm font-semibold">{documentCategory}</h3><div className="grid gap-3">
           {categoryDocuments.map((document) => {
-            const url = getDocumentUrl(document);
+            const url = getSignedDocumentUrl(document);
             const fileName = readApiString(document, ["fileName", "file_name"]);
             const documentName = readApiString(document, ["documentName", "document_name"]) ?? fileName ?? "Document";
             const documentType = readApiString(document, ["documentType", "document_type", "type", "fileType"]) ?? "FILE";

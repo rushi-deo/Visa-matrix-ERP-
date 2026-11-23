@@ -131,7 +131,7 @@ export const updateDocumentRecord = async (id, payload, authContext = {}) => {
     }, authContext),
     organizationId,
   );
-  return withAuthorizedSignedUrl(updated);
+  return withAuthorizedSignedUrl(updated, authContext);
 };
 
 export const deleteDocumentRecord = async (id, authContext = {}) => {
