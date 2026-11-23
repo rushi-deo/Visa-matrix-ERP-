@@ -21,12 +21,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export const Route = createFileRoute("/_app/finance/invoices")({
-  component: () => {
+type InvoiceRow = {
+  id: string;
+  invoiceNo: string;
+  customer: string;
+  issued: string;
+  due: string;
+  amount: number;
+  status: string;
+};
+
+export const Route = createFileRoute("/_app/finance/invoices")({ component: InvoicePage });
+
+function InvoicePage() {
     const navigate = useNavigate();
 
     const [showInvoiceModal, setShowInvoiceModal] = useState(false);
-    const [invoiceData, setInvoiceData] = useState<any[]>([]);
+    const [invoiceData, setInvoiceData] = useState<InvoiceRow[]>([]);
 const [invoiceForm, setInvoiceForm] = useState({
   customer: "",
   amount: "",
@@ -73,7 +84,7 @@ const [invoiceForm, setInvoiceForm] = useState({
   }
 };
 
-    const cols: Column<any>[] = [
+    const cols: Column<InvoiceRow>[] = [
       {
         key: "invoiceNo",
         header: "Invoice #",
@@ -201,5 +212,4 @@ return (
     </Dialog>
         </>
     );
-  },
-});
+}

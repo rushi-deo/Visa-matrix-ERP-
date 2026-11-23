@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { normalizeVisaType } from "../utils/visaType";
 
 const createInitialState = (initialValues = {}) => ({
@@ -37,11 +37,6 @@ export default function ApplicationForm({
 }) {
   const [values, setValues] = useState(() => createInitialState(initialValues));
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    setValues(createInitialState(initialValues));
-    setErrors({});
-  }, [initialValues]);
 
   const normalizedCountryOptions = useMemo(() => {
     const safeCountries = Array.isArray(countries) ? countries : [];

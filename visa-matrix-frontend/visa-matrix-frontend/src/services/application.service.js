@@ -78,24 +78,6 @@ const mapApplicationToDbPayload = (application = {}) =>
     created_at: application.created_at,
   });
 
-const mapApplicationToNewApplicationPayload = (application = {}) =>
-  compactPayload({
-    customer_name: application.customerName ?? application.customer_name,
-    passport_number: application.passportNumber ?? application.passport_number,
-    email: application.email,
-    phone: application.phone,
-    destination_country:
-      application.destinationCountry ?? application.destination_country,
-    visa_type: normalizeVisaType(application.visaType ?? application.visa_type),
-    travel_date: application.travelDate ?? application.travel_date,
-    assigned_to:
-      application.agentAssigned ??
-      application.assigned_agent ??
-      application.agent_assigned ??
-      application.assigned_to,
-    lead_source: application.leadSource ?? application.lead_source,
-  });
-
 function getApplicationsTable() {
   if (!supabase) {
     throw new Error("Supabase client is not configured.");
@@ -152,7 +134,7 @@ export async function sendQuotation(payload) {
   return extractResponseData(response) ?? response?.data ?? {};
 }
 
-export async function createApplication(payload, _currentUser) {
+export async function createApplication(payload) {
   if (!supabase) {
     throw new Error("Supabase client is not configured.");
   }

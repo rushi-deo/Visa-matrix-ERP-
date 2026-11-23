@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { asApiRecord } from "@/lib/api-record";
 
 type Option = string | { label?: string; value?: string };
 type VisaField = {
@@ -20,12 +21,33 @@ type VisaField = {
   visible_if?: Record<string, unknown>;
 };
 type VisaSection = { id?: string; title?: string; description?: string; fields?: VisaField[] };
-type FormConfig = {
+export type DynamicVisaFormConfig = {
   name?: string;
   country_name?: string;
   visa_type_name?: string;
   form_schema?: { sections?: VisaSection[] };
 };
+
+export function isDynamicVisaFormConfig(value: unknown): value is DynamicVisaFormConfig {
+  const config = asApiRecord(value);
+  const schema = asApiRecord(config?.form_schema);
+  if (!config || !schema) return false;
+  if (config.name !== undefined && typeof config.name !== "string") return false;
+  if (config.country_name !== undefined && typeof config.country_name !== "string") return false;
+  if (config.visa_type_name !== undefined && typeof config.visa_type_name !== "string") return false;
+  if (schema.sections === undefined) return true;
+  if (!Array.isArray(schema.sections)) return false;
+  return schema.sections.every((value) => {
+    const section = asApiRecord(value);
+    if (!section) return false;
+    if (section.fields === undefined) return true;
+    if (!Array.isArray(section.fields)) return false;
+    return section.fields.every((field) => {
+      const fieldRecord = asApiRecord(field);
+      return typeof fieldRecord?.id === "string";
+    });
+  });
+}
 
 const optionValue = (option: Option) => typeof option === "string" ? option : String(option.value ?? option.label ?? "");
 const optionLabel = (option: Option) => typeof option === "string" ? option : String(option.label ?? option.value ?? "");
@@ -93,7 +115,7 @@ function FieldControl({ field, value, onChange, readOnly }: { field: VisaField; 
   return <Input {...common} type={htmlType} readOnly={readOnly} />;
 }
 
-export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, readOnly = false, initialValues = {}, onValuesChange, onSaveDraft, onSubmit }: { config: FormConfig; countryName?: string; visaTypeName?: string; readOnly?: boolean; initialValues?: Record<string, unknown>; onValuesChange?: (values: Record<string, unknown>) => void; onSaveDraft?: (values: Record<string, unknown>) => void | Promise<void>; onSubmit?: (values: Record<string, unknown>) => void | Promise<void> }) {
+export function DynamicVisaApplicationForm({ config, countryName, visaTypeName, readOnly = false, initialValues = {}, onValuesChange, onSaveDraft, onSubmit }: { config: DynamicVisaFormConfig; countryName?: string; visaTypeName?: string; readOnly?: boolean; initialValues?: Record<string, unknown>; onValuesChange?: (values: Record<string, unknown>) => void; onSaveDraft?: (values: Record<string, unknown>) => void | Promise<void>; onSubmit?: (values: Record<string, unknown>) => void | Promise<void> }) {
   const sections = config.form_schema?.sections ?? [];
   const draftKey = `visa-matrix:draft:${countryName ?? "country"}:${visaTypeName ?? "visa"}`;
   const [step, setStep] = React.useState(0);

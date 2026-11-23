@@ -41,15 +41,22 @@ export default function CRM() {
   const [activityMessage, setActivityMessage] = useState("");
 
   const loadLeads = async () => {
-    setLoading(true);
-    const nextLeads = await fetchLeads();
-    setLeads(nextLeads);
-    setLeadError("");
-    setLoading(false);
+    try {
+      const nextLeads = await fetchLeads();
+      setLeads(Array.isArray(nextLeads) ? nextLeads : []);
+      setLeadError("");
+    } catch (error) {
+      setLeads([]);
+      setLeadError(error instanceof Error ? error.message : "Unable to load leads.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    loadLeads();
+    // loadLeads updates state after its awaited backend request completes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadLeads();
   }, []);
 
   const safeLeads = Array.isArray(leads) ? leads : [];
@@ -246,6 +253,29 @@ if (!leadForm.visaType) {
         {loading ? <p className="empty-state">Loading leads...</p> : null}
         {!loading && leadError ? <p className="form-error">{leadError}</p> : null}
         {!loading && !leadError && filteredLeads.length === 0 ? <p className="empty-state">No Leads Found</p> : null}
+
+        {!loading && !leadError && filteredLeads.length > 0 ? (
+          <div className="grid gap-3">
+            {filteredLeads.slice((page - 1) * pageSize, page * pageSize).map((lead) => (
+              <article key={lead.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-4">
+                <div className="min-w-0">
+                  <strong>{lead.leadName}</strong>
+                  <p className="text-sm text-muted-foreground">
+                    {[lead.interestedCountry, lead.visaType, lead.assignedAgent, lead.status].filter(Boolean).join(" · ")}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button className="secondary-button" type="button" onClick={() => openScheduleModal(lead)}>
+                    Schedule consultation
+                  </button>
+                  <button className="secondary-button" type="button" onClick={() => openConvertModal(lead)}>
+                    Convert to application
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
 
         <TablePagination
           itemLabel="lead records"

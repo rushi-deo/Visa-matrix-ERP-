@@ -4,6 +4,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { Users, CalendarCheck, UserMinus, Award } from "lucide-react";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
+import { activities, monthlyRevenue } from "@/lib/mock-data";
 export const Route = createFileRoute("/_app/dashboard/hr")({ component: () => (
   <>
     <PageHeader title="HR Dashboard" description="Workforce, attendance and leave overview." />
@@ -13,6 +14,6 @@ export const Route = createFileRoute("/_app/dashboard/hr")({ component: () => (
       <StatCard label="On Leave" value="9" icon={UserMinus} accent="warning" />
       <StatCard label="Top Performers" value="14" delta={5.2} icon={Award} accent="info" />
     </div>
-    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart /><ActivityFeed /></div>
+    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart data={monthlyRevenue} /><ActivityFeed activities={activities} /></div>
   </>
 ) });

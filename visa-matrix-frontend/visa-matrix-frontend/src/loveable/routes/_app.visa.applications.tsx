@@ -6,10 +6,10 @@ import apiClient, {
 } from "@erp/services/apiClient";
 import * as React from "react";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { Button } from "@/components/ui/button";
 import type { Column } from "@/components/common/DataTable";
 import { ApplicantWorkspace } from "@/components/applicant-workspace/ApplicantWorkspace";
 import { WorkspaceDivider } from "@/components/applicant-workspace/WorkspaceDivider";
+import { asApiRecord, asApiRecords, getErrorMessage, readApiString } from "@/lib/api-record";
 type Application = {
   id: string;
   application_number: string;
@@ -27,8 +27,12 @@ export const Route = createFileRoute("/_app/visa/applications")({
   component: Page,
 });
 function Page() {
-  const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname !== "/visa/applications" ? <Outlet /> : <ApplicationsList />;
+}
+
+function ApplicationsList() {
+  const navigate = useNavigate();
   const [applications, setApplications] = React.useState<Application[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -37,10 +41,6 @@ function Page() {
   const [leftPanelWidth, setLeftPanelWidth] = React.useState(58);
   const [isFullScreen, setIsFullScreen] = React.useState(false);
   const workspaceOpen = selectedApplicationId !== null;
-
-  if (pathname !== "/visa/applications") {
-    return <Outlet />;
-  }
 
   const cols: Column<Application>[] = [
     {
@@ -94,16 +94,34 @@ function Page() {
   React.useEffect(() => {
     let mounted = true;
     (async () => {
-      setLoading(true);
-      setError(null);
       try {
         const resp = await apiClient.get(API_ENDPOINTS.applications);
         const data = extractResponseData(resp);
-        const items = Array.isArray(data?.items) ? data.items : [];
-        if (mounted) setApplications(items);
-      } catch (err: any) {
+        const payload = asApiRecord(data);
+        const items = asApiRecords(Array.isArray(payload?.items) ? payload.items : data);
+        if (mounted) {
+          setApplications(items.flatMap((item) => {
+            const id = readApiString(item, ["id", "application_id"]);
+            if (!id) return [];
+            return [{
+              id,
+              application_number: readApiString(item, ["application_number", "application_code", "app_id"]) ?? id,
+              customer_name: readApiString(item, ["customer_name", "applicant_name", "full_name"]) ?? "",
+              destination_country: readApiString(item, ["destination_country", "country_name", "country"]) ?? "",
+              visa_type: readApiString(item, ["visa_type", "visa_type_name"]) ?? "",
+              status: readApiString(item, ["status", "application_status"]) ?? "Submitted",
+              stage: readApiString(item, ["stage", "workflow_stage"]) ?? "",
+              assigned_employee: readApiString(item, ["assigned_employee", "assigned_to", "assignee"]) ?? "",
+              created_at: readApiString(item, ["created_at", "createdAt"]) ?? "",
+              updated_at: readApiString(item, ["updated_at", "updatedAt"]) ?? "",
+              payment_status: readApiString(item, ["payment_status", "paymentStatus"]) ?? "",
+            }];
+          }));
+          setError(null);
+        }
+      } catch (err: unknown) {
         console.error("Failed to load applications:", err);
-        if (mounted) setError(err?.message ?? String(err));
+        if (mounted) setError(getErrorMessage(err, "Unable to load applications."));
       } finally {
         if (mounted) setLoading(false);
       }

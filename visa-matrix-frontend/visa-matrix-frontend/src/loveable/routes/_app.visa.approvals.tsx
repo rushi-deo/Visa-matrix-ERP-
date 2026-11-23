@@ -25,7 +25,7 @@ function Page() {
     let mounted = true;
     fetchApplications()
       .then((rows) => {
-        if (mounted) setApplications(rows as Application[]);
+        if (mounted) setApplications(rows.map(toApplicationProfile));
       })
       .catch(() => {
         if (mounted) setApplications([]);
@@ -130,4 +130,29 @@ function Page() {
       />
     </>
   );
+}
+
+function toApplicationProfile(value: unknown): Application {
+  const record: Record<string, unknown> =
+    typeof value === "object" && value !== null && !Array.isArray(value)
+      ? value as Record<string, unknown>
+      : {};
+  const text = (value: unknown) => typeof value === "string" ? value : "";
+  const number = (value: unknown) => typeof value === "number" ? value : Number(value ?? 0);
+
+  return {
+    id: text(record.id),
+    applicant: text(record.customerName ?? record.customer_name),
+    appId: text(record.applicationCode ?? record.application_number ?? record.id),
+    flag: text(record.flag),
+    country: text(record.destinationCountry ?? record.destination_country ?? record.country),
+    visaType: text(record.visaType ?? record.visa_type),
+    status: text(record.status) || "Submitted",
+    priority: text(record.priority) || "Normal",
+    email: text(record.email),
+    assignee: text(record.assignedEmployee ?? record.assigned_employee ?? record.assigned_to),
+    submitted: text(record.submissionDate ?? record.submission_date ?? record.createdAt ?? record.created_at),
+    amount: number(record.amount),
+    progress: number(record.progress),
+  };
 }

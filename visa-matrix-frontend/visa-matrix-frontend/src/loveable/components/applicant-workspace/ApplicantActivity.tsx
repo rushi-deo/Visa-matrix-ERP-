@@ -1,17 +1,11 @@
 import { CircleDot, CircleDollarSign, Eye, FileDown, FileUp, MessageSquare, Pencil, Plus, RefreshCw, UserRound } from "lucide-react";
+import { asApiRecords, readApiString, readApiValue, type ApiRecord } from "@/lib/api-record";
 
 interface ApplicantActivityProps {
-  applicant: any;
+  applicant: ApiRecord;
   loading: boolean;
   error?: string | null;
 }
-
-const firstValue = (source: any, keys: string[]) => {
-  for (const key of keys) {
-    if (source?.[key] !== undefined && source?.[key] !== null && source?.[key] !== "") return source[key];
-  }
-  return null;
-};
 
 const getActivityIcon = (type: string) => {
   const normalizedType = type.toLowerCase();
@@ -42,7 +36,7 @@ export function ApplicantActivity({ applicant, loading, error }: ApplicantActivi
   if (loading) return <p className="text-sm text-muted-foreground">Loading activity...</p>;
   if (error) return <p className="text-sm text-destructive">{error}</p>;
 
-  const rawActivities = firstValue(applicant, [
+  const rawActivities = readApiValue(applicant, [
     "activity",
     "activities",
     "activityLog",
@@ -53,13 +47,13 @@ export function ApplicantActivity({ applicant, loading, error }: ApplicantActivi
     "applicationEvents",
     "application_events",
   ]);
-  const activities = (Array.isArray(rawActivities) ? rawActivities : [])
-    .map((activity: any, index) => ({
-      id: activity.id ?? activity.activity_id ?? activity.event_id ?? `${index}-${activity.created_at ?? activity.timestamp ?? "activity"}`,
-      type: firstValue(activity, ["activityType", "activity_type", "type", "eventType", "event_type", "action"]) ?? "Activity",
-      description: firstValue(activity, ["description", "details", "message", "actionDescription", "action_description"]) ?? "-",
-      user: firstValue(activity, ["userName", "user_name", "employeeName", "employee_name", "actor", "createdBy", "created_by", "user"]) ?? "-",
-      date: firstValue(activity, ["createdAt", "created_at", "timestamp", "date", "occurredAt", "occurred_at", "updated_at"]),
+  const activities = asApiRecords(rawActivities)
+    .map((activity, index) => ({
+      id: readApiString(activity, ["id", "activity_id", "event_id"]) ?? `${index}-${readApiString(activity, ["created_at", "timestamp"]) ?? "activity"}`,
+      type: readApiString(activity, ["activityType", "activity_type", "type", "eventType", "event_type", "action"]) ?? "Activity",
+      description: readApiString(activity, ["description", "details", "message", "actionDescription", "action_description"]) ?? "-",
+      user: readApiString(activity, ["userName", "user_name", "employeeName", "employee_name", "actor", "createdBy", "created_by", "user"]) ?? "-",
+      date: readApiValue(activity, ["createdAt", "created_at", "timestamp", "date", "occurredAt", "occurred_at", "updated_at"]),
     }))
     .sort((first, second) => {
       const firstDate = new Date(String(first.date ?? "")).getTime();

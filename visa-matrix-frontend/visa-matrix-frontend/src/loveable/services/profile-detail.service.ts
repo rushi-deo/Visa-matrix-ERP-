@@ -27,10 +27,8 @@ import {
   type Lead,
 } from "@/lib/mock-data";
 import type {
-  ProfileAction,
   ProfileDetail,
   ProfileEntityType,
-  ProfileMetric,
   ProfileNote,
   ProfileSection,
   ProfileTable,

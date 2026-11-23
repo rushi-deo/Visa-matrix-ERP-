@@ -4,6 +4,7 @@ import { ModulePage } from "@/components/common/ModulePage";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { Column } from "@/components/common/DataTable";
 import { hrWorkspaceApi } from "@erp/features/hr/api/hrWorkspaceApi";
+import { asApiRecords, readApiString } from "@/lib/api-record";
 
 type User = { id: string; name: string; email: string; role: string; status?: string; lastLogin: string };
 
@@ -18,13 +19,13 @@ function Page() {
     let mounted = true;
     hrWorkspaceApi.getEmployees().then((response) => {
       if (!mounted) return;
-      const items = Array.isArray(response?.items) ? response.items : [];
-      setData(items.slice(0, 16).map((e: any, i: number) => ({
-        id: e.id,
-        name: e.name,
-        email: e.email,
+      const items = asApiRecords(response?.items).slice(0, 16);
+      setData(items.map((employee, i) => ({
+        id: readApiString(employee, ["id", "employee_id"]) ?? `user-${i}`,
+        name: readApiString(employee, ["name", "full_name"]) ?? "Employee",
+        email: readApiString(employee, ["email"]) ?? "",
         role: ["Super Admin", "HR", "Finance", "CRM", "Employee"][i % 5],
-        status: e.status,
+        status: readApiString(employee, ["status"]) ?? undefined,
         lastLogin: `2025-11-${String((i % 27) + 1).padStart(2, "0")}`,
       })));
     }).catch(() => mounted && setData([]));

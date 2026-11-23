@@ -1,19 +1,11 @@
 import { CalendarClock, CheckCircle2, CircleDot, FileText, UserRound } from "lucide-react";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { asApiRecords, readApiString, readApiValue, type ApiRecord } from "@/lib/api-record";
 
 interface ApplicantTimelineProps {
-  applicant: any;
+  applicant: ApiRecord;
   loading: boolean;
 }
-
-const firstValue = (source: any, keys: string[]) => {
-  for (const key of keys) {
-    if (source?.[key] !== undefined && source?.[key] !== null && source?.[key] !== "") {
-      return source[key];
-    }
-  }
-  return null;
-};
 
 const getEventIcon = (type: string) => {
   const normalizedType = type.toLowerCase();
@@ -35,7 +27,7 @@ export function ApplicantTimeline({ applicant, loading }: ApplicantTimelineProps
     return <p className="text-sm text-muted-foreground">Loading timeline...</p>;
   }
 
-  const rawEvents = firstValue(applicant, [
+  const rawEvents = readApiValue(applicant, [
     "timeline",
     "activities",
     "activity",
@@ -45,15 +37,15 @@ export function ApplicantTimeline({ applicant, loading }: ApplicantTimelineProps
     "applicationEvents",
     "application_events",
   ]);
-  const events = (Array.isArray(rawEvents) ? rawEvents : [])
-    .map((event: any, index) => ({
-      id: event.id ?? event.event_id ?? `${index}-${event.created_at ?? event.date ?? "event"}`,
-      title: firstValue(event, ["title", "eventTitle", "event_title", "name", "type", "event"]) ?? "Application update",
-      description: firstValue(event, ["description", "details", "message", "note", "comment"]),
-      date: firstValue(event, ["createdAt", "created_at", "timestamp", "date", "occurredAt", "occurred_at", "updated_at"]),
-      user: firstValue(event, ["userName", "user_name", "employeeName", "employee_name", "assignedEmployee", "assigned_employee", "actor", "createdBy", "created_by"]),
-      status: firstValue(event, ["status", "eventStatus", "event_status"]),
-      type: String(firstValue(event, ["type", "eventType", "event_type", "title"]) ?? "event"),
+  const events = asApiRecords(rawEvents)
+    .map((event, index) => ({
+      id: readApiString(event, ["id", "event_id"]) ?? `${index}-${readApiString(event, ["created_at", "date"]) ?? "event"}`,
+      title: readApiString(event, ["title", "eventTitle", "event_title", "name", "type", "event"]) ?? "Application update",
+      description: readApiString(event, ["description", "details", "message", "note", "comment"]),
+      date: readApiValue(event, ["createdAt", "created_at", "timestamp", "date", "occurredAt", "occurred_at", "updated_at"]),
+      user: readApiString(event, ["userName", "user_name", "employeeName", "employee_name", "assignedEmployee", "assigned_employee", "actor", "createdBy", "created_by"]),
+      status: readApiString(event, ["status", "eventStatus", "event_status"]),
+      type: readApiString(event, ["type", "eventType", "event_type", "title"]) ?? "event",
     }))
     .sort((a, b) => {
       const first = new Date(String(a.date ?? "")).getTime();

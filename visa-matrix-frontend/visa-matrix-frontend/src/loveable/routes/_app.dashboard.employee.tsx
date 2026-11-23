@@ -4,7 +4,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { CheckSquare, Clock, Award, FileText } from "lucide-react";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { tasks } from "@/lib/mock-data";
+import { activities, tasks } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/common/StatusBadge";
 export const Route = createFileRoute("/_app/dashboard/employee")({ component: () => (
   <>
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_app/dashboard/employee")({ component: ()
       <StatCard label="Open Cases" value="7" icon={FileText} accent="warning" />
     </div>
     <div className="grid gap-4 lg:grid-cols-2">
-      <ActivityFeed />
+      <ActivityFeed activities={activities} />
       <Card><CardHeader><CardTitle className="text-base">My Tasks</CardTitle></CardHeader>
         <CardContent className="space-y-2">{tasks.map((t) => (
           <div key={t.id} className="flex items-center justify-between border rounded-md p-2.5">

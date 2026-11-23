@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, Search, ArrowUpDown } from "lucide-react";
 import { EmptyState } from "./EmptyState";
 
 export interface Column<T> {
-  key: string;
+  key: Extract<keyof T, string>;
   header: string;
   render?: (row: T) => React.ReactNode;
   sortable?: boolean;
@@ -30,7 +30,7 @@ interface Props<T> {
 export function DataTable<T extends { id: string }>({ data, columns, searchKeys, pageSize = 10, rowAction, onRowClick, selectedRowId, toolbar }: Props<T>) {
   const [q, setQ] = React.useState("");
   const [page, setPage] = React.useState(1);
-  const [sortKey, setSortKey] = React.useState<string | null>(null);
+  const [sortKey, setSortKey] = React.useState<Extract<keyof T, string> | null>(null);
   const [sortDir, setSortDir] = React.useState<"asc"|"desc">("asc");
 
   const filtered = React.useMemo(() => {
@@ -43,7 +43,7 @@ export function DataTable<T extends { id: string }>({ data, columns, searchKeys,
     if (!sortKey) return filtered;
     const col = columns.find((c) => c.key === sortKey);
     if (!col) return filtered;
-    const get = col.accessor ?? ((r: T) => String((r as any)[sortKey] ?? ""));
+    const get = col.accessor ?? ((r: T) => String(r[sortKey] ?? ""));
     return [...filtered].sort((a, b) => {
       const av = get(a), bv = get(b);
       if (av < bv) return sortDir === "asc" ? -1 : 1;
@@ -98,7 +98,7 @@ export function DataTable<T extends { id: string }>({ data, columns, searchKeys,
                 aria-selected={selectedRowId === row.id}>
                 {columns.map((c) => (
                   <TableCell key={c.key} className={c.className}>
-                    {c.render ? c.render(row) : String((row as any)[c.key] ?? "")}
+                    {c.render ? c.render(row) : String(row[c.key] ?? "")}
                   </TableCell>
                 ))}
                 {rowAction && <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>{rowAction(row)}</TableCell>}

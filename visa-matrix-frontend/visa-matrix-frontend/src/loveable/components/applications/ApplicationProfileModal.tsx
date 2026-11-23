@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { CalendarDays, CircleDollarSign, Clock3, FileText, MessageSquare, ShieldCheck, UserRound } from "lucide-react";
 
 export interface Application {
+  id: string;
   applicant: string;
   appId: string;
   flag: string;

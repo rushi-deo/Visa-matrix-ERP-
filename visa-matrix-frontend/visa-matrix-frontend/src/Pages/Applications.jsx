@@ -41,7 +41,7 @@ export default function Applications() {
   const getApplicationDisplayId = (application) =>
     application?.applicationCode || application?.id || "";
 
-  const loadApplications = async (preferredApplicationId = "") => {
+  const loadApplications = async () => {
     const nextApplications = await fetchApplications();
     console.log("Applications:", nextApplications);
     setApplications(nextApplications);
@@ -122,7 +122,7 @@ export default function Applications() {
     );
 
     return normalizedApplications;
-  }, [applications, currentUser?.role]);
+    }, [applications]);
 
   const filteredApplications = scopedApplications.filter((application) => {
     const matchesSearch = [

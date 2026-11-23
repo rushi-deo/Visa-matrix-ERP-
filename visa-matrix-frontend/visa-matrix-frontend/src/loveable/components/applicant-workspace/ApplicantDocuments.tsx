@@ -11,17 +11,18 @@ import {
   uploadDocuments,
 } from "@erp/services/documents.service";
 import { isUploadTypeSupported, supportedUploadTypes } from "@erp/services/erpService";
+import { asApiRecords, getErrorMessage, readApiString, readApiValue, type ApiRecord } from "@/lib/api-record";
 
 interface ApplicantDocumentsProps {
   applicationId: string;
 }
 
 const valueOrDash = (value: unknown) => value === null || value === undefined || value === "" ? "-" : String(value);
-const getDocumentUrl = (document: any) => document.url ?? document.fileUrl ?? document.file_url ?? document.publicUrl ?? document.public_url ?? document.downloadUrl ?? document.download_url ?? null;
-const getCategory = (document: any) => document.category ?? document.documentCategory ?? document.document_category ?? "Other";
+const getDocumentUrl = (document: ApiRecord) => readApiString(document, ["url", "fileUrl", "file_url", "publicUrl", "public_url", "downloadUrl", "download_url"]);
+const getCategory = (document: ApiRecord) => readApiString(document, ["category", "documentCategory", "document_category"]) ?? "Other";
 
 export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
-  const [documents, setDocuments] = React.useState<any[]>([]);
+  const [documents, setDocuments] = React.useState<ApiRecord[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [listError, setListError] = React.useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = React.useState(false);
@@ -31,26 +32,36 @@ export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
 
-  const loadDocuments = React.useCallback(async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    setListError(null);
-    try {
-      const result = await fetchDocuments({ includeMeta: true });
-      if (result?.error) throw result.error;
-      const rows = Array.isArray(result?.data) ? result.data : [];
-      setDocuments(rows.filter((document) => String(document.applicationId ?? document.application_id ?? "") === String(applicationId)));
-    } catch (error: any) {
-      setDocuments([]);
-      setListError(error?.message ?? "Unable to load documents.");
-      throw error;
-    } finally {
-      if (showLoading) setLoading(false);
-    }
+  const fetchApplicationDocuments = React.useCallback(async () => {
+    const result = await fetchDocuments({ includeMeta: true });
+    if (result?.error) throw result.error;
+    const rows = asApiRecords(result?.data);
+    return rows.filter((document) => String(readApiValue(document, ["applicationId", "application_id"]) ?? "") === String(applicationId));
   }, [applicationId]);
 
   React.useEffect(() => {
-    loadDocuments().catch(() => undefined);
-  }, [loadDocuments]);
+    let mounted = true;
+    const load = async () => {
+      try {
+        const rows = await fetchApplicationDocuments();
+        if (mounted) {
+          setDocuments(rows);
+          setListError(null);
+        }
+      } catch (error: unknown) {
+        if (mounted) {
+          setDocuments([]);
+          setListError(getErrorMessage(error, "Unable to load documents."));
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      mounted = false;
+    };
+  }, [fetchApplicationDocuments]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -74,22 +85,24 @@ export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
     setUploadProgress(35);
     setUploadError(null);
     try {
-      await uploadDocuments({ applicationId, documentName: category, uploadedBy: "Operations Team", files: [selectedFile] });
+      await uploadDocuments({ applicationId, documentName: category, files: [selectedFile] });
       setUploadProgress(100);
-      await loadDocuments(false);
+      setDocuments(await fetchApplicationDocuments());
+      setListError(null);
       toast.success("Document uploaded successfully.");
       setUploadOpen(false);
       setSelectedFile(null);
-    } catch (error: any) {
-      setUploadError(error?.message ?? "Unable to upload document.");
-      toast.error(error?.message ?? "Unable to upload document.");
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, "Unable to upload document.");
+      setUploadError(message);
+      toast.error(message);
     } finally {
       setUploading(false);
       setUploadProgress(0);
     }
   };
 
-  const groupedDocuments = documents.reduce<Record<string, any[]>>((groups, document) => {
+  const groupedDocuments = documents.reduce<Record<string, ApiRecord[]>>((groups, document) => {
     const documentCategory = String(getCategory(document));
     (groups[documentCategory] ??= []).push(document);
     return groups;
@@ -109,11 +122,13 @@ export function ApplicantDocuments({ applicationId }: ApplicantDocumentsProps) {
         <section key={documentCategory} className="space-y-3"><h3 className="text-sm font-semibold">{documentCategory}</h3><div className="grid gap-3">
           {categoryDocuments.map((document) => {
             const url = getDocumentUrl(document);
-            const fileName = document.fileName ?? document.file_name;
-            const documentName = document.documentName ?? document.document_name ?? fileName ?? "Document";
-            const documentType = document.documentType ?? document.document_type ?? document.type ?? document.fileType ?? "FILE";
-            const status = document.status ?? document.verificationStatus ?? document.verification_status ?? "Uploaded";
-            return <Card key={document.id}><CardHeader className="pb-3"><div className="flex items-start gap-3"><div className="grid size-9 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><FileText className="size-4" /></div><div className="min-w-0 flex-1"><CardTitle className="truncate text-sm">{valueOrDash(documentName)}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{valueOrDash(fileName)}</p></div><StatusBadge value={valueOrDash(status)} /></div></CardHeader><CardContent className="space-y-3 pt-0"><div className="grid gap-3 text-sm sm:grid-cols-3"><div><p className="text-xs text-muted-foreground">Document Type</p><p className="mt-1 font-medium">{valueOrDash(documentType)}</p></div><div><p className="text-xs text-muted-foreground">Upload Date</p><p className="mt-1 font-medium">{valueOrDash(document.uploadDate ?? document.upload_date ?? document.uploaded_at)}</p></div><div><p className="text-xs text-muted-foreground">Status</p><p className="mt-1 font-medium">{valueOrDash(status)}</p></div></div><div className="flex gap-2 border-t pt-3">{url ? <Button asChild size="sm" variant="outline"><a href={url} target="_blank" rel="noreferrer"><Eye className="size-3.5" />View</a></Button> : <Button size="sm" variant="outline" disabled><Eye className="size-3.5" />View</Button>}{url ? <Button asChild size="sm" variant="outline"><a href={url} download={fileName || true}><Download className="size-3.5" />Download</a></Button> : <Button size="sm" variant="outline" disabled><Download className="size-3.5" />Download</Button>}</div></CardContent></Card>;
+            const fileName = readApiString(document, ["fileName", "file_name"]);
+            const documentName = readApiString(document, ["documentName", "document_name"]) ?? fileName ?? "Document";
+            const documentType = readApiString(document, ["documentType", "document_type", "type", "fileType"]) ?? "FILE";
+            const status = readApiString(document, ["status", "verificationStatus", "verification_status"]) ?? "Uploaded";
+            const id = readApiString(document, ["id", "document_id"]) ?? documentName;
+            const uploadDate = readApiValue(document, ["uploadDate", "upload_date", "uploaded_at"]);
+            return <Card key={id}><CardHeader className="pb-3"><div className="flex items-start gap-3"><div className="grid size-9 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><FileText className="size-4" /></div><div className="min-w-0 flex-1"><CardTitle className="truncate text-sm">{valueOrDash(documentName)}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{valueOrDash(fileName)}</p></div><StatusBadge value={status} /></div></CardHeader><CardContent className="space-y-3 pt-0"><div className="grid gap-3 text-sm sm:grid-cols-3"><div><p className="text-xs text-muted-foreground">Document Type</p><p className="mt-1 font-medium">{documentType}</p></div><div><p className="text-xs text-muted-foreground">Upload Date</p><p className="mt-1 font-medium">{valueOrDash(uploadDate)}</p></div><div><p className="text-xs text-muted-foreground">Status</p><p className="mt-1 font-medium">{status}</p></div></div><div className="flex gap-2 border-t pt-3">{url ? <Button asChild size="sm" variant="outline"><a href={url} target="_blank" rel="noreferrer"><Eye className="size-3.5" />View</a></Button> : <Button size="sm" variant="outline" disabled><Eye className="size-3.5" />View</Button>}{url ? <Button asChild size="sm" variant="outline"><a href={url} download={fileName ?? true}><Download className="size-3.5" />Download</a></Button> : <Button size="sm" variant="outline" disabled><Download className="size-3.5" />Download</Button>}</div></CardContent></Card>;
           })}
         </div></section>
       ))}

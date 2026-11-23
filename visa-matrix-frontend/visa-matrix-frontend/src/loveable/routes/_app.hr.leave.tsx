@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import type { Column } from "@/components/common/DataTable";
 import { hrWorkspaceApi } from "@erp/features/hr/api/hrWorkspaceApi";
+import { asApiRecords, readApiString } from "@/lib/api-record";
 
 type Leave = { id: string; employee: string; type: string; from: string; to: string; status: string };
 
@@ -20,10 +21,10 @@ function Page() {
     let mounted = true;
     hrWorkspaceApi.getEmployees().then((response) => {
       if (!mounted) return;
-      const items = Array.isArray(response?.items) ? response.items : [];
-      setData(items.slice(0, 12).map((e: any, i: number) => ({
-        id: e.id,
-        employee: e.name,
+      const items = asApiRecords(response?.items).slice(0, 12);
+      setData(items.map((employee, i) => ({
+        id: readApiString(employee, ["id", "employee_id"]) ?? `leave-${i}`,
+        employee: readApiString(employee, ["name", "full_name"]) ?? "Employee",
         type: ["Sick", "Casual", "Earned", "Unpaid"][i % 4],
         from: `2025-11-${String(10 + (i % 9)).padStart(2, "0")}`,
         to: `2025-11-${String(12 + (i % 9)).padStart(2, "0")}`,

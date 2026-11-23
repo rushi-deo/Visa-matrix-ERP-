@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import apiClient, { API_ENDPOINTS } from "@erp/services/apiClient";
 import { toast } from "sonner";
+import { asApiRecord, asApiRecords, type ApiRecord, readApiString } from "@/lib/api-record";
 
 type Props = {
   open: boolean;
@@ -34,41 +35,30 @@ type SelectOption = {
   name: string;
 };
 
-const extractCountries = (response: any): SelectOption[] => {
-  const payload = response?.data;
-  const items = Array.isArray(payload?.data?.items)
-    ? payload.data.items
-    : Array.isArray(payload?.data)
-      ? payload.data
-      : Array.isArray(payload)
-        ? payload
-        : [];
-
-  return items
-    .map((item: any) => ({
-      id: String(item?.id ?? item?.country_id ?? ""),
-      name: String(item?.name ?? item?.country ?? ""),
-    }))
-    .filter((item: SelectOption) => item.id && item.name);
+const responseItems = (response: unknown): ApiRecord[] => {
+  const responseRecord = asApiRecord(response);
+  const payload = asApiRecord(responseRecord?.data);
+  const nestedPayload = asApiRecord(payload?.data);
+  const candidates = [nestedPayload?.items, payload?.items, payload?.data, response];
+  const collection = candidates.find(Array.isArray);
+  return asApiRecords(collection);
 };
 
-const extractVisaTypes = (response: any): SelectOption[] => {
-  const payload = response?.data;
-  const items = Array.isArray(payload?.data?.items)
-    ? payload.data.items
-    : Array.isArray(payload?.data)
-      ? payload.data
-      : Array.isArray(payload)
-        ? payload
-        : [];
+const toSelectOptions = (
+  records: ApiRecord[],
+  idKeys: readonly string[],
+  nameKeys: readonly string[],
+): SelectOption[] => records.flatMap((item) => {
+  const id = readApiString(item, idKeys);
+  const name = readApiString(item, nameKeys);
+  return id && name ? [{ id, name }] : [];
+});
 
-  return items
-    .map((item: any) => ({
-      id: String(item?.id ?? item?.visa_type_id ?? ""),
-      name: String(item?.name ?? item?.visa_type ?? item?.type ?? ""),
-    }))
-    .filter((item: SelectOption) => item.id && item.name);
-};
+const extractCountries = (response: unknown): SelectOption[] =>
+  toSelectOptions(responseItems(response), ["id", "country_id"], ["name", "country"]);
+
+const extractVisaTypes = (response: unknown): SelectOption[] =>
+  toSelectOptions(responseItems(response), ["id", "visa_type_id"], ["name", "visa_type", "type"]);
 
 export function ApplicationCreateDialog({
   open,
@@ -79,8 +69,8 @@ export function ApplicationCreateDialog({
   const [error, setError] = React.useState<string | null>(null);
   const [countries, setCountries] = React.useState<SelectOption[]>([]);
   const [visaTypes, setVisaTypes] = React.useState<SelectOption[]>([]);
-  const [loadingCountries, setLoadingCountries] = React.useState(false);
-  const [loadingVisaTypes, setLoadingVisaTypes] = React.useState(false);
+  const [countriesLoaded, setCountriesLoaded] = React.useState(false);
+  const [visaTypesLoadedForCountry, setVisaTypesLoadedForCountry] = React.useState<string | null>(null);
   const [fullName, setFullName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
@@ -91,6 +81,8 @@ export function ApplicationCreateDialog({
   const [travelDate, setTravelDate] = React.useState<string | null>(null);
   const [duration, setDuration] = React.useState("");
   const [purpose, setPurpose] = React.useState("");
+  const loadingCountries = open && !countriesLoaded;
+  const loadingVisaTypes = Boolean(country) && visaTypesLoadedForCountry !== country;
 
   React.useEffect(() => {
     console.log("Dialog open:", open);
@@ -102,7 +94,6 @@ export function ApplicationCreateDialog({
     let mounted = true;
 
     const loadCountries = async () => {
-      setLoadingCountries(true);
       try {
         console.log("Loading countries...");
         const response = await apiClient.get("/countries");
@@ -110,17 +101,16 @@ export function ApplicationCreateDialog({
 
         if (mounted) {
           setCountries(extractCountries(response));
+          setCountriesLoaded(true);
         }
       } catch (error) {
         console.error("Countries error:", error);
         if (mounted) {
           setCountries([]);
+          setCountriesLoaded(true);
           toast.error("Failed to load countries");
         }
       } finally {
-        if (mounted) {
-          setLoadingCountries(false);
-        }
       }
     };
 
@@ -132,18 +122,13 @@ export function ApplicationCreateDialog({
   }, [open]);
 
   React.useEffect(() => {
-    setVisaType("");
-
     if (!country) {
-      setVisaTypes([]);
-      setLoadingVisaTypes(false);
       return;
     }
 
     let mounted = true;
 
     const loadVisaTypes = async () => {
-      setLoadingVisaTypes(true);
       try {
         console.log("Loading visa types...");
         const response = await apiClient.get("/visa-types", {
@@ -153,17 +138,16 @@ export function ApplicationCreateDialog({
 
         if (mounted) {
           setVisaTypes(extractVisaTypes(response));
+          setVisaTypesLoadedForCountry(country);
         }
       } catch (error) {
         console.error("Visa types error:", error);
         if (mounted) {
           setVisaTypes([]);
+          setVisaTypesLoadedForCountry(country);
           toast.error("Failed to load visa types");
         }
       } finally {
-        if (mounted) {
-          setLoadingVisaTypes(false);
-        }
       }
     };
 
@@ -221,13 +205,15 @@ export function ApplicationCreateDialog({
       toast.success("Application created");
       onCreated?.();
       close();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("API ERROR", err);
-      console.error("RESPONSE", err?.response?.data);
-      const responseData = err?.response?.data;
-      const msg = responseData ?? err?.message ?? String(err);
+      const errorRecord = asApiRecord(err);
+      const response = asApiRecord(errorRecord?.response);
+      const responseData = response?.data;
+      const responseDataRecord = asApiRecord(responseData);
+      const msg = responseData ?? (err instanceof Error ? err.message : String(err));
       const validation =
-        responseData?.errors || responseData?.validation;
+        responseDataRecord?.errors || responseDataRecord?.validation;
       if (validation) {
         const details =
           typeof validation === "string"
@@ -298,7 +284,13 @@ export function ApplicationCreateDialog({
             <Label>Country</Label>
             <Select
               value={country}
-              onValueChange={setCountry}
+              onValueChange={(nextCountry) => {
+                setCountry(nextCountry);
+                setVisaType("");
+                setVisaTypes([]);
+                setVisaTypesLoadedForCountry(null);
+                setError(null);
+              }}
               disabled={loadingCountries}
             >
               <SelectTrigger>

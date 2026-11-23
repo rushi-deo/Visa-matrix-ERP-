@@ -166,6 +166,7 @@ export default function ApplicationDetail() {
         {error ? <p className="form-error">{error}</p> : null}
         {!loading && !error && application ? (
           <ApplicationForm
+            key={application.id ?? application.applicationCode}
             countries={finalCountries}
             footerActions={
               <button

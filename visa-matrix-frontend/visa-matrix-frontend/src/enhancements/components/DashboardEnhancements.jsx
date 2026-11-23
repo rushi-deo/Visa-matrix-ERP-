@@ -32,11 +32,12 @@ function EnhancementSlot({ children, position }) {
       dashboardContent.appendChild(container);
     }
 
+    // The portal needs React state only after its host node is attached to the dashboard DOM.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTarget(container);
 
     return () => {
       container.remove();
-      setTarget(null);
     };
   }, [position]);
 

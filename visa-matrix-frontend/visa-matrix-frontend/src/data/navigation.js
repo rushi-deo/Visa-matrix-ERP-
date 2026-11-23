@@ -37,40 +37,6 @@ export const navigationItems = [
     module: "invoicing",
     children: [
       {
-        label: "Dashboard",
-        path: "/accounts/dashboard",
-        shortLabel: "Dashboard",
-        module: "invoicing",
-      },
-      {
-        label: "Invoice",
-        path: "/accounts/invoice",
-        shortLabel: "Invoice",
-        module: "invoicing",
-      },
-      {
-        label: "Transactions",
-        path: "/accounts/transactions",
-        shortLabel: "Transactions",
-        module: "invoicing",
-      },
-      {
-        label: "Expenses",
-        path: "/accounts/expenses",
-        shortLabel: "Expenses",
-        module: "invoicing",
-      },
-      {
-        label: "Reports",
-        path: "/accounts/reports",
-        shortLabel: "Reports",
-        module: "invoicing",
-      },
-    ],
-    shortLabel: "Accounts",
-    module: "invoicing",
-    children: [
-      {
         path: "/accounts/dashboard",
         shortLabel: "Dashboard",
         label: "Dashboard",

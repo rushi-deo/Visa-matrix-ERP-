@@ -12,6 +12,20 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import apiClient from "../../services/apiClient";
+import { asApiRecord } from "@/lib/api-record";
+
+type InvoiceScalar = string | number | null;
+type InvoiceRecord = Record<string, InvoiceScalar>;
+
+function normalizeInvoice(value: unknown): InvoiceRecord | null {
+  const record = asApiRecord(value);
+  if (!record) return null;
+  const scalarEntries = Object.entries(record).filter(
+    (entry): entry is [string, InvoiceScalar] =>
+      entry[1] === null || typeof entry[1] === "string" || typeof entry[1] === "number",
+  );
+  return Object.fromEntries(scalarEntries);
+}
 
 export const Route = createFileRoute("/_app/finance/invoices/$id")({
   component: InvoiceDetailRoute,
@@ -20,7 +34,7 @@ export const Route = createFileRoute("/_app/finance/invoices/$id")({
 function InvoiceDetailRoute() {
   const { id } = Route.useParams();
 
-  const [invoice, setInvoice] = useState<any>(null);
+  const [invoice, setInvoice] = useState<InvoiceRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,12 +42,9 @@ function InvoiceDetailRoute() {
       try {
         const response = await apiClient.get(`/invoices/${id}`);
 
-        const invoiceData =
-          response?.data?.data ??
-          response?.data ??
-          null;
-
-        setInvoice(invoiceData);
+        const responseRecord = asApiRecord(response);
+        const responseData = asApiRecord(responseRecord?.data);
+        setInvoice(normalizeInvoice(responseData?.data ?? responseRecord?.data));
       } catch (error) {
         console.error("Failed to load invoice:", error);
       } finally {

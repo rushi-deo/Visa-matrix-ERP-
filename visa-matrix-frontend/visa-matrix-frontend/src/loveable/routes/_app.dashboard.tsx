@@ -25,6 +25,7 @@ import { fetchLeads } from "@erp/services/api";
 import { fetchNotifications } from "@erp/services/notifications.service";
 import { hrWorkspaceApi } from "@erp/features/hr/api/hrWorkspaceApi";
 import apiClient, { extractResponseData } from "@erp/services/apiClient";
+import { asApiRecord, asApiRecords, readApiString } from "@/lib/api-record";
 
 type Application = {
   id: string;
@@ -63,16 +64,24 @@ function Page() {
         ]);
         if (!mounted) return;
         const appPayload = extractResponseData(applicationsResp);
-        const appRows = Array.isArray(appPayload?.items) ? appPayload.items : Array.isArray(appPayload) ? appPayload : [];
-        setApplications(appRows.map((item: any) => ({
-          id: item.id ?? item.application_id ?? "",
-          appId: item.appId ?? item.application_number ?? item.application_code ?? "",
-          applicant: item.applicant ?? item.customer_name ?? "",
-          country: item.country ?? item.destination_country ?? "",
-          visaType: item.visaType ?? item.visa_type ?? "",
-          status: item.status ?? "Submitted",
-          assignee: item.assignee ?? item.assigned_to ?? "",
-        })));
+        const appPayloadRecord = asApiRecord(appPayload);
+        const appRows = asApiRecords(
+          Array.isArray(appPayloadRecord?.items) ? appPayloadRecord.items : appPayload,
+        );
+        setApplications(appRows.flatMap((item) => {
+          const id = readApiString(item, ["id", "application_id"]);
+          return id
+            ? [{
+                id,
+                appId: readApiString(item, ["appId", "application_number", "application_code"]) ?? "",
+                applicant: readApiString(item, ["applicant", "customer_name"]) ?? "",
+                country: readApiString(item, ["country", "destination_country"]) ?? "",
+                visaType: readApiString(item, ["visaType", "visa_type"]) ?? "",
+                status: readApiString(item, ["status"]) ?? "Submitted",
+                assignee: readApiString(item, ["assignee", "assigned_to"]) ?? "",
+              }]
+            : [];
+        }));
         setEmployees(Array.isArray(employeesResp?.items) ? employeesResp.items : []);
         setInvoices(invoicesResp as Payment[]);
         setLeads(leadsResp as Array<{ id: string; stage?: string }>);

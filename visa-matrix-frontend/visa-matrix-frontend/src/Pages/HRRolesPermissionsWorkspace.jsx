@@ -13,7 +13,7 @@ export default function HRRolesPermissionsWorkspace() {
   const [saving, setSaving] = useState(false);
   const { data, error, loading, reload, setData } = useHrResource(() => hrWorkspaceApi.getRoleTemplates(), []);
 
-  const roles = data?.items ?? [];
+  const roles = useMemo(() => data?.items ?? [], [data?.items]);
   const activeRole = useMemo(
     () => roles.find((role) => role.name === selectedRole) ?? roles[0],
     [roles, selectedRole],

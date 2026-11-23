@@ -1,19 +1,20 @@
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { readApiString, type ApiRecord } from "@/lib/api-record";
 
 interface ApplicantHeaderProps {
-  applicant: any;
+  applicant: ApiRecord;
 }
 
 const displayValue = (value: unknown) =>
   value === null || value === undefined || value === "" ? "-" : String(value);
 
 export function ApplicantHeader({ applicant }: ApplicantHeaderProps) {
-  const fields = [
-    ["Application ID", applicant.applicationCode || applicant.id],
-    ["Country", applicant.destinationCountry],
-    ["Visa Type", applicant.visaType],
-    ["Assigned Employee", applicant.assignedEmployee],
-    ["Created Date", applicant.createdAt],
+  const fields: Array<[string, string | null]> = [
+    ["Application ID", readApiString(applicant, ["applicationCode", "id"])],
+    ["Country", readApiString(applicant, ["destinationCountry", "destination_country"])],
+    ["Visa Type", readApiString(applicant, ["visaType", "visa_type"])],
+    ["Assigned Employee", readApiString(applicant, ["assignedEmployee", "assigned_employee"])],
+    ["Created Date", readApiString(applicant, ["createdAt", "created_at"])],
   ];
 
   return (
@@ -22,10 +23,10 @@ export function ApplicantHeader({ applicant }: ApplicantHeaderProps) {
         <div>
           <p className="text-sm text-muted-foreground">Applicant</p>
           <h3 className="mt-1 text-2xl font-semibold tracking-tight">
-            {displayValue(applicant.customerName)}
+            {displayValue(readApiString(applicant, ["customerName", "customer_name"]))}
           </h3>
           <div className="mt-3">
-            <StatusBadge value={displayValue(applicant.status)} />
+            <StatusBadge value={displayValue(readApiString(applicant, ["status"]))} />
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:min-w-[28rem] lg:grid-cols-3">

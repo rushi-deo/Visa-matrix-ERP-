@@ -70,7 +70,6 @@ export async function fetchDocuments(options = {}) {
 export async function uploadDocuments({
   applicationId,
   documentName,
-  uploadedBy,
   files = [],
 }) {
   const uploaded = [];

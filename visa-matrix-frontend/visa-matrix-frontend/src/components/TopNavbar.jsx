@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { navigationItems } from "../data/navigation";
 import { useAuth } from "../context/AuthContext";
@@ -26,21 +26,32 @@ const pageTitles = {
 
 export default function TopNavbar() {
   const location = useLocation();
+  return <TopNavbarForPath key={location.pathname} pathname={location.pathname} />;
+}
+
+function TopNavbarForPath({ pathname }) {
   const navigate = useNavigate();
   const { canAccess, currentUser, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notificationSnapshot, setNotificationSnapshot] = useState({ userId: null, items: [] });
   const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchSnapshot, setSearchSnapshot] = useState({ userId: null, query: "", items: [] });
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
   const searchContainerRef = useRef(null);
+  const notifications = currentUser && canAccess("notifications", "view") && notificationSnapshot.userId === currentUser.id
+    ? notificationSnapshot.items
+    : [];
+  const searchSnapshotMatches = Boolean(
+    currentUser && searchSnapshot.userId === currentUser.id && searchSnapshot.query === searchValue,
+  );
+  const searchResults = searchSnapshotMatches ? searchSnapshot.items : [];
+  const searchLoading = Boolean(currentUser && searchValue.trim() && !searchSnapshotMatches);
   const activeItem = navigationItems.find((item) => {
     if (item.path === "/dashboard") {
-      return location.pathname === "/" || location.pathname === "/dashboard";
+      return pathname === "/" || pathname === "/dashboard";
     }
 
-    return location.pathname.startsWith(item.path);
+    return pathname.startsWith(item.path);
   });
 
   const today = new Date().toLocaleDateString("en-US", {
@@ -49,21 +60,15 @@ export default function TopNavbar() {
     year: "numeric",
   });
   const canViewNotifications = canAccess("notifications", "view");
-  const unreadNotifications = useMemo(
-    () =>
-      notifications.filter(
-        (notification) => !(notification.is_read ?? notification.read_status ?? false),
-      ).length,
-    [notifications],
-  );
-  const visibleSearchResults = useMemo(
-    () => searchResults.filter((result) => result.path !== "/crm" && result.type !== "lead"),
-    [searchResults],
+  const unreadNotifications = notifications.filter(
+    (notification) => !(notification.is_read ?? notification.read_status ?? false),
+  ).length;
+  const visibleSearchResults = searchResults.filter(
+    (result) => result.path !== "/crm" && result.type !== "lead",
   );
 
   useEffect(() => {
     if (!currentUser || !canViewNotifications) {
-      setNotifications([]);
       return undefined;
     }
 
@@ -73,7 +78,7 @@ export default function TopNavbar() {
       const nextNotifications = await fetchNotifications();
 
       if (isMounted) {
-        setNotifications(nextNotifications);
+        setNotificationSnapshot({ userId: currentUser.id, items: nextNotifications });
       }
     };
 
@@ -106,21 +111,21 @@ export default function TopNavbar() {
 
   useEffect(() => {
     if (!currentUser || !searchValue.trim()) {
-      setSearchResults([]);
-      setSearchLoading(false);
       return undefined;
     }
 
     let isActive = true;
-    setSearchLoading(true);
-
     const timerId = window.setTimeout(async () => {
-      const nextResults = await searchWorkspace(searchValue);
-
-      if (isActive) {
-        setSearchResults(nextResults);
-        setSearchLoading(false);
-        setSearchOpen(true);
+      try {
+        const nextResults = await searchWorkspace(searchValue);
+        if (isActive) {
+          setSearchSnapshot({ userId: currentUser.id, query: searchValue, items: nextResults });
+          setSearchOpen(true);
+        }
+      } catch {
+        if (isActive) {
+          setSearchSnapshot({ userId: currentUser.id, query: searchValue, items: [] });
+        }
       }
     }, 250);
 
@@ -129,11 +134,6 @@ export default function TopNavbar() {
       window.clearTimeout(timerId);
     };
   }, [currentUser, searchValue]);
-
-  useEffect(() => {
-    setSearchOpen(false);
-    setMenuOpen(false);
-  }, [location.pathname]);
 
   const handleLogout = async () => {
     logout();

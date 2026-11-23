@@ -4,6 +4,7 @@ import { ModulePage } from "@/components/common/ModulePage";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { Column } from "@/components/common/DataTable";
 import { hrWorkspaceApi } from "@erp/features/hr/api/hrWorkspaceApi";
+import { asApiRecords, readApiString, readApiValue } from "@/lib/api-record";
 
 type Payroll = { id: string; employee: string; empId: string; salary: number; bonus: number; net: number; status: string };
 
@@ -18,16 +19,22 @@ function Page() {
     let mounted = true;
     hrWorkspaceApi.getEmployees().then((response) => {
       if (!mounted) return;
-      const items = Array.isArray(response?.items) ? response.items : [];
-      setData(items.map((e: any) => ({
-        id: e.id,
-        employee: e.name,
-        empId: e.employee_code ?? e.empId ?? "",
-        salary: Number(e.salary ?? 0),
-        bonus: Math.round(Number(e.salary ?? 0) * 0.05),
-        net: Number(e.salary ?? 0) + Math.round(Number(e.salary ?? 0) * 0.05),
-        status: "Paid",
-      })));
+      const items = asApiRecords(response?.items);
+      setData(items.flatMap((employee) => {
+        const id = readApiString(employee, ["id", "employee_id"]);
+        if (!id) return [];
+        const salary = Number(readApiValue(employee, ["salary", "base_salary"]) ?? 0);
+        const bonus = Math.round(salary * 0.05);
+        return [{
+          id,
+          employee: readApiString(employee, ["name", "full_name"]) ?? "Employee",
+          empId: readApiString(employee, ["employee_code", "empId"]) ?? "",
+          salary,
+          bonus,
+          net: salary + bonus,
+          status: "Paid",
+        }];
+      }));
     }).catch(() => mounted && setData([]));
     return () => {
       mounted = false;

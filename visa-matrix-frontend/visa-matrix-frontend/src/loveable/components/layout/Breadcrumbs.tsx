@@ -8,8 +8,6 @@ function titleize(s: string) {
 export function Breadcrumbs() {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const parts = path.split("/").filter(Boolean);
-  let acc = "";
-
   return (
     <nav
       className="flex items-center gap-1 text-sm text-muted-foreground"
@@ -23,7 +21,7 @@ export function Breadcrumbs() {
       </Link>
 
       {parts.map((p, i) => {
-        acc += "/" + p;
+        const href = `/${parts.slice(0, i + 1).join("/")}`;
         const last = i === parts.length - 1;
 
         // Hide UUID-like route parameters
@@ -32,7 +30,7 @@ export function Breadcrumbs() {
         }
 
         return (
-          <span key={acc} className="inline-flex items-center gap-1">
+          <span key={href} className="inline-flex items-center gap-1">
             <ChevronRight className="size-3.5" />
 
             {last ? (
@@ -40,7 +38,7 @@ export function Breadcrumbs() {
                 {titleize(p)}
               </span>
             ) : (
-              <Link to={acc} className="hover:text-foreground">
+              <Link to={href} className="hover:text-foreground">
                 {titleize(p)}
               </Link>
             )}
