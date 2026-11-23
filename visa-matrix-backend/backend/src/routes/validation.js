@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { evaluateRules } from "../services/ruleEngine.js";
 import { getRules } from "../services/ruleService.js";
+import { authenticateToken, authorizePermissions } from "../middleware/rbac.middleware.js";
 
 const router = Router();
 
 const isUUID = (value) => {
-  return /^[0-9a-fA-F-]{36}$/.test(value);
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 };
 
-router.post("/validate", async (req, res, next) => {
+router.post("/validate", authenticateToken, authorizePermissions("applications:view"), async (req, res, next) => {
   try {
     if (!req.body) {
       return res.status(400).json({
@@ -17,6 +18,9 @@ router.post("/validate", async (req, res, next) => {
       });
     }
 
+    if (typeof req.body !== "object" || Array.isArray(req.body)) {
+      return res.status(400).json({ success: false, message: "Request body must be an object." });
+    }
     const application = req.body;
     const { country_id, visa_type_id } = req.body;
 

@@ -5,6 +5,8 @@ import { createRollbackTransaction } from "../../core/transaction.js";
 import { createInvoice } from "../../services/invoice.service.js";
 import { generateQuotation } from "../../services/quotation.service.js";
 import { eventPublisher } from "../../platform/events/index.js";
+import { getCustomerById } from "../customers/customer.repository.js";
+import { ForbiddenError } from "../../core/errors.js";
 import {
   createApplication,
   deleteApplicationById,
@@ -26,15 +28,20 @@ import {
 import {
   applyTenantToPayload,
   assertTenantAccess,
+  getTenantOrganizationScope,
 } from "../../utils/tenantSecurity.js";
 
 const resolveApplicationStatus = (application) => {
   return application.status || application.application_status || APPLICATION_STATUSES.DRAFT;
 };
 
-export const getApplications = async (query) => listApplications(query);
+export const getApplications = async (query = {}, authContext = {}) =>
+  listApplications(query, getTenantOrganizationScope(authContext));
 export const getApplication = async (id, authContext = {}) => {
-  const application = await getApplicationById(id);
+  const application = await getApplicationById(
+    id,
+    getTenantOrganizationScope(authContext),
+  );
   return assertTenantAccess(application, authContext, "application");
 };
 
@@ -48,6 +55,17 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
           status: APPLICATION_STATUSES.DRAFT,
         };
   const tenantPayload = applyTenantToPayload(nextPayload, authContext);
+
+  if (tenantPayload.customer_id) {
+    const customer = await getCustomerById(
+      tenantPayload.customer_id,
+      tenantPayload.organization_id,
+    );
+    assertTenantAccess(customer, authContext, "customer");
+    if (customer.organization_id !== tenantPayload.organization_id) {
+      throw new ForbiddenError("Application customer belongs to another organization.");
+    }
+  }
 
   let application;
 
@@ -73,7 +91,6 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
         error: eventError instanceof Error ? eventError.message : eventError,
       });
     }
-    return application;
     transaction.addRollback("delete_application", () =>
       deleteApplicationById(application.id)
     );
@@ -104,7 +121,7 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
       after: application, 
     });
 
-    const quotation = await generateQuotation(application.id);
+    const quotation = await generateQuotation(application.id, authContext);
     const invoice = await createInvoice(quotation.id, authContext);
 
     await executeWorkflowForApplication({
@@ -131,8 +148,16 @@ export const createApplicationRecord = async (payload, authContext = {}) => {
 };
 
 export const updateApplicationRecord = async (id, payload, authContext = {}) => {
-  const currentApplication = await getApplicationById(id);
+  const organizationId = getTenantOrganizationScope(authContext);
+  const currentApplication = await getApplicationById(id, organizationId);
   assertTenantAccess(currentApplication, authContext, "application");
+  if (payload.customer_id && payload.customer_id !== currentApplication.customer_id) {
+    const customer = await getCustomerById(payload.customer_id, organizationId);
+    assertTenantAccess(customer, authContext, "customer");
+    if (String(customer.organization_id) !== String(currentApplication.organization_id)) {
+      throw new ForbiddenError("Application customer belongs to another organization.");
+    }
+  }
   const previousStatus = resolveApplicationStatus(currentApplication);
   const requestedStatus = payload.status || payload.application_status;
 
@@ -147,7 +172,11 @@ export const updateApplicationRecord = async (id, payload, authContext = {}) => 
 
   const updatedApplication = await updateApplication(
     id,
-    applyTenantToPayload(payload, authContext)
+    applyTenantToPayload({
+      ...payload,
+      organization_id: currentApplication.organization_id,
+    }, authContext),
+    organizationId,
   );
   const nextStatus = resolveApplicationStatus(updatedApplication);
 
@@ -198,7 +227,8 @@ export const updateApplicationRecord = async (id, payload, authContext = {}) => 
 };
 
 export const deleteApplicationRecord = async (id, authContext = {}) => {
-  const currentApplication = await getApplicationById(id);
+  const organizationId = getTenantOrganizationScope(authContext);
+  const currentApplication = await getApplicationById(id, organizationId);
   assertTenantAccess(currentApplication, authContext, "application");
-  return deleteApplication(id);
+  return deleteApplication(id, organizationId);
 };

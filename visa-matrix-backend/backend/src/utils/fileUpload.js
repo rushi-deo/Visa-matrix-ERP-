@@ -46,14 +46,22 @@ export const uploadBufferToStorage = async ({
     });
   }
 
-  const { data } = supabase.storage
-    .from(env.supabaseStorageBucket)
-    .getPublicUrl(storagePath);
-
   return {
     storagePath,
-    publicUrl: data.publicUrl,
   };
+};
+
+export const createSignedStorageUrl = async (storagePath, expiresIn = 300) => {
+  if (!storagePath) {
+    throw new ExternalServiceError("Document storage location is unavailable.");
+  }
+  const { data, error } = await supabase.storage
+    .from(env.supabaseStorageBucket)
+    .createSignedUrl(storagePath, expiresIn);
+  if (error || !data?.signedUrl) {
+    throw new ExternalServiceError("Failed to create a secure document link.");
+  }
+  return data.signedUrl;
 };
 
 export const removeStoredFile = async (storagePath) => {

@@ -114,6 +114,8 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: "Missing or invalid authorization header",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
@@ -129,6 +131,8 @@ export const authenticateToken = async (req, res, next) => {
           verifyError.name === "TokenExpiredError"
             ? "Token has expired"
             : "Invalid token",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
@@ -139,6 +143,8 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(403).json({
         success: false,
         message: accessProfile.message,
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
@@ -157,6 +163,8 @@ export const authenticateToken = async (req, res, next) => {
     return res.status(500).json({
       success: false,
       message: "Authentication failed",
+      requestId: req.requestId || null,
+      correlationId: req.correlationId || null,
     });
   }
 };
@@ -179,6 +187,8 @@ export const authorizeRoles = (...allowedRoles) => {
         return res.status(401).json({
           success: false,
           message: "User authentication required",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -189,7 +199,9 @@ export const authorizeRoles = (...allowedRoles) => {
       if (!hasRoleAccess(userRole, allowedRoles)) {
         return res.status(403).json({
           success: false,
-          message: `Access denied. Allowed roles: ${allowedRoles.join(", ")}. Your role: ${userRole}`,
+          message: "Access denied.",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -199,6 +211,8 @@ export const authorizeRoles = (...allowedRoles) => {
       return res.status(500).json({
         success: false,
         message: "Authorization check failed",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
       });
     }
   };
@@ -223,6 +237,8 @@ export const authorizePermissions = (...requiredPermissions) => {
         return res.status(401).json({
           success: false,
           message: "User authentication required",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -239,7 +255,9 @@ export const authorizePermissions = (...requiredPermissions) => {
       ) {
         return res.status(403).json({
           success: false,
-          message: `Insufficient permissions. Required: ${normalizedRequiredPermissions.join(", ")}. Your permissions: ${userPermissions.join(", ")}`,
+          message: "Insufficient permissions.",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -249,6 +267,8 @@ export const authorizePermissions = (...requiredPermissions) => {
       return res.status(500).json({
         success: false,
         message: "Authorization check failed",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
       });
     }
   };

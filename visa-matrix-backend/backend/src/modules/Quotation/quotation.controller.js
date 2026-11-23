@@ -8,7 +8,7 @@ import {
 } from "./quotation.service.js";
 export const listQuotations = async (req, res) => {
   try {
-    const data = await getQuotations(req.query);
+    const data = await getQuotations(req.query, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -26,7 +26,7 @@ export const listQuotations = async (req, res) => {
 
 export const getQuotationById = async (req, res) => {
   try {
-    const quotation = await getQuotation(req.params.id);
+    const quotation = await getQuotation(req.params.id, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -44,7 +44,7 @@ export const getQuotationById = async (req, res) => {
 
 export const createQuotation = async (req, res) => {
   try {
-    const quotation = await createQuotationRecord(req.body);
+    const quotation = await createQuotationRecord(req.body, req.auth);
 
     return res.status(201).json({
       success: true,
@@ -64,7 +64,8 @@ export const updateQuotation = async (req, res) => {
   try {
     const quotation = await updateQuotationRecord(
       req.params.id,
-      req.body
+      req.body,
+      req.auth,
     );
 
     return res.status(200).json({
@@ -84,7 +85,7 @@ export const updateQuotation = async (req, res) => {
 
 export const deleteQuotation = async (req, res) => {
   try {
-    await deleteQuotationRecord(req.params.id);
+    await deleteQuotationRecord(req.params.id, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -101,7 +102,7 @@ export const deleteQuotation = async (req, res) => {
 };
 export const generateInvoice = async (req, res) => {
   try {
-    const invoice = await generateInvoiceFromQuotation(req.params.id);
+    const invoice = await generateInvoiceFromQuotation(req.params.id, req.auth);
 
     return res.status(201).json({
       success: true,

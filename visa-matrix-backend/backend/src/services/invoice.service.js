@@ -4,16 +4,20 @@ import { AppError, NotFoundError, RequestValidationError, fromSupabaseError } fr
 import {
   applyTenantToPayload,
   assertTenantAccess,
+  getTenantOrganizationScope,
 } from "../utils/tenantSecurity.js";
 
 const normalizeTextValue = (value) => String(value ?? "").trim();
 
-const fetchQuotationRecord = async (quotationId) => {
-  const { data, error } = await supabase
+const fetchQuotationRecord = async (quotationId, organizationId = null) => {
+  let request = supabase
     .from("quotations")
     .select("*")
-    .eq("id", quotationId)
-    .maybeSingle();
+    .eq("id", quotationId);
+  request = organizationId
+    ? request.eq("organization_id", organizationId)
+    : request.not("organization_id", "is", null);
+  const { data, error } = await request.maybeSingle();
 
   if (error) {
     throw fromSupabaseError(error, "Failed to fetch quotation.");
@@ -56,7 +60,10 @@ export const createInvoice = async (quotationId, authContext = {}) => {
     throw new RequestValidationError("quotationId is required.");
   }
 
-  const quotation = await fetchQuotationRecord(quotationId);
+  const quotation = await fetchQuotationRecord(
+    quotationId,
+    getTenantOrganizationScope(authContext),
+  );
   assertTenantAccess(quotation, authContext, "quotation");
   const amount = Number(quotation.total_amount ?? 0) || 0;
   const createdAt = new Date().toISOString();
@@ -65,6 +72,7 @@ export const createInvoice = async (quotationId, authContext = {}) => {
     applyTenantToPayload({
       quotation_id: quotation.id,
       application_id: quotation.application_id ?? null,
+      organization_id: quotation.organization_id,
       amount,
       subtotal: amount,
       tax_amount: 0,
@@ -76,6 +84,7 @@ export const createInvoice = async (quotationId, authContext = {}) => {
     }, authContext),
     applyTenantToPayload({
       application_id: quotation.application_id ?? null,
+      organization_id: quotation.organization_id,
       subtotal: amount,
       tax_amount: 0,
       total_amount: amount,

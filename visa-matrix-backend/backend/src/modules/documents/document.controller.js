@@ -9,7 +9,7 @@ import {
 } from "./document.service.js";
 
 export const listDocumentsController = asyncHandler(async (req, res) => {
-  const data = await getDocuments(req.query);
+  const data = await getDocuments(req.query, req.auth);
   return sendSuccess(res, data);
 });
 

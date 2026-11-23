@@ -1,14 +1,11 @@
 import supabase from "../config/supabase.js";
 import {
-  deleteRecord,
-  fetchRecordById,
-  listRecords,
-  updateRecord,
-} from "./baseService.js";
-import {
   applyTenantToPayload,
   assertTenantAccess,
+  getTenantOrganizationScope,
 } from "../utils/tenantSecurity.js";
+import { getPaginationOptions, buildPaginationMeta } from "../utils/pagination.js";
+import { ForbiddenError, NotFoundError, fromSupabaseError } from "../core/errors.js";
 
 const APPLICATION_TABLE_CANDIDATES = ["application", "applications"];
 
@@ -73,7 +70,7 @@ const isMissingTableError = (error) => {
   );
 };
 
-const buildInsertError = (error, tableName, data) => {
+const buildInsertError = (error, tableName) => {
   const insertError = new Error(error?.message || "Supabase insert failed.");
 
   insertError.statusCode =
@@ -82,7 +79,6 @@ const buildInsertError = (error, tableName, data) => {
   insertError.details = error?.details || null;
   insertError.hint = error?.hint || null;
   insertError.tableName = tableName;
-  insertError.payload = data;
 
   if (/row-level security|rls/i.test(insertError.message)) {
     insertError.rlsHint =
@@ -92,18 +88,34 @@ const buildInsertError = (error, tableName, data) => {
   return insertError;
 };
 
-export const listApplications = async (queryParams) => {
-  return listRecords("applications", queryParams, {
-    select: "*",
-    entityLabel: "Applications",
-  });
+export const listApplications = async (queryParams = {}, authContext = {}) => {
+  const pagination = getPaginationOptions(queryParams.page, queryParams.limit);
+  const organizationId = getTenantOrganizationScope(authContext);
+  let query = supabase.from("applications").select("*", { count: "exact" });
+  query = organizationId
+    ? query.eq("organization_id", organizationId)
+    : query.not("organization_id", "is", null);
+  if (queryParams.status) query = query.eq("status", queryParams.status);
+  if (queryParams.application_status) query = query.eq("application_status", queryParams.application_status);
+  query = query.order("created_at", { ascending: false }).range(pagination.from, pagination.to);
+
+  const { data, error, count } = await query;
+  if (error) throw fromSupabaseError(error, "Failed to list applications.");
+  return {
+    items: data || [],
+    pagination: buildPaginationMeta(count || 0, pagination.page, pagination.limit),
+  };
 };
 
 export const getApplicationById = async (id, authContext = {}) => {
-  const application = await fetchRecordById("applications", id, {
-    select: "*",
-    entityLabel: "Application",
-  });
+  const organizationId = getTenantOrganizationScope(authContext);
+  let query = supabase.from("applications").select("*").eq("id", id);
+  query = organizationId
+    ? query.eq("organization_id", organizationId)
+    : query.not("organization_id", "is", null);
+  const { data: application, error } = await query.maybeSingle();
+  if (error) throw fromSupabaseError(error, "Failed to fetch application.");
+  if (!application) throw new NotFoundError("Application not found.");
 
   return assertTenantAccess(application, authContext, "application");
 };
@@ -111,7 +123,16 @@ export const getApplicationById = async (id, authContext = {}) => {
 export const createApplication = async (payload, authContext = {}) => {
   const data = mapApplicationPayload(applyTenantToPayload(payload, authContext));
 
-  console.log("Data going to DB:", data);
+  if (data.customer_id) {
+    const { data: customer, error } = await supabase
+      .from("customers")
+      .select("id, organization_id")
+      .eq("id", data.customer_id)
+      .eq("organization_id", data.organization_id)
+      .maybeSingle();
+    if (error) throw fromSupabaseError(error, "Failed to validate application customer.");
+    if (!customer) throw new ForbiddenError("Application customer must belong to the same organization.");
+  }
 
   let lastError = null;
 
@@ -122,12 +143,7 @@ export const createApplication = async (payload, authContext = {}) => {
       .select();
 
     if (response.error) {
-      console.error("Supabase Error:", {
-        tableName,
-        error: response.error,
-      });
-
-      lastError = buildInsertError(response.error, tableName, data);
+      lastError = buildInsertError(response.error, tableName);
 
       if (tableName !== "applications" && isMissingTableError(response.error)) {
         continue;
@@ -136,7 +152,6 @@ export const createApplication = async (payload, authContext = {}) => {
       throw lastError;
     }
 
-    console.log("Inserted Data:", response);
     return Array.isArray(response.data) ? response.data[0] : response.data;
   }
 
@@ -145,13 +160,29 @@ export const createApplication = async (payload, authContext = {}) => {
 
 export const updateApplication = async (id, payload, authContext = {}) => {
   const application = await getApplicationById(id, authContext);
-
   assertTenantAccess(application, authContext, "application");
-
-  return updateRecord("applications", id, applyTenantToPayload(payload, authContext), {
-    select: "*",
-    entityLabel: "Application",
-  });
+  const data = mapApplicationPayload(applyTenantToPayload({
+    ...payload,
+    organization_id: application.organization_id,
+  }, authContext));
+  if (data.customer_id) {
+    const { data: customer, error } = await supabase
+      .from("customers")
+      .select("id, organization_id")
+      .eq("id", data.customer_id)
+      .eq("organization_id", application.organization_id)
+      .maybeSingle();
+    if (error) throw fromSupabaseError(error, "Failed to validate application customer.");
+    if (!customer) throw new ForbiddenError("Application customer must belong to the same organization.");
+  }
+  let query = supabase.from("applications").update(data).eq("id", id);
+  query = application.organization_id
+    ? query.eq("organization_id", application.organization_id)
+    : query.not("organization_id", "is", null);
+  const { data: updated, error } = await query.select("*").maybeSingle();
+  if (error) throw fromSupabaseError(error, "Failed to update application.");
+  if (!updated) throw new NotFoundError("Application not found.");
+  return assertTenantAccess(updated, authContext, "application");
 };
 
 export const deleteApplication = async (id, authContext = {}) => {
@@ -159,10 +190,13 @@ export const deleteApplication = async (id, authContext = {}) => {
 
   assertTenantAccess(application, authContext, "application");
 
-  const deletedApplication = await deleteRecord("applications", id, {
-    select: "id",
-    entityLabel: "Application",
-  });
+  let query = supabase.from("applications").delete().eq("id", id);
+  query = application.organization_id
+    ? query.eq("organization_id", application.organization_id)
+    : query.not("organization_id", "is", null);
+  const { data: deletedApplication, error } = await query.select("id").maybeSingle();
+  if (error) throw fromSupabaseError(error, "Failed to delete application.");
+  if (!deletedApplication) throw new NotFoundError("Application not found.");
 
   return {
     id: deletedApplication.id,

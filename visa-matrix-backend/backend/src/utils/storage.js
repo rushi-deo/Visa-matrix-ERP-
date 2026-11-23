@@ -29,7 +29,7 @@ const decodeBase64Content = (value) => {
     }
 
     return buffer;
-  } catch (_error) {
+  } catch {
     throw new ApiError(400, "file_base64 is not valid base64 content.");
   }
 };
@@ -62,12 +62,15 @@ export const uploadBase64Document = async ({
     );
   }
 
-  const { data } = supabase.storage
+  const { data, error: signedUrlError } = await supabase.storage
     .from(env.storageBucket)
-    .getPublicUrl(objectPath);
+    .createSignedUrl(objectPath, 300);
+  if (signedUrlError || !data?.signedUrl) {
+    throw new ApiError(500, "Failed to create a secure document link.");
+  }
 
   return {
-    fileUrl: data.publicUrl,
+    fileUrl: data.signedUrl,
     storagePath: objectPath,
     fileName: `${safeBaseName}${extension}`,
     sizeBytes: buffer.byteLength,

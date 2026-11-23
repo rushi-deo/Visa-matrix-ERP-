@@ -11,36 +11,36 @@ import {
 } from "./workflow.service.js";
 
 export const listWorkflowsController = asyncHandler(async (req, res) => {
-  const data = await getWorkflows(req.query);
+  const data = await getWorkflows(req.query, req.user);
   return sendSuccess(res, data);
 });
 
 export const getWorkflowByIdController = asyncHandler(async (req, res) => {
-  const data = await getWorkflow(req.params.id);
+  const data = await getWorkflow(req.params.id, req.user);
   return sendSuccess(res, data);
 });
 
 export const createWorkflowController = asyncHandler(async (req, res) => {
-  const data = await createWorkflowRecord(req.body);
+  const data = await createWorkflowRecord(req.body, req.user);
   return sendCreated(res, data, "Workflow created successfully.");
 });
 
 export const updateWorkflowController = asyncHandler(async (req, res) => {
-  const data = await updateWorkflowRecord(req.params.id, req.body);
+  const data = await updateWorkflowRecord(req.params.id, req.body, req.user);
   return sendSuccess(res, data, {
     message: "Workflow updated successfully.",
   });
 });
 
 export const deleteWorkflowController = asyncHandler(async (req, res) => {
-  const data = await deleteWorkflowRecord(req.params.id);
+  const data = await deleteWorkflowRecord(req.params.id, req.user);
   return sendSuccess(res, data, {
     message: "Workflow deleted successfully.",
   });
 });
 
 export const executeWorkflowController = asyncHandler(async (req, res) => {
-  const application = await getApplication(req.params.applicationId);
+  const application = await getApplication(req.params.applicationId, req.user);
   const data = await executeWorkflowForApplication({
     triggerKey: req.body.triggerKey || "application_created",
     application,

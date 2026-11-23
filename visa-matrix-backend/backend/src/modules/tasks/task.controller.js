@@ -9,29 +9,29 @@ import {
 } from "./task.service.js";
 
 export const listTasksController = asyncHandler(async (req, res) => {
-  const data = await getTasks(req.query);
+  const data = await getTasks(req.query, req.user);
   return sendSuccess(res, data);
 });
 
 export const getTaskByIdController = asyncHandler(async (req, res) => {
-  const data = await getTask(req.params.id);
+  const data = await getTask(req.params.id, req.user);
   return sendSuccess(res, data);
 });
 
 export const createTaskController = asyncHandler(async (req, res) => {
-  const data = await createTaskRecord(req.body);
+  const data = await createTaskRecord(req.body, req.user);
   return sendCreated(res, data, "Task created successfully.");
 });
 
 export const updateTaskController = asyncHandler(async (req, res) => {
-  const data = await updateTaskRecord(req.params.id, req.body);
+  const data = await updateTaskRecord(req.params.id, req.body, req.user);
   return sendSuccess(res, data, {
     message: "Task updated successfully.",
   });
 });
 
 export const deleteTaskController = asyncHandler(async (req, res) => {
-  const data = await deleteTaskRecord(req.params.id);
+  const data = await deleteTaskRecord(req.params.id, req.user);
   return sendSuccess(res, data, {
     message: "Task deleted successfully.",
   });

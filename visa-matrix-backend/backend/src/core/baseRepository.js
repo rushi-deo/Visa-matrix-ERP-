@@ -29,6 +29,7 @@ export const createCrudRepository = ({
     page = 1,
     limit = 20,
     filters = {},
+    notNullFilters = [],
     searchTerm = "",
     searchColumns = [],
     select = defaultSelect,
@@ -51,6 +52,12 @@ if (softDelete) {
   .forEach(([column, value]) => {
     query = query.eq(column, value);
   });
+
+    notNullFilters
+      .filter((column) => allowedFilters.length === 0 || allowedFilters.includes(column))
+      .forEach((column) => {
+        query = query.not(column, "is", null);
+      });
 
     const normalizedSearch = sanitizeSearchTerm(searchTerm);
 

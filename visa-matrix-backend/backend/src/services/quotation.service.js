@@ -6,6 +6,7 @@ import {
   RequestValidationError,
   fromSupabaseError,
 } from "../core/errors.js";
+import { assertTenantAccess, getTenantOrganizationScope } from "../utils/tenantSecurity.js";
 
 const normalizeTextValue = (value) => String(value ?? "").trim();
 const normalizeLookupValue = (value) => normalizeTextValue(value).toLowerCase();
@@ -15,12 +16,15 @@ const toNumberValue = (value) => {
   return Number.isFinite(numericValue) ? numericValue : 0;
 };
 
-const fetchApplicationRecord = async (applicationId) => {
-  const { data, error } = await supabase
+const fetchApplicationRecord = async (applicationId, organizationId = null) => {
+  let request = supabase
     .from("applications")
     .select("*, countries(name), visa_types(name)")
-    .eq("id", applicationId)
-    .maybeSingle();
+    .eq("id", applicationId);
+  request = organizationId
+    ? request.eq("organization_id", organizationId)
+    : request.not("organization_id", "is", null);
+  const { data, error } = await request.maybeSingle();
 
   if (error) {
     throw fromSupabaseError(error, "Failed to fetch application for quotation.");
@@ -119,12 +123,16 @@ const insertQuotationRecord = async (payload) => {
   return data;
 };
 
-export const generateQuotation = async (applicationId) => {
+export const generateQuotation = async (applicationId, authContext = {}) => {
   if (!normalizeTextValue(applicationId)) {
     throw new RequestValidationError("applicationId is required.");
   }
 
-  const application = await fetchApplicationRecord(applicationId);
+  const application = await fetchApplicationRecord(
+    applicationId,
+    getTenantOrganizationScope(authContext),
+  );
+  assertTenantAccess(application, authContext, "application");
   const { countryName, visaType } = resolveApplicationPricingFields(application);
   const cleanedCountryName = normalizeLookupValue(countryName);
   const cleanedVisaType = normalizeLookupValue(visaType);
@@ -162,6 +170,7 @@ export const generateQuotation = async (applicationId) => {
   try {
     return await insertQuotationRecord({
       application_id: application.id,
+      organization_id: application.organization_id,
       country_name: countryName,
       visa_type: visaType,
       govt_fee: govtFee,

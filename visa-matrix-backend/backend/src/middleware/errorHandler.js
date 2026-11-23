@@ -2,8 +2,8 @@ import logger from "../core/logger.js";
 import { AppError, NotFoundError } from "../core/errors.js";
 import { sendErrorResponse } from "../core/response.js";
 
-export const notFoundHandler = (req, _res, next) => {
-  next(new NotFoundError(`Route not found: ${req.method} ${req.originalUrl}`));
+export const notFoundHandler = (_req, _res, next) => {
+  next(new NotFoundError("Route not found."));
 };
 
 export const errorHandler = (error, req, res, _next) => {
@@ -23,5 +23,8 @@ export const errorHandler = (error, req, res, _next) => {
     stack: error.stack,
   });
 
-  return sendErrorResponse(res, normalizedError, normalizedError.statusCode);
+  return sendErrorResponse(res, normalizedError, normalizedError.statusCode, {
+    requestId: req.requestId,
+    correlationId: req.correlationId,
+  });
 };

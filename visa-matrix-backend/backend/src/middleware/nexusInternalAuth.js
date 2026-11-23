@@ -34,6 +34,8 @@ export const authenticateNexusService = (req, res, next) => {
     return res.status(401).json({
       success: false,
       message: INVALID_SERVICE_CREDENTIAL_MESSAGE,
+      requestId: req.requestId || null,
+      correlationId: req.correlationId || null,
     });
   }
 

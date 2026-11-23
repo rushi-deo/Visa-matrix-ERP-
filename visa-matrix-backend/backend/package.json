@@ -8,12 +8,12 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node --test",
+    "test": "node --import ./tools/env-for-tests.js --test",
     "worker": "node src/server.js",
     "seed:admin": "node seed-admin.js",
     "convert:forms": "node tools/form-converter/index.js",
-    "build": "echo \"No build step required\"",
-    "lint": "echo \"Add ESLint later\""
+    "build": "node tools/build-check.js",
+    "lint": "eslint src routes test tools --max-warnings=0"
   },
   "keywords": [
     "visa",
@@ -47,5 +47,11 @@
     "uuid": "^9.0.1",
     "winston": "^3.19.0",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "supertest": "^7.3.2"
   }
 }

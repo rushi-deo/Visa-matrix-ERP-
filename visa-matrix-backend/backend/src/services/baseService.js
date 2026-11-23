@@ -101,7 +101,7 @@ export const updateRecord = async (
   { select = "*", entityLabel = "Record" } = {}
 ) => {
   if (!payload || Object.keys(payload).length === 0) {
-    throw new ApiError(400, `At least one field is required to update ${entityLabel.toLowerCase()}.`);
+    throw new RequestValidationError(`At least one field is required to update ${entityLabel.toLowerCase()}.`);
   }
 
   const { data, error } = await supabase
@@ -116,7 +116,7 @@ export const updateRecord = async (
   }
 
   if (!data) {
-    throw new ApiError(404, `${entityLabel} not found.`);
+    throw new NotFoundError(`${entityLabel} not found.`);
   }
 
   return data;
@@ -139,7 +139,7 @@ export const deleteRecord = async (
   }
 
   if (!data) {
-    throw new ApiError(404, `${entityLabel} not found.`);
+    throw new NotFoundError(`${entityLabel} not found.`);
   }
 
   return data;

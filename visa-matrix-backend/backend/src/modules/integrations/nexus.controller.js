@@ -18,6 +18,10 @@ import {
 } from "../visa-catalog/visaCatalog.service.js";
 import { getVisaRule } from "../visaRules/visaRule.service.js";
 import { getInvoices, getInvoice } from "../invoices/invoice.service.js";
+import { getApplication, getApplications } from "../applications/application.service.js";
+import { getDocument, getDocuments } from "../documents/document.service.js";
+import { getLead, getAllLeads } from "../leads/lead.service.js";
+import { getCustomers } from "../customers/customer.service.js";
 
 const SAFE_CUSTOMER_FIELDS = [
   "id",
@@ -54,7 +58,24 @@ const auditCustomerRead = (req, resourceId, status, errorMessage = null) =>
     userAgent: req.get("user-agent") || null,
   });
 
+const auditIntegrationRead = (req, action, resourceType, resourceId = null) =>
+  recordAuditEvent({
+    action,
+    correlationId: req.correlationId,
+    context: createAuditContext(req),
+    ipAddress: req.ip,
+    organizationId: req.user?.organization_id || null,
+    requestId: req.requestId,
+    resourceId,
+    resourceType,
+    status: "completed",
+    userAgent: req.get("user-agent") || null,
+  });
+
 const toSafeIntegrationError = (error) => {
+  if (error instanceof AppError && error.statusCode === 404) {
+    return new NotFoundError("ERP resource not found.");
+  }
   if (
     error instanceof NotFoundError ||
     error instanceof ForbiddenError ||
@@ -63,7 +84,7 @@ const toSafeIntegrationError = (error) => {
     return error;
   }
 
-  return new AppError("Customer integration request failed.", 500);
+  return new AppError("ERP integration request failed.", 500);
 };
 
 export const invoiceGetIntegrationController = asyncHandler(
@@ -71,7 +92,7 @@ export const invoiceGetIntegrationController = asyncHandler(
     const { invoiceId } = req.body;
 
     try {
-      const invoice = await getInvoice(invoiceId);
+      const invoice = await getInvoice(invoiceId, req.user);
 
       await recordAuditEvent({
         action: "invoice.read",
@@ -108,7 +129,7 @@ export const invoiceGetIntegrationController = asyncHandler(
         userAgent: req.get("user-agent") || null,
       }).catch(() => undefined);
 
-      throw new AppError("Invoice integration request failed.", 500);
+      throw toSafeIntegrationError(error);
     }
   },
 );
@@ -116,7 +137,7 @@ export const invoiceGetIntegrationController = asyncHandler(
 export const invoiceListIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const invoices = await getInvoices(req.body || {});
+      const invoices = await getInvoices(req.body || {}, req.user);
 
       await recordAuditEvent({
         action: "invoice.list",
@@ -151,7 +172,7 @@ export const invoiceListIntegrationController = asyncHandler(
         userAgent: req.get("user-agent") || null,
       }).catch(() => undefined);
 
-      throw new AppError("Invoice integration request failed.", 500);
+      throw toSafeIntegrationError(error);
     }
   },
 );
@@ -178,6 +199,26 @@ export const customerGetIntegrationController = asyncHandler(
         error instanceof Error ? error.message : "Customer read failed.",
       ).catch(() => undefined);
 
+      throw toSafeIntegrationError(error);
+    }
+  },
+);
+
+export const customerListIntegrationController = asyncHandler(
+  async (req, res) => {
+    try {
+      const customers = await getCustomers(req.body || {}, req.user);
+      await auditIntegrationRead(req, "customer.list", "customer");
+      const data = Array.isArray(customers)
+        ? customers.map(toSafeCustomer)
+        : { ...customers, items: (customers.items || []).map(toSafeCustomer) };
+      return res.status(200).json({
+        success: true,
+        data,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
       throw toSafeIntegrationError(error);
     }
   },
@@ -280,7 +321,7 @@ export const applicationGetIntegrationController = asyncHandler(
 export const applicationListIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const applications = await getApplications(req.body || {});
+      const applications = await getApplications(req.body || {}, req.user);
 
       await recordAuditEvent({
         action: "application.list",
@@ -326,6 +367,7 @@ export const documentGetIntegrationController = asyncHandler(
   async (req, res) => {
     try {
       const document = await getDocument(req.body.documentId, req.user);
+      await auditIntegrationRead(req, "document.read", "document", req.body.documentId);
 
       return res.status(200).json({
         success: true,
@@ -342,7 +384,8 @@ export const documentGetIntegrationController = asyncHandler(
 export const documentListIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const documents = await getDocuments(req.body || {});
+      const documents = await getDocuments(req.body || {}, req.user);
+      await auditIntegrationRead(req, "document.list", "document");
 
       return res.status(200).json({
         success: true,
@@ -359,7 +402,8 @@ export const documentListIntegrationController = asyncHandler(
 export const leadGetIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const lead = await getLead(req.body.leadId);
+      const lead = await getLead(req.body.leadId, req.user);
+      await auditIntegrationRead(req, "lead.read", "lead", req.body.leadId);
 
       return res.status(200).json({
         success: true,
@@ -376,7 +420,8 @@ export const leadGetIntegrationController = asyncHandler(
 export const leadListIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const leads = await getAllLeads(req.body || {});
+      const leads = await getAllLeads(req.body || {}, req.user);
+      await auditIntegrationRead(req, "lead.list", "lead");
 
       return res.status(200).json({
         success: true,
@@ -464,7 +509,7 @@ export const visaRulesGetIntegrationController = asyncHandler(
 export const formListIntegrationController = asyncHandler(
   async (req, res) => {
     try {
-      const data = await getForms(req.body || {});
+      const data = await getForms({ ...(req.body || {}), status: "published" });
 
       return res.status(200).json({
         success: true,
@@ -482,6 +527,7 @@ export const formGetIntegrationController = asyncHandler(
   async (req, res) => {
     try {
       const data = await getForm(req.body.formId);
+      if (data.status !== "published") throw new NotFoundError("Form not found.");
 
       return res.status(200).json({
         success: true,
@@ -518,26 +564,36 @@ export const formGetByCountryVisaIntegrationController = asyncHandler(
 
 export const paymentGetIntegrationController = asyncHandler(
   async (req, res) => {
-    const { paymentId } = req.body;
-    const payment = await getPayment(paymentId, req.user);
-    return res.status(200).json({
-      success: true,
-      data: payment,
-      requestId: req.requestId,
-      correlationId: req.correlationId,
-    });
+    try {
+      const { paymentId } = req.body;
+      const payment = await getPayment(paymentId, req.user);
+      await auditIntegrationRead(req, "payment.read", "payment", paymentId);
+      return res.status(200).json({
+        success: true,
+        data: payment,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
   },
 );
 
 export const paymentListIntegrationController = asyncHandler(
   async (req, res) => {
-    const payments = await getPayments(req.body || {});
-    return res.status(200).json({
-      success: true,
-      data: payments,
-      requestId: req.requestId,
-      correlationId: req.correlationId,
-    });
+    try {
+      const payments = await getPayments(req.body || {}, req.user);
+      await auditIntegrationRead(req, "payment.list", "payment");
+      return res.status(200).json({
+        success: true,
+        data: payments,
+        requestId: req.requestId,
+        correlationId: req.correlationId,
+      });
+    } catch (error) {
+      throw toSafeIntegrationError(error);
+    }
   },
 );
 
@@ -548,23 +604,62 @@ export const paymentListIntegrationController = asyncHandler(
 
 
 export const taskGetIntegrationController = asyncHandler(async (req, res) => {
-  const data = await getTask(req.body.taskId);
-  return res.json({ success: true, data });
+  try {
+    const data = await getTask(req.body.taskId, req.user);
+    await auditIntegrationRead(req, "task.read", "task", req.body.taskId);
+    return res.status(200).json({
+      success: true,
+      data,
+      requestId: req.requestId,
+      correlationId: req.correlationId,
+    });
+  } catch (error) {
+    throw toSafeIntegrationError(error);
+  }
 });
 
 export const taskListIntegrationController = asyncHandler(async (req, res) => {
-  const data = await getTasks(req.body.query || {});
-  return res.json({ success: true, data });
+  try {
+    const data = await getTasks(req.body || {}, req.user);
+    await auditIntegrationRead(req, "task.list", "task");
+    return res.status(200).json({
+      success: true,
+      data,
+      requestId: req.requestId,
+      correlationId: req.correlationId,
+    });
+  } catch (error) {
+    throw toSafeIntegrationError(error);
+  }
 });
 
-
 export const workflowGetIntegrationController = asyncHandler(async (req, res) => {
-  const data = await getWorkflow(req.body.workflowId);
-  return res.json({ success: true, data });
+  try {
+    const data = await getWorkflow(req.body.workflowId, req.user);
+    await auditIntegrationRead(req, "workflow.read", "workflow", req.body.workflowId);
+    return res.status(200).json({
+      success: true,
+      data,
+      requestId: req.requestId,
+      correlationId: req.correlationId,
+    });
+  } catch (error) {
+    throw toSafeIntegrationError(error);
+  }
 });
 
 export const workflowListIntegrationController = asyncHandler(async (req, res) => {
-  const data = await getWorkflows(req.body.query || {});
-  return res.json({ success: true, data });
+  try {
+    const data = await getWorkflows(req.body || {}, req.user);
+    await auditIntegrationRead(req, "workflow.list", "workflow");
+    return res.status(200).json({
+      success: true,
+      data,
+      requestId: req.requestId,
+      correlationId: req.correlationId,
+    });
+  } catch (error) {
+    throw toSafeIntegrationError(error);
+  }
 });
 

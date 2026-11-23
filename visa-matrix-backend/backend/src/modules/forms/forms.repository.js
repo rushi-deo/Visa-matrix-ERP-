@@ -2,8 +2,7 @@ import supabase from "../../config/supabase.js";
 import { fromSupabaseError } from "../../core/errors.js";
 import { buildPaginationMeta, getPaginationOptions } from "../../utils/pagination.js";
 
-const FORM_TABLE = "form_schemas";
-const normalizeVisaLabel = (value) => String(value ?? "").toLowerCase().replace(/\bvisa\b/g, "").replace(/[^a-z0-9]+/g, "").trim();
+const FORM_TABLE = "form_configs";
 
 const mapFormRow = (row, names = {}) => ({
   ...row,
@@ -11,7 +10,7 @@ const mapFormRow = (row, names = {}) => ({
   visa_type_id: row.visa_type_id ?? names.visaTypeId ?? null,
   country_name: row.country_name ?? row.country ?? names.countryName ?? null,
   visa_type_name: row.visa_type_name ?? row.visa_type ?? names.visaTypeName ?? null,
-  form_schema: row.form_schema ?? row.schema ?? {},
+  form_schema: row.form_schema ?? {},
   version: row.version ?? 1,
   status: row.status ?? "published",
 });
@@ -38,27 +37,32 @@ const getCatalogNames = async (countryId, visaTypeId) => {
   };
 };
 
-const findCanonicalRow = async (names) => {
-  if (!names?.countryName || !names.visaTypeAliases?.length) return null;
+const findCanonicalRow = async (countryId, visaTypeId) => {
+  if (!countryId || !visaTypeId) return null;
 
   const { data, error } = await supabase
     .from(FORM_TABLE)
     .select("*")
-    .ilike("country", names.countryName);
+    .eq("country_id", countryId)
+    .eq("visa_type_id", visaTypeId)
+    .eq("status", "published")
+    .order("version", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error) throw fromSupabaseError(error, "Failed to fetch form schema.");
-
-  const aliases = new Set(names.visaTypeAliases.map(normalizeVisaLabel));
-  const countryForms = data || [];
-  const exactMatch = countryForms.find((row) => aliases.has(normalizeVisaLabel(row.visa_type)));
-  if (exactMatch) return exactMatch;
-
-  return countryForms.length === 1 ? countryForms[0] : null;
+  return data ?? null;
 };
 
 export const listForms = async (query = {}) => {
   const pagination = getPaginationOptions(query.page, query.limit);
   let request = supabase.from(FORM_TABLE).select("*", { count: "exact" }).order("created_at", { ascending: false });
+  const countryId = query.country_id || query.countryId;
+  const visaTypeId = query.visa_type_id || query.visaTypeId;
+  if (countryId) request = request.eq("country_id", countryId);
+  if (visaTypeId) request = request.eq("visa_type_id", visaTypeId);
+  if (query.status) request = request.eq("status", query.status);
+  if (query.search) request = request.ilike("name", `%${String(query.search).trim()}%`);
   if (pagination.limit) request = request.range(pagination.from, pagination.to);
 
   const { data, error, count } = await request;
@@ -78,7 +82,7 @@ export const getFormById = async (id) => {
 
 export const getFormByCountryAndVisaType = async (countryId, visaTypeId) => {
   const names = await getCatalogNames(countryId, visaTypeId);
-  const row = await findCanonicalRow(names);
+  const row = await findCanonicalRow(names?.countryId, names?.visaTypeId);
   return row ? mapFormRow(row, names) : null;
 };
 
@@ -88,7 +92,14 @@ export const createForm = async (payload) => {
 
   const { data, error } = await supabase
     .from(FORM_TABLE)
-    .insert({ country: names.countryName, visa_type: names.visaTypeName, schema: payload.form_schema })
+    .insert({
+      country_id: names.countryId,
+      visa_type_id: names.visaTypeId,
+      name: payload.name || `Form ${names.countryName} / ${names.visaTypeName}`,
+      form_schema: payload.form_schema,
+      version: payload.version ?? 1,
+      status: payload.status ?? "draft",
+    })
     .select("*")
     .single();
   if (error) throw fromSupabaseError(error, "Failed to create form.");
@@ -97,7 +108,10 @@ export const createForm = async (payload) => {
 
 export const updateForm = async (id, payload) => {
   const nextPayload = {};
-  if (payload.form_schema !== undefined) nextPayload.schema = payload.form_schema;
+  if (payload.form_schema !== undefined) nextPayload.form_schema = payload.form_schema;
+  if (payload.name !== undefined) nextPayload.name = payload.name;
+  if (payload.version !== undefined) nextPayload.version = payload.version;
+  if (payload.status !== undefined) nextPayload.status = payload.status;
 
   const { data, error } = await supabase.from(FORM_TABLE).update(nextPayload).eq("id", id).select("*").maybeSingle();
   if (error) throw fromSupabaseError(error, "Failed to update form.");
@@ -139,6 +153,13 @@ export const findVisaTypeMatch = async (value) => {
 };
 
 export const findDuplicateForm = async ({ country_id, visa_type_id }) => {
-  const names = await getCatalogNames(country_id, visa_type_id);
-  return findCanonicalRow(names);
+  const { data, error } = await supabase
+    .from(FORM_TABLE)
+    .select("id")
+    .eq("country_id", country_id)
+    .eq("visa_type_id", visa_type_id)
+    .limit(1)
+    .maybeSingle();
+  if (error) throw fromSupabaseError(error, "Failed to check for duplicate form.");
+  return data ?? null;
 };

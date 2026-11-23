@@ -217,7 +217,7 @@ const parseJsonContent = (content, sourceLabel) => {
   try {
     const parsed = JSON.parse(String(content));
     return normalizeJsonObject(parsed);
-  } catch (error) {
+  } catch {
     throw new RequestValidationError(
       `Invalid JSON in ${sourceLabel || "import payload"}.`
     );
@@ -487,9 +487,8 @@ export const publishFormRecord = async (id) => {
     throw new AppError("Form not found.", 404);
   }
 
-  // Canonical imported schemas do not carry a separate publication status;
-  // every row in form_schemas is an available published definition.
-  return current;
+  if (current.status === "published") return current;
+  return updateForm(id, { status: "published" });
 };
 
 export const importFormsRecord = async (input = {}) => {

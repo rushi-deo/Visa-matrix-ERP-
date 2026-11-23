@@ -27,11 +27,12 @@ export const sendNoContent = (res) => {
   return res.status(204).send();
 };
 
-export const sendErrorResponse = (res, error, statusCode = 500) => {
+export const sendErrorResponse = (res, error, statusCode = 500, context = {}) => {
   return res.status(statusCode).json({
-  success: false,
-  message: error.message,
-  error: error.details ?? null,
-  timestamp: new Date().toISOString(),
-});
+    success: false,
+    message: error.message,
+    requestId: context.requestId || null,
+    correlationId: context.correlationId || null,
+    timestamp: new Date().toISOString(),
+  });
 };

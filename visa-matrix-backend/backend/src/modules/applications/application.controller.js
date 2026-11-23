@@ -9,7 +9,7 @@ import {
 } from "./application.service.js";
 
 export const listApplicationsController = asyncHandler(async (req, res) => {
-  const data = await getApplications(req.query);
+  const data = await getApplications(req.query, req.auth);
   return sendSuccess(res, data);
 });
 
