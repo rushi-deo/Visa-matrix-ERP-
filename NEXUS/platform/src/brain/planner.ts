@@ -30,7 +30,7 @@ const ensurePlanShape = (value: unknown): ExecutionPlan => {
   };
 };
 
-export const createBrainPlanner = (manager: ProviderManager, toolManager?: ToolManager) => {
+export const createBrainPlanner = (manager: ProviderManager, _toolManager?: ToolManager) => {
   return async (context: ExecutionContext): Promise<ExecutionPlan> => {
     const request: ProviderRequest = {
       model: plannerModel,

@@ -169,7 +169,7 @@ describe('NEXUS public execution API', () => {
       NEXUS_INTERNAL_TOKEN: 'test-internal-token',
     };
 
-    const fetchMock = vi.fn(async (_url: string | URL, init?: RequestInit) => {
+    const fetchMock = vi.fn(async (_url: string | URL, _init?: RequestInit) => {
       return new Response(
         JSON.stringify({
           success: true,

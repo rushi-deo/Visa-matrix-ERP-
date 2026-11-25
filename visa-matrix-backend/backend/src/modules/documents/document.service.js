@@ -147,7 +147,7 @@ export const deleteDocumentRecord = async (id, authContext = {}) => {
   }
 
   if (document.storage_path) {
-    await removeStoredFile(document.storage_path).catch(() => null);
+    await removeStoredFile(document.storage_path);
   }
 
   return deleteDocument(id, organizationId);

@@ -3,7 +3,24 @@ import crypto from "node:crypto";
 import multer from "multer";
 import env from "../config/env.js";
 import supabase from "../config/supabase.js";
-import { ExternalServiceError } from "../core/errors.js";
+import {
+  ExternalServiceError,
+  RequestValidationError,
+} from "../core/errors.js";
+
+const DOCUMENT_UPLOAD_MIME_TYPES = Object.freeze({
+  ".pdf": "application/pdf",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".docx":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+});
+
+export const isAllowedDocumentUpload = (file) => {
+  const extension = path.extname(file?.originalname || "").toLowerCase();
+  return DOCUMENT_UPLOAD_MIME_TYPES[extension] === file?.mimetype;
+};
 
 const sanitizeFileName = (value) => {
   return String(value || "document")
@@ -17,6 +34,17 @@ export const uploadSingleFile = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: env.uploadsMaxFileSizeBytes,
+  },
+  fileFilter: (_req, file, callback) => {
+    if (!isAllowedDocumentUpload(file)) {
+      return callback(
+        new RequestValidationError(
+          "Unsupported document type. Upload a PDF, JPG, PNG, or DOCX file.",
+        ),
+      );
+    }
+
+    return callback(null, true);
   },
 });
 

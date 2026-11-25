@@ -47,6 +47,12 @@ test("document updates return a signed URL using the caller's tenant context", a
       return;
     }
 
+    if (requestUrl.pathname.startsWith("/storage/v1/object/")) {
+      response.writeHead(500, { "content-type": "application/json" });
+      response.end(JSON.stringify({ message: "Storage unavailable" }));
+      return;
+    }
+
     response.writeHead(404, { "content-type": "application/json" });
     response.end(JSON.stringify({ message: "Unexpected test request" }));
   });
@@ -56,13 +62,18 @@ test("document updates return a signed URL using the caller's tenant context", a
   process.env.SUPABASE_URL = `http://127.0.0.1:${port}`;
 
   try {
-    const { updateDocumentRecord } = await import(
+    const { deleteDocumentRecord, updateDocumentRecord } = await import(
       "../src/modules/documents/document.service.js"
     );
+    const authContext = {
+      userId: "employee-a",
+      organizationId: "organization-a",
+      role: "employee",
+    };
     const result = await updateDocumentRecord(
       "document-a",
       { status: "verified" },
-      { userId: "employee-a", organizationId: "organization-a", role: "employee" },
+      authContext,
     );
 
     assert.equal(result.status, "verified");
@@ -74,6 +85,17 @@ test("document updates return a signed URL using the caller's tenant context", a
     assert.ok(requests.some(({ method, pathname, search }) =>
       method === "PATCH" && pathname === "/rest/v1/documents" &&
       search.includes("organization_id=eq.organization-a")));
+    await assert.rejects(
+      deleteDocumentRecord("document-a", authContext),
+      /Failed to delete file from Supabase Storage/,
+    );
+    assert.ok(
+      !requests.some(
+        ({ method, pathname }) =>
+          method === "DELETE" && pathname === "/rest/v1/documents",
+      ),
+      "document metadata must remain when storage deletion fails",
+    );
   } finally {
     server.closeAllConnections();
     await new Promise((resolve, reject) =>

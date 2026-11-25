@@ -1,6 +1,6 @@
 ﻿import type { ConnectorManager } from '../connectors/types.js';
 import type { ConfirmationManager } from '../security/confirmation/manager.js';
-import type { Tool, ToolContext, ToolResult, ToolKind } from './types.js';
+import type { Tool, ToolContext, ToolKind, ToolResult } from './types.js';
 
 export const createErpTool = (
   connectorManager: ConnectorManager,

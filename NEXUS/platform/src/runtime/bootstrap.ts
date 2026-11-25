@@ -4,9 +4,9 @@ import { createContainer } from '../infrastructure/container/container.js';
 import { registerCoreServices } from '../infrastructure/container/registrations.js';
 import { ConnectorManagerToken, ProviderManagerToken, RuntimeToken, ToolManagerToken } from '../infrastructure/container/service-tokens.js';
 import { createAnthropicProvider, createOpenAIProvider } from '../providers/adapters.js';
+import { createConfirmationManager } from '../security/confirmation/manager.js';
 import { createLoggerFactory } from '../shared/logger.js';
 import { createErpTool } from '../tools/erp-tool.js';
-import { createConfirmationManager } from '../security/confirmation/manager.js';
 import { createPlatformRuntime } from './runtime.js';
 import type { Bootstrap } from './types.js';
 
