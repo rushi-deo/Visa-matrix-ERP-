@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DataTable from "../components/DataTable";
 import PageHeader from "../components/PageHeader";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -9,12 +9,6 @@ export default function Countries() {
   const { countries, loading, error } = useCountries();
   const [searchValue, setSearchValue] = useState("");
   const [selectedCountryKey, setSelectedCountryKey] = useState("");
-
-  useEffect(() => {
-    if (!selectedCountryKey && countries[0]) {
-      setSelectedCountryKey(`${countries[0].country}-${countries[0].visaType}`);
-    }
-  }, [countries, selectedCountryKey]);
 
   const filteredCountries = useMemo(
     () =>

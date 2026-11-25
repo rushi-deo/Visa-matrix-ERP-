@@ -1,5 +1,5 @@
-﻿import type { ConnectorManager } from '../connectors/types.js';
-import type { BrainContext } from '../brain/types.js';
+﻿import type { BrainContext } from '../brain/types.js';
+import type { ConnectorManager } from '../connectors/types.js';
 import type { IntegrationExecutionRequest } from '../connectors/types.js';
 import type { EngineManager } from '../engines/core/types.js';
 import type { EventBus } from '../events/event-bus.js';

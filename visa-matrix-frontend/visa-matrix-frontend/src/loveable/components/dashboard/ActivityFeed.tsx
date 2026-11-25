@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { ActivityItem } from "@/types/dashboard";
 
 const c: Record<string,string> = {
   success: "bg-success", info: "bg-info", warning: "bg-warning", danger: "bg-destructive",
 };
-type ActivityItem = { id: string | number; who: string; action: string; target: string; time: string; type: keyof typeof c };
-
 export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
   return (
     <Card>

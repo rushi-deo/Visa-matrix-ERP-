@@ -2,6 +2,13 @@ import { enqueueWorkflowJob } from "../../jobs/workflowJob.js";
 import logger from "../../core/logger.js";
 import { emitSystemNotification } from "../notifications/notification.service.js";
 import { createTaskRecord } from "../tasks/task.service.js";
+import { getApplication } from "../applications/application.service.js";
+import { ForbiddenError } from "../../core/errors.js";
+import {
+  applyTenantToPayload,
+  assertTenantAccess,
+  getTenantOrganizationScope,
+} from "../../utils/tenantSecurity.js";
 import {
   createWorkflow,
   deleteWorkflow,
@@ -34,7 +41,7 @@ const executeStep = async (step, application, authContext) => {
         assigned_to: authContext.userId || null,
         status: "open",
         priority: "high",
-      });
+      }, authContext);
       break;
 
     case "notify_agent":
@@ -64,18 +71,71 @@ const executeStep = async (step, application, authContext) => {
   }
 };
 
-export const getWorkflows = async (query) => listWorkflows(query);
-export const getWorkflow = async (id) => getWorkflowById(id);
-export const createWorkflowRecord = async (payload) => createWorkflow(payload);
-export const updateWorkflowRecord = async (id, payload) => updateWorkflow(id, payload);
-export const deleteWorkflowRecord = async (id) => deleteWorkflow(id);
+const assertWorkflowApplicationOwnership = async (workflow, authContext) => {
+  assertTenantAccess(workflow, authContext, "workflow");
+  if (workflow.application_id) {
+    const application = await getApplication(workflow.application_id, authContext);
+    if (String(application.organization_id) !== String(workflow.organization_id)) {
+      throw new ForbiddenError("Workflow organization does not match its application.");
+    }
+  }
+  return workflow;
+};
+
+export const getWorkflows = async (query = {}, authContext = {}) => {
+  const result = await listWorkflows(query, getTenantOrganizationScope(authContext));
+  const items = await Promise.all((result.items || []).map((workflow) =>
+    assertWorkflowApplicationOwnership(workflow, authContext),
+  ));
+  return { ...result, items };
+};
+export const getWorkflow = async (id, authContext = {}) => {
+  const workflow = await getWorkflowById(id, getTenantOrganizationScope(authContext));
+  return assertWorkflowApplicationOwnership(workflow, authContext);
+};
+export const createWorkflowRecord = async (payload, authContext = {}) => {
+  let organizationId = payload.organization_id;
+  if (payload.application_id) {
+    const application = await getApplication(payload.application_id, authContext);
+    organizationId = application.organization_id;
+  }
+  return createWorkflow(applyTenantToPayload({
+    ...payload,
+    ...(organizationId ? { organization_id: organizationId } : {}),
+  }, authContext));
+};
+export const updateWorkflowRecord = async (id, payload, authContext = {}) => {
+  const organizationId = getTenantOrganizationScope(authContext);
+  const current = await getWorkflowById(id, organizationId);
+  await assertWorkflowApplicationOwnership(current, authContext);
+  if (payload.application_id) {
+    const application = await getApplication(payload.application_id, authContext);
+    if (String(application.organization_id) !== String(current.organization_id)) {
+      throw new ForbiddenError("Workflow application must belong to the workflow organization.");
+    }
+  }
+  return updateWorkflow(id, applyTenantToPayload({
+    ...payload,
+    organization_id: current.organization_id,
+  }, authContext), organizationId);
+};
+export const deleteWorkflowRecord = async (id, authContext = {}) => {
+  const organizationId = getTenantOrganizationScope(authContext);
+  const current = await getWorkflowById(id, organizationId);
+  await assertWorkflowApplicationOwnership(current, authContext);
+  return deleteWorkflow(id, organizationId);
+};
 
 export const executeWorkflowForApplication = async ({
   triggerKey = "application_created",
   application,
   authContext = {},
 }) => {
-  const configuredSteps = await listWorkflowStepsByTrigger(triggerKey);
+  assertTenantAccess(application, authContext, "application");
+  const configuredSteps = await listWorkflowStepsByTrigger(
+    triggerKey,
+    application.organization_id,
+  );
   const stepsToExecute = configuredSteps.length ? configuredSteps : defaultSteps;
 
   for (const step of stepsToExecute) {

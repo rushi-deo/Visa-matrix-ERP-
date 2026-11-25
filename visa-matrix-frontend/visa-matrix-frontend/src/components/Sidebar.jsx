@@ -132,14 +132,6 @@ const menuIcons = {
   ),
 };
 
-const sidebarSections = [
-  { title: "CRM", paths: ["/dashboard", "/customers", "/applications", "/documents"] },
-  { title: "Visa Operations", paths: ["/countries", "/workflow", "/visa-question-flow", "/tasks"] },
-  { title: "Finance", paths: ["/payments", "/accounts"] },
-  { title: "HR", paths: ["/hr"] },
-  { title: "Administration", paths: ["/communication", "/audit-logs", "/reports", "/admin", "/settings"] },
-];
-
 export default function Sidebar() {
   const location = useLocation();
   const { canAccess } = useAuth();
@@ -162,9 +154,6 @@ export default function Sidebar() {
       item.path !== "/settings"
     );
   });
-
-  const visibleSectionItems = (sectionPaths) =>
-    primaryNavigation.filter((item) => sectionPaths.includes(item.path));
 
   return (
     <aside className="sidebar">
@@ -231,56 +220,26 @@ export default function Sidebar() {
                   </span>
                 </button>
 
-                  return (
-                    <div key={item.shortLabel} className="sidebar__menu-group">
-                      <button
-                        onClick={() => toggleMenu(item.shortLabel)}
-                        className={`sidebar__link sidebar__menu-toggle ${
-                          hasActiveChild ? "sidebar__link--active" : ""
-                        } ${isExpanded ? "sidebar__menu-toggle--expanded" : ""}`}
-                        aria-expanded={isExpanded}
-                      >
-                        <span className="sidebar__icon" aria-hidden="true">
-                          {menuIcons[item.path]}
-                        </span>
-                        <span className="sidebar__label">{item.shortLabel}</span>
-                        <span className="sidebar__chevron" aria-hidden="true">
-                          <svg
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                          >
-                            <path
-                              d="M7 8l3 3 3-3"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
-                      </button>
+                {isExpanded && (
+                  <div className="sidebar__submenu">
+                    {item.children.map((child) => {
+                      const isActive = child.path && location.pathname.startsWith(child.path);
 
-                      {isExpanded && (
-                        <div className="sidebar__submenu">
-                          {item.children.map((child) => {
-                            const isActive = child.path && location.pathname.startsWith(child.path);
-
-                            return (
-                              <Link
-                                key={child.path}
-                                to={child.path}
-                                className={`sidebar__submenu-link ${isActive ? "sidebar__submenu-link--active" : ""}`}
-                              >
-                                <span className="sidebar__submenu-label">{child.shortLabel}</span>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
+                      return (
+                        <Link
+                          key={child.path}
+                          to={child.path}
+                          className={`sidebar__submenu-link ${isActive ? "sidebar__submenu-link--active" : ""}`}
+                        >
+                          <span className="sidebar__submenu-label">{child.shortLabel}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
                 const isDashboardRoute =
                   item.path === "/dashboard" &&
@@ -304,9 +263,6 @@ export default function Sidebar() {
                   </Link>
                 );
               })}
-            </div>
-          );
-        })}
       </nav>
 
       <div className="sidebar__footer">

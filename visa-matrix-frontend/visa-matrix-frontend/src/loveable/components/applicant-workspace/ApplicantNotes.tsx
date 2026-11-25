@@ -3,34 +3,24 @@ import { MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { asApiRecords, readApiString, readApiValue, type ApiRecord } from "@/lib/api-record";
 
 interface ApplicantNotesProps {
-  applicant: any;
+  applicant: ApiRecord;
   loading: boolean;
 }
 
-const getInitialNotes = (applicant: any) => {
-  const notes = applicant?.notes ?? applicant?.applicationNotes ?? applicant?.application_notes;
-  return Array.isArray(notes) ? notes : [];
+const getInitialNotes = (applicant: ApiRecord) => {
+  return asApiRecords(readApiValue(applicant, ["notes", "applicationNotes", "application_notes"]));
 };
 
-const getValue = (note: any, keys: string[], fallback = "-") => {
-  for (const key of keys) {
-    if (note?.[key] !== undefined && note?.[key] !== null && note?.[key] !== "") return String(note[key]);
-  }
-  return fallback;
-};
+const getValue = (note: ApiRecord, keys: string[], fallback = "-") =>
+  readApiString(note, keys) ?? fallback;
 
 export function ApplicantNotes({ applicant, loading }: ApplicantNotesProps) {
-  const [notes, setNotes] = React.useState<any[]>(() => getInitialNotes(applicant));
+  const [notes, setNotes] = React.useState<ApiRecord[]>(() => getInitialNotes(applicant));
   const [content, setContent] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    setNotes(getInitialNotes(applicant));
-    setContent("");
-    setError(null);
-  }, [applicant]);
 
   const sortedNotes = [...notes].sort((first, second) => {
     const firstDate = new Date(getValue(first, ["createdAt", "created_at", "date", "updated_at"], "")).getTime();
@@ -45,7 +35,7 @@ export function ApplicantNotes({ applicant, loading }: ApplicantNotesProps) {
       return;
     }
 
-    const currentUser = applicant?.currentUserName ?? applicant?.userName ?? "Current user";
+    const currentUser = readApiString(applicant, ["currentUserName", "userName"]) ?? "Current user";
     setNotes((currentNotes) => [
       {
         id: `local-note-${Date.now()}`,
@@ -91,7 +81,7 @@ export function ApplicantNotes({ applicant, loading }: ApplicantNotesProps) {
       ) : (
         <div className="space-y-3">
           {sortedNotes.map((note, index) => (
-            <Card key={note.id ?? `${getValue(note, ["createdAt", "created_at"], "note")}-${index}`}>
+            <Card key={readApiString(note, ["id"]) ?? `${getValue(note, ["createdAt", "created_at"], "note")}-${index}`}>
               <CardContent className="p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium">{getValue(note, ["author", "authorName", "author_name", "createdBy", "created_by"], "Unknown author")}</p>

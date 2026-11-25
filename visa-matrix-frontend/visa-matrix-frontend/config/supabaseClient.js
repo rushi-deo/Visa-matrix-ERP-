@@ -3,8 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 // This module is imported by browser bundles. A service-role key would grant
 // unrestricted database access to every visitor, so only public Vite values
 // are valid here.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL?.trim();
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL?.trim();
+const SUPABASE_ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY?.trim();
 
 const maskSensitiveValue = (value, visibleStart = 6, visibleEnd = 4) => {
   if (!value) {

@@ -4,6 +4,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { Wallet, Receipt, AlertCircle, TrendingUp } from "lucide-react";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { StatusPie } from "@/components/dashboard/StatusPie";
+import { monthlyRevenue, statusDistribution } from "@/lib/mock-data";
 export const Route = createFileRoute("/_app/dashboard/finance")({ component: () => (
   <>
     <PageHeader title="Finance Dashboard" description="Revenue, invoices and collections." />
@@ -13,6 +14,6 @@ export const Route = createFileRoute("/_app/dashboard/finance")({ component: () 
       <StatCard label="Overdue" value="$8,420" delta={-6.2} icon={AlertCircle} accent="destructive" />
       <StatCard label="Net Growth" value="+22%" delta={4.3} icon={TrendingUp} />
     </div>
-    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart /><StatusPie /></div>
+    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart data={monthlyRevenue} /><StatusPie data={statusDistribution} /></div>
   </>
 ) });

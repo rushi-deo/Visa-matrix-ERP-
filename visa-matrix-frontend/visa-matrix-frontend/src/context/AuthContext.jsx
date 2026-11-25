@@ -116,27 +116,50 @@ function persistSession(nextSession) {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUserState] = useState(null);
-  const [token, setToken] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [initialSession] = useState(readStoredSession);
+  const [user, setUserState] = useState(() => initialSession?.user ?? null);
+  const [token, setToken] = useState(() => initialSession?.token ?? "");
+  const [loading, setLoading] = useState(false);
   const [rolePermissions, setRolePermissions] = useState(ROLE_PERMISSIONS);
   const [rbacRoles, setRbacRoles] = useState([]);
   const [allPermissions, setAllPermissions] = useState([]);
-  const [managedUsers, setManagedUsers] = useState([]);
+  const [managedUsers, setManagedUsers] = useState(() =>
+    initialSession?.user ? [initialSession.user] : [],
+  );
+  const userRef = React.useRef(initialSession?.user ?? null);
+  const sessionIdentityRef = React.useRef({
+    token: initialSession?.token ?? "",
+    userId: initialSession?.user?.id ?? null,
+  });
 
   const applySession = useCallback((nextSession) => {
     if (!nextSession?.token || !nextSession?.user) {
+      userRef.current = null;
+      sessionIdentityRef.current = { token: "", userId: null };
       setUserState(null);
       setToken("");
       setManagedUsers([]);
+      setRbacRoles([]);
+      setAllPermissions([]);
+      setRolePermissions(ROLE_PERMISSIONS);
       persistSession(null);
       return;
     }
 
     const nextUser = normalizeUser(nextSession.user);
+    const identityChanged =
+      sessionIdentityRef.current.token !== nextSession.token ||
+      sessionIdentityRef.current.userId !== nextUser.id;
+    userRef.current = nextUser;
+    sessionIdentityRef.current = { token: nextSession.token, userId: nextUser.id };
 
     setUserState(nextUser);
     setToken(nextSession.token);
+    if (identityChanged) {
+      setRbacRoles([]);
+      setAllPermissions([]);
+      setRolePermissions(ROLE_PERMISSIONS);
+    }
     setManagedUsers((previousUsers) => {
       const withoutCurrent = previousUsers.filter((item) => item.id !== nextUser.id);
       return [nextUser, ...withoutCurrent];
@@ -145,9 +168,6 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    applySession(readStoredSession());
-    setLoading(false);
-
     const handleExpiredSession = () => {
       applySession(null);
     };
@@ -160,9 +180,8 @@ export function AuthProvider({ children }) {
   }, [applySession]);
 
   useEffect(() => {
-    if (!token || !user) {
-      setRbacRoles([]);
-      setAllPermissions([]);
+    const sessionUser = userRef.current;
+    if (!token || !sessionUser) {
       return;
     }
 
@@ -176,10 +195,10 @@ export function AuthProvider({ children }) {
           applySession({
             token,
             user: {
-              ...user,
+              ...sessionUser,
               ...profile,
-              id: profile.id ?? profile.userId ?? user.id,
-              roleId: profile.roleId ?? user.roleId,
+              id: profile.id ?? profile.userId ?? sessionUser.id,
+              roleId: profile.roleId ?? sessionUser.roleId,
             },
           });
         }
@@ -193,10 +212,10 @@ export function AuthProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [token, applySession]);
 
   useEffect(() => {
-    if (!token || !user) {
+    if (!token || !user?.id) {
       return;
     }
 

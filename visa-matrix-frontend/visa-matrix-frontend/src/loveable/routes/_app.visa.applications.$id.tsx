@@ -8,6 +8,7 @@ import * as React from "react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
 import { fetchApplicationById } from "@erp/services/application.service";
+import { asApiRecord, type ApiRecord, readApiString, readApiValue } from "@/lib/api-record";
 
 export const Route = createFileRoute("/_app/visa/applications/$id")({
   component: Page,
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/_app/visa/applications/$id")({
 
 function Page() {
   const { id } = useParams({ from: "/_app/visa/applications/$id" });
-  const [application, setApplication] = React.useState<any>(null);
+  const [application, setApplication] = React.useState<ApiRecord | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [approve, setApprove] = React.useState(false);
   const [reject, setReject] = React.useState(false);
@@ -26,7 +27,7 @@ function Page() {
       setLoading(true);
       try {
         const data = await fetchApplicationById(id);
-        if (mounted) setApplication(data);
+        if (mounted) setApplication(asApiRecord(data));
       } catch (error) {
         console.error("Failed to load application details:", error);
         if (mounted) setApplication(null);
@@ -40,31 +41,37 @@ function Page() {
     };
   }, [id]);
 
-  const app = application ?? {};
-  const applicantName = app?.applicant_name || app?.applicantName || app?.full_name || app?.customer?.full_name || app?.applicant || "—";
-  const applicationId = app?.app_id || app?.appId || app?.application_id || app?.id || "—";
-  const status = app?.status || app?.application_status || "Submitted";
-  const priority = app?.priority || app?.urgency || "Medium";
-  const country = app?.country?.name || app?.country_name || app?.country || "—";
-  const visaType = app?.visa_type?.name || app?.visa_type_name || app?.visa_type || app?.visaType || "—";
-  const assignedEmployee = app?.assigned_employee?.full_name || app?.assignedEmployee || app?.assigned_to || app?.assignee || "—";
-  const createdDate = app?.created_at || app?.createdAt || app?.submitted || "—";
-  const updatedDate = app?.updated_at || app?.updatedAt || app?.last_updated || createdDate;
-  const passportNumber = app?.passport_number || app?.passportNumber || app?.customer?.passport_number || "—";
-  const dob = app?.date_of_birth || app?.dob || app?.customer?.date_of_birth || "—";
-  const gender = app?.gender || app?.customer?.gender || "—";
-  const nationality = app?.nationality || app?.customer?.nationality || "—";
-  const email = app?.email || app?.customer?.email || "—";
-  const phone = app?.phone || app?.customer?.phone || "—";
-  const address = app?.address || app?.customer?.address || "—";
-  const destinationCountry = app?.destination_country || app?.destinationCountry || country;
-  const visaCategory = app?.visa_category || app?.visaCategory || "—";
-  const intake = app?.intake || app?.intake_date || "—";
-  const university = app?.university || "—";
-  const branch = app?.branch || "—";
-  const counsellor = app?.counsellor || "—";
-  const processor = app?.processor || assignedEmployee;
-  const progress = app?.progress ?? 0;
+  const app: ApiRecord = application ?? {};
+  const customer = asApiRecord(app.customer);
+  const countryRecord = asApiRecord(app.country);
+  const visaTypeRecord = asApiRecord(app.visa_type);
+  const employeeRecord = asApiRecord(app.assigned_employee);
+  const field = (record: ApiRecord, keys: readonly string[], fallback = "—") =>
+    readApiString(record, keys) ?? fallback;
+  const applicantName = field(app, ["applicant_name", "applicantName", "full_name", "applicant"], field(customer ?? {}, ["full_name", "name"]));
+  const applicationId = field(app, ["app_id", "appId", "application_id", "id"]);
+  const status = field(app, ["status", "application_status"], "Submitted");
+  const priority = field(app, ["priority", "urgency"], "Medium");
+  const country = readApiString(countryRecord, ["name"]) ?? field(app, ["country_name", "country"]);
+  const visaType = readApiString(visaTypeRecord, ["name"]) ?? field(app, ["visa_type_name", "visa_type", "visaType"]);
+  const assignedEmployee = readApiString(employeeRecord, ["full_name", "name"]) ?? field(app, ["assignedEmployee", "assigned_to", "assignee"]);
+  const createdDate = field(app, ["created_at", "createdAt", "submitted"]);
+  const updatedDate = field(app, ["updated_at", "updatedAt", "last_updated"], createdDate);
+  const passportNumber = field(app, ["passport_number", "passportNumber"], field(customer ?? {}, ["passport_number"]));
+  const dob = field(app, ["date_of_birth", "dob"], field(customer ?? {}, ["date_of_birth"]));
+  const gender = field(app, ["gender"], field(customer ?? {}, ["gender"]));
+  const nationality = field(app, ["nationality"], field(customer ?? {}, ["nationality"]));
+  const email = field(app, ["email"], field(customer ?? {}, ["email"]));
+  const phone = field(app, ["phone"], field(customer ?? {}, ["phone"]));
+  const address = field(app, ["address"], field(customer ?? {}, ["address"]));
+  const destinationCountry = field(app, ["destination_country", "destinationCountry"], country);
+  const visaCategory = field(app, ["visa_category", "visaCategory"]);
+  const intake = field(app, ["intake", "intake_date"]);
+  const university = field(app, ["university"]);
+  const branch = field(app, ["branch"]);
+  const counsellor = field(app, ["counsellor"]);
+  const processor = field(app, ["processor"], assignedEmployee);
+  const progress = Number(readApiValue(app, ["progress"]) ?? 0);
 
   return (
     <>

@@ -29,13 +29,11 @@ export default function ProtectedRoute({
   }
 
   if (!currentUser) {
-    // eslint-disable-next-line no-console
     console.log("ProtectedRoute: no currentUser, redirecting to /login", location.pathname);
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   if (allowedRoles.length > 0 && !hasRole(allowedRoles)) {
-    // eslint-disable-next-line no-console
     console.log("ProtectedRoute: user lacks allowedRoles", { allowedRoles, pathname: location.pathname });
     return (
       <DashboardLayout>
@@ -52,7 +50,6 @@ export default function ProtectedRoute({
   }
 
   if (module && !canAccess(module, action)) {
-    // eslint-disable-next-line no-console
     console.log("ProtectedRoute: user lacks module access", { module, action, pathname: location.pathname });
     return (
       <DashboardLayout>

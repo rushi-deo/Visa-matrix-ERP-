@@ -4,6 +4,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { Users, Target, MessageCircle, TrendingUp } from "lucide-react";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
+import { activities, monthlyRevenue } from "@/lib/mock-data";
 export const Route = createFileRoute("/_app/dashboard/crm")({ component: () => (
   <>
     <PageHeader title="CRM Dashboard" description="Pipeline, conversions and customer activity." />
@@ -13,6 +14,6 @@ export const Route = createFileRoute("/_app/dashboard/crm")({ component: () => (
       <StatCard label="Follow-ups" value="42" icon={MessageCircle} accent="warning" />
       <StatCard label="Conversion" value="32%" delta={3.1} icon={TrendingUp} accent="success" />
     </div>
-    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart /><ActivityFeed /></div>
+    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart data={monthlyRevenue} /><ActivityFeed activities={activities} /></div>
   </>
 ) });

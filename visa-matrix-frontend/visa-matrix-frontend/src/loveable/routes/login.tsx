@@ -8,21 +8,22 @@ import * as React from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { asApiRecord } from "@/lib/api-record";
 
-function loginErrorMessage(authError: any) {
-  if (!authError?.response) {
+function loginErrorMessage(authError: unknown) {
+  const authErrorRecord = asApiRecord(authError);
+  const response = asApiRecord(authErrorRecord?.response);
+  if (!response) {
     return "Unable to reach the Visa Matrix server. Check your connection and try again.";
   }
 
-  if (authError.response.status >= 500) {
+  if (typeof response.status === "number" && response.status >= 500) {
     return "The authentication service is temporarily unavailable. Please try again later.";
   }
 
-  return (
-    authError.response.data?.message ??
-    authError.response.data?.error ??
-    "Unable to sign in with those credentials."
-  );
+  const responseData = asApiRecord(response.data);
+  const message = responseData?.message ?? responseData?.error;
+  return typeof message === "string" ? message : "Unable to sign in with those credentials.";
 }
 
 export const Route = createFileRoute("/login")({ component: LoginPage });

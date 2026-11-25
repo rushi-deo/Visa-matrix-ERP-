@@ -21,14 +21,12 @@ const normalizeRequiredPermissions = (requiredPermissions = []) => {
   return requiredPermissions;
 };
 
-const loadUserAccessProfile = async (userId, decoded) => {
+const loadUserAccessProfile = async (userId) => {
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select(`
     id,
-    user_id,
     email,
-    role,
     organization_id,
     is_active,
     status,
@@ -38,12 +36,21 @@ const loadUserAccessProfile = async (userId, decoded) => {
     .maybeSingle();
 
   if (profileError) {
-    console.error("Error loading access profile:", profileError);
+    throw new Error("Unable to load the authenticated user's access profile.");
+  }
+
+  if (!profile) {
+    return {
+      blocked: true,
+      statusCode: 401,
+      message: "User account could not be verified.",
+    };
   }
 
   if (
     profile &&
-    (profile.is_active === false || profile.status === "inactive")
+    (profile.is_active === false ||
+      ["inactive", "suspended", "deleted"].includes(profile.status))
   ) {
     return {
       blocked: true,
@@ -52,7 +59,7 @@ const loadUserAccessProfile = async (userId, decoded) => {
   }
 
   const resolvedRole = normalizeEnterpriseRole(
-    profile?.user_roles?.[0]?.roles?.name || profile?.role || decoded.role,
+    profile.user_roles?.[0]?.roles?.name,
   );
 
   if (isGuestRole(resolvedRole)) {
@@ -73,27 +80,24 @@ const loadUserAccessProfile = async (userId, decoded) => {
       .eq("role_id", roleId);
 
     if (permissionError) {
-      console.error("Error loading role permissions:", permissionError);
+      throw new Error("Unable to load permissions for the authenticated user.");
     }
 
     permissions = (rolePermissions || [])
       .map((item) => item.permissions?.name)
       .filter(Boolean);
-  } else if (Array.isArray(decoded.permissions)) {
-    permissions = decoded.permissions;
   }
 
   return {
     blocked: false,
     user: {
       userId,
-      authUserId: profile?.user_id || decoded.authUserId || null,
-      email: profile?.email || decoded.email,
+      authUserId: userId,
+      email: profile.email || null,
       role: resolvedRole,
       roleCode: normalizeRoleCode(resolvedRole),
       roleId,
-      organization_id:
-        profile?.organization_id || decoded.organization_id || null,
+      organization_id: profile.organization_id || null,
       permissions,
     },
   };
@@ -114,6 +118,8 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: "Missing or invalid authorization header",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
@@ -121,7 +127,7 @@ export const authenticateToken = async (req, res, next) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, env.jwtSecret);
+      decoded = jwt.verify(token, env.jwtSecret, { algorithms: ["HS256"] });
     } catch (verifyError) {
       return res.status(401).json({
         success: false,
@@ -129,16 +135,38 @@ export const authenticateToken = async (req, res, next) => {
           verifyError.name === "TokenExpiredError"
             ? "Token has expired"
             : "Invalid token",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
+      });
+    }
+
+    if (!decoded || typeof decoded !== "object" || Array.isArray(decoded)) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
     const userId = decoded.userId || decoded.sub;
-    const accessProfile = await loadUserAccessProfile(userId, decoded);
+    if (typeof userId !== "string" || !userId.trim()) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token",
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
+      });
+    }
+
+    const accessProfile = await loadUserAccessProfile(userId);
 
     if (accessProfile.blocked) {
-      return res.status(403).json({
+      return res.status(accessProfile.statusCode || 403).json({
         success: false,
         message: accessProfile.message,
+        requestId: req.requestId || null,
+        correlationId: req.correlationId || null,
       });
     }
 
@@ -153,10 +181,15 @@ export const authenticateToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Authentication error:", error);
-    return res.status(500).json({
+    console.error("Authentication access verification failed.", {
+      errorName: error instanceof Error ? error.name : "UnknownError",
+      requestId: req.requestId || null,
+    });
+    return res.status(503).json({
       success: false,
-      message: "Authentication failed",
+      message: "Unable to verify user access.",
+      requestId: req.requestId || null,
+      correlationId: req.correlationId || null,
     });
   }
 };
@@ -179,6 +212,8 @@ export const authorizeRoles = (...allowedRoles) => {
         return res.status(401).json({
           success: false,
           message: "User authentication required",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -189,7 +224,9 @@ export const authorizeRoles = (...allowedRoles) => {
       if (!hasRoleAccess(userRole, allowedRoles)) {
         return res.status(403).json({
           success: false,
-          message: `Access denied. Allowed roles: ${allowedRoles.join(", ")}. Your role: ${userRole}`,
+          message: "Access denied.",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -199,6 +236,8 @@ export const authorizeRoles = (...allowedRoles) => {
       return res.status(500).json({
         success: false,
         message: "Authorization check failed",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
       });
     }
   };
@@ -223,6 +262,8 @@ export const authorizePermissions = (...requiredPermissions) => {
         return res.status(401).json({
           success: false,
           message: "User authentication required",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -239,7 +280,9 @@ export const authorizePermissions = (...requiredPermissions) => {
       ) {
         return res.status(403).json({
           success: false,
-          message: `Insufficient permissions. Required: ${normalizedRequiredPermissions.join(", ")}. Your permissions: ${userPermissions.join(", ")}`,
+          message: "Insufficient permissions.",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
         });
       }
 
@@ -249,6 +292,8 @@ export const authorizePermissions = (...requiredPermissions) => {
       return res.status(500).json({
         success: false,
         message: "Authorization check failed",
+          requestId: req.requestId || null,
+          correlationId: req.correlationId || null,
       });
     }
   };

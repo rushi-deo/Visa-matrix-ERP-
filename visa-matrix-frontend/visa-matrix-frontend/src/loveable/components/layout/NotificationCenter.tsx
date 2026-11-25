@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { fetchNotifications } from "@erp/services/notifications.service";
+import { asApiRecords, readApiString, readApiValue } from "@/lib/api-record";
 
 const dot: Record<string, string> = {
   info: "bg-info", success: "bg-success", warning: "bg-warning", danger: "bg-destructive",
@@ -17,7 +18,22 @@ export function NotificationCenter() {
   useEffect(() => {
     let mounted = true;
     fetchNotifications()
-      .then((rows) => mounted && setNotifications(rows as any))
+      .then((rows) => {
+        if (!mounted) return;
+        setNotifications(asApiRecords(rows).flatMap((row) => {
+          const id = readApiString(row, ["id", "notification_id"]);
+          if (!id) return [];
+          const readStatus = readApiValue(row, ["is_read", "read_status"]);
+          return [{
+            id,
+            title: readApiString(row, ["title", "subject"]) ?? "Notification",
+            desc: readApiString(row, ["message", "description", "body"]) ?? "",
+            time: readApiString(row, ["created_at", "time", "timestamp"]) ?? "",
+            unread: readStatus !== true,
+            type: readApiString(row, ["type", "severity"]) ?? "info",
+          }];
+        }));
+      })
       .catch(() => mounted && setNotifications([]));
     return () => {
       mounted = false;

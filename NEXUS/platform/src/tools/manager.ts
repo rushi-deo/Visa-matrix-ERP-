@@ -1,9 +1,9 @@
 ﻿import type {
   Tool,
+  ToolContext,
   ToolExecutor,
   ToolManager,
   ToolRegistry,
-  ToolContext,
 } from './types.js';
 
 export const createToolRegistry = (): ToolRegistry => {

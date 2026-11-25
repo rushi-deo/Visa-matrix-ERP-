@@ -71,7 +71,7 @@ export const signInWithPassword = async ({ email, password }) => {
 
   try {
     result = await supabase.auth.signInWithPassword({ email, password });
-  } catch (error) {
+  } catch {
     // The Supabase SDK throws for transport failures (DNS, TLS, timeout),
     // rather than returning its normal { data, error } result.
     throw new ExternalServiceError(

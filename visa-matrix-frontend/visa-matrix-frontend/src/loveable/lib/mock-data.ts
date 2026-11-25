@@ -147,7 +147,7 @@ export const countryStats = countries.slice(0,6).map((c,i) => ({
   country: c.name, flag: c.flag, count: 80 - i*9 + Math.floor(Math.random()*8),
 }));
 
-export const activities = [
+export const activities: ActivityItem[] = [
   { id: 1, who: "Priya Sharma", action: "approved visa application", target: "VM-20247", time: "2 min ago", type: "success" },
   { id: 2, who: "Rohan Verma", action: "uploaded documents for", target: "VM-20246", time: "12 min ago", type: "info" },
   { id: 3, who: "Ananya Patel", action: "created new lead", target: "Acme Corp", time: "1 hr ago", type: "info" },
@@ -183,3 +183,5 @@ export const documents = [
   { id: "d5", name: "MarriageCert.pdf", type: "Personal", size: "1.1 MB", uploaded: "2025-09-22", status: "Verified", owner: "Vikram Kumar" },
   { id: "d6", name: "EducationTranscript.pdf", type: "Education", size: "2.0 MB", uploaded: "2025-09-25", status: "Pending", owner: "Ishita Reddy" },
 ];
+import type { ActivityItem } from "@/types/dashboard";
+

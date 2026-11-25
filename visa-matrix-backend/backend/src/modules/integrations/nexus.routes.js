@@ -10,6 +10,7 @@ import { authenticateNexusService } from "../../middleware/nexusInternalAuth.js"
 import { requestValidator } from "../../middleware/requestValidator.js";
 import {
   customerGetIntegrationController,
+  customerListIntegrationController,
   customerCreateIntegrationController,
   applicationGetIntegrationController,
   applicationListIntegrationController,
@@ -38,9 +39,14 @@ const customerCreateBodySchema = z
     passport_number: z.string().min(3).max(50).optional(),
     nationality: z.string().min(2).max(100).optional(),
   })
-  .passthrough();
+  .strict();
 const customerGetBodySchema = z.object({
   customerId: z.string().uuid(),
+}).strict();
+const customerListBodySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().max(200).optional(),
 }).strict();
 
 const applicationGetBodySchema = z.object({
@@ -50,10 +56,10 @@ const applicationGetBodySchema = z.object({
 const applicationListBodySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
-  search: z.string().optional(),
-  status: z.string().optional(),
-  country_id: z.string().uuid().optional(),
-  visa_type_id: z.string().uuid().optional(),
+  search: z.string().max(200).optional(),
+  status: z.string().max(80).optional(),
+  countryId: z.string().uuid().optional(),
+  visaTypeId: z.string().uuid().optional(),
 }).strict();
 
 const documentGetBodySchema = z.object({
@@ -63,9 +69,9 @@ const documentGetBodySchema = z.object({
 const documentListBodySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
-  search: z.string().optional(),
-  application_id: z.string().uuid().optional(),
-  customer_id: z.string().uuid().optional(),
+  search: z.string().max(200).optional(),
+  applicationId: z.string().uuid().optional(),
+  status: z.string().max(80).optional(),
 }).strict();
 
 const leadGetBodySchema = z.object({
@@ -75,8 +81,8 @@ const leadGetBodySchema = z.object({
 const leadListBodySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
-  search: z.string().optional(),
-  status: z.string().optional(),
+  search: z.string().max(200).optional(),
+  status: z.string().max(80).optional(),
 }).strict();
 
 const countryListBodySchema = z.object({}).strict();
@@ -98,11 +104,34 @@ const formGetBodySchema = z.object({
   formId: z.string().uuid(),
 }).strict();
 
-const taskGetBodySchema = z.object({ taskId: z.string().uuid() });
-const taskListBodySchema = z.object({ query: z.record(z.string(), z.any()).optional() });
+const taskGetBodySchema = z.object({ taskId: z.string().uuid() }).strict();
+const taskListBodySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().max(200).optional(),
+  status: z.string().max(80).optional(),
+  applicationId: z.string().uuid().optional(),
+  assignedTo: z.string().uuid().optional(),
+}).strict();
 
-const workflowGetBodySchema = z.object({ workflowId: z.string().uuid() });
-const workflowListBodySchema = z.object({ query: z.record(z.string(), z.any()).optional() });
+const workflowGetBodySchema = z.object({ workflowId: z.string().uuid() }).strict();
+const workflowListBodySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().max(200).optional(),
+  triggerKey: z.string().max(120).optional(),
+  isActive: z.boolean().optional(),
+}).strict();
+
+const paymentGetBodySchema = z.object({ paymentId: z.string().uuid() }).strict();
+const paymentListBodySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().max(200).optional(),
+  applicationId: z.string().uuid().optional(),
+  status: z.string().max(80).optional(),
+  currency: z.string().regex(/^[A-Z]{3}$/).optional(),
+}).strict();
 
 const invoiceGetBodySchema = z.object({
   invoiceId: z.string().uuid(),
@@ -111,11 +140,18 @@ const invoiceGetBodySchema = z.object({
 const invoiceListBodySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
-  search: z.string().optional(),
+  search: z.string().max(200).optional(),
 }).strict();
 const formGetByCountryVisaBodySchema = z.object({
   countryId: z.string().uuid(),
   visaTypeId: z.string().uuid(),
+}).strict();
+const formListBodySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().max(200).optional(),
+  countryId: z.string().uuid().optional(),
+  visaTypeId: z.string().uuid().optional(),
 }).strict();
 
 router.post(
@@ -143,6 +179,15 @@ router.post(
   requestValidator({ body: customerCreateBodySchema }),
   customerCreateIntegrationController,
 );
+router.post(
+  "/customer.list",
+  authenticateNexusService,
+  authenticateToken,
+  authorizePermissions("customers:view"),
+  requestValidator({ body: customerListBodySchema }),
+  customerListIntegrationController,
+);
+
 router.post(
   "/customer.get",
   authenticateNexusService,
@@ -246,6 +291,8 @@ router.post(
   "/form.list",
   authenticateNexusService,
   authenticateToken,
+  authorizePermissions("forms:view"),
+  requestValidator({ body: formListBodySchema }),
   formListIntegrationController,
 );
 
@@ -253,6 +300,7 @@ router.post(
   "/form.get",
   authenticateNexusService,
   authenticateToken,
+  authorizePermissions("forms:view"),
   requestValidator({ body: formGetBodySchema }),
   formGetIntegrationController,
 );
@@ -261,10 +309,9 @@ router.post(
   "/form.getByCountryVisa",
   authenticateNexusService,
   authenticateToken,
+  authorizePermissions("forms:view"),
   requestValidator({ body: formGetByCountryVisaBodySchema }),
   formGetByCountryVisaIntegrationController,
-  invoiceGetIntegrationController,
-  invoiceListIntegrationController,
 );
 
 
@@ -273,6 +320,7 @@ router.post(
   authenticateNexusService,
   authenticateToken,
   authorizePermissions("payments:view"),
+  requestValidator({ body: paymentGetBodySchema }),
   paymentGetIntegrationController,
 );
 
@@ -281,10 +329,41 @@ router.post(
   authenticateNexusService,
   authenticateToken,
   authorizePermissions("payments:view"),
+  requestValidator({ body: paymentListBodySchema }),
   paymentListIntegrationController,
 );
-router.post("/workflow.get", authenticateNexusService, authorizePermissions("workflows:view"), requestValidator({ body: workflowGetBodySchema }), workflowGetIntegrationController);
-router.post("/workflow.list", authenticateNexusService, authorizePermissions("workflows:view"), requestValidator({ body: workflowListBodySchema }), workflowListIntegrationController);
+router.post(
+  "/task.get",
+  authenticateNexusService,
+  authenticateToken,
+  authorizePermissions("tasks:view"),
+  requestValidator({ body: taskGetBodySchema }),
+  taskGetIntegrationController,
+);
+router.post(
+  "/task.list",
+  authenticateNexusService,
+  authenticateToken,
+  authorizePermissions("tasks:view"),
+  requestValidator({ body: taskListBodySchema }),
+  taskListIntegrationController,
+);
+router.post(
+  "/workflow.get",
+  authenticateNexusService,
+  authenticateToken,
+  authorizePermissions("workflow:view"),
+  requestValidator({ body: workflowGetBodySchema }),
+  workflowGetIntegrationController,
+);
+router.post(
+  "/workflow.list",
+  authenticateNexusService,
+  authenticateToken,
+  authorizePermissions("workflow:view"),
+  requestValidator({ body: workflowListBodySchema }),
+  workflowListIntegrationController,
+);
 
 export default router;
 

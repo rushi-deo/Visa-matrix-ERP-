@@ -7,16 +7,19 @@ export async function getFormSchema(country, visaType) {
   }
 
   const { data, error } = await supabase
-    .from("form_schemas")
-    .select("schema")
-    .ilike("country", country)
-    .ilike("visa_type", visaType)
-    .single();
+    .from("form_configs")
+    .select("form_schema")
+    .eq("country_id", country)
+    .eq("visa_type_id", visaType)
+    .eq("status", "published")
+    .order("version", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
     console.error("Error fetching form schema:", error);
     return null;
   }
 
-  return data?.schema ?? null;
+  return data?.form_schema ?? null;
 }

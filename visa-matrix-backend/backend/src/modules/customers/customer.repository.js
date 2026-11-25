@@ -21,6 +21,7 @@ export const listCustomers = (query = {}, organizationId = null) => {
     searchTerm: query.search,
     searchColumns: ["full_name", "email", "phone", "passport_number"],
     filters: organizationId ? { organization_id: organizationId } : {},
+    notNullFilters: organizationId ? [] : ["organization_id"],
   });
 };
 
@@ -31,6 +32,7 @@ const applyOrganizationFilter = (query, organizationId) => {
 export const getCustomerById = async (id, organizationId = null) => {
   let query = supabase.from("customers").select("*").eq("id", id);
   query = applyOrganizationFilter(query, organizationId);
+  if (!organizationId) query = query.not("organization_id", "is", null);
 
   const { data, error } = await query.maybeSingle();
 
@@ -50,6 +52,7 @@ export const createCustomer = (payload) => customerCrudRepository.create(payload
 export const updateCustomer = async (id, payload, organizationId = null) => {
   let query = supabase.from("customers").update(payload).eq("id", id);
   query = applyOrganizationFilter(query, organizationId);
+  if (!organizationId) query = query.not("organization_id", "is", null);
 
   const { data, error } = await query.select("*").maybeSingle();
 
@@ -67,6 +70,7 @@ export const updateCustomer = async (id, payload, organizationId = null) => {
 export const deleteCustomer = async (id, organizationId = null) => {
   let query = supabase.from("customers").delete().eq("id", id);
   query = applyOrganizationFilter(query, organizationId);
+  if (!organizationId) query = query.not("organization_id", "is", null);
 
   const { data, error } = await query.select("id").maybeSingle();
 

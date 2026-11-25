@@ -67,7 +67,7 @@ import type {
 interface ProfileDetailPageProps {
   entity: ProfileEntityType;
   id: string;
-  backTo: string;
+  backTo: "/crm/customers" | "/crm/leads" | "/finance/payments" | "/hr/employees";
   backLabel: string;
 }
 
@@ -503,7 +503,7 @@ export function ProfileDetailPage({
         actions={
           <>
             <Button asChild variant="outline">
-              <Link to={backTo as any}>
+              <Link to={backTo}>
                 <ArrowLeft className="mr-2 size-4" />
                 {backLabel}
               </Link>

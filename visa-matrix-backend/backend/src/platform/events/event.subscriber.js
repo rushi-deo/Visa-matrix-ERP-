@@ -1,4 +1,4 @@
-import eventRegistry, { EventRegistry } from './event.registry.js';
+import eventRegistry from './event.registry.js';
 
 /**
  * Platform event subscriber responsible for wiring handlers to the registry

@@ -1,5 +1,4 @@
 ﻿import { createAutomationManager } from '../../automation/manager.js';
-import { createConfirmationManager } from '../../security/confirmation/manager.js';
 import { createBrainPlanner } from '../../brain/planner.js';
 import { createConnectorManager } from '../../connectors/manager.js';
 import { createEngineManager } from '../../engines/core/manager.js';
@@ -10,6 +9,7 @@ import { createOrchestrator } from '../../orchestration/manager.js';
 import { createExecutionPipeline } from '../../orchestration/pipeline.js';
 import { createPluginManager } from '../../plugins/manager.js';
 import { createProviderManager } from '../../providers/manager.js';
+import { createConfirmationManager } from '../../security/confirmation/manager.js';
 import type { Container } from '../../shared/di.js';
 import { createToken } from '../../shared/di.js';
 import { createToolManager } from '../../tools/manager.js';
@@ -22,8 +22,8 @@ import { createProviderAgent } from '../../workforce/provider-agent.js';
 import { createResearchAgent } from '../../workforce/research-agent.js';
 import { createSupervisorAgent } from '../../workforce/supervisor-agent.js';
 import { createVisaAgent } from '../../workforce/visa-agent.js';
-import { PlannerToken } from './service-tokens.js';
 import { ConfirmationManagerToken } from './confirmation-token.js';
+import { PlannerToken } from './service-tokens.js';
 import {
   AgentManagerToken,
   AutomationManagerToken,

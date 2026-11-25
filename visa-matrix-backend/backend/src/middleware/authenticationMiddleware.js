@@ -197,7 +197,7 @@ export async function optionalAuth(req, res, next) {
     }
 
     next();
-  } catch (error) {
+  } catch {
     next();
   }
 }

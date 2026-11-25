@@ -3,13 +3,21 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Inbox, Send, Archive, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+type MailFolder = { icon: LucideIcon; label: string; count: string };
+const folders: MailFolder[] = [
+  { icon: Inbox, label: "Inbox", count: "18" },
+  { icon: Send, label: "Sent", count: "" },
+  { icon: Archive, label: "Archive", count: "" },
+  { icon: Trash2, label: "Trash", count: "" },
+];
 export const Route = createFileRoute("/_app/email")({ component: () => (
   <>
     <PageHeader title="Email Center" actions={<Button><Plus className="size-4 mr-2" />Compose</Button>} />
     <Card className="grid grid-cols-1 md:grid-cols-[200px_1fr] min-h-[60vh] overflow-hidden">
       <div className="border-r p-3 space-y-1">
-        {[[Inbox,"Inbox","18"],[Send,"Sent",""],[Archive,"Archive",""],[Trash2,"Trash",""]].map(([I,l,c]: any, i) => (
-          <Button key={i} variant="ghost" className="w-full justify-between"><span className="inline-flex items-center gap-2"><I className="size-4" />{l}</span>{c && <span className="text-xs text-muted-foreground">{c}</span>}</Button>
+        {folders.map(({ icon: Icon, label, count }) => (
+          <Button key={label} variant="ghost" className="w-full justify-between"><span className="inline-flex items-center gap-2"><Icon className="size-4" />{label}</span>{count && <span className="text-xs text-muted-foreground">{count}</span>}</Button>
         ))}
       </div>
       <div className="divide-y">{Array.from({length: 8}).map((_, i) => (

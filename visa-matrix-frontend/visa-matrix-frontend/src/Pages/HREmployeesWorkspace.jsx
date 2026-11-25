@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import DataTable from "../components/DataTable";
 import StatusPill from "../components/StatusPill";
@@ -21,13 +21,8 @@ export default function HREmployeesWorkspace() {
     [search, departmentFilter, statusFilter],
   );
 
-  useEffect(() => {
-    if (searchParams.get("create") === "1") {
-      setDrawerOpen(true);
-    }
-  }, [searchParams]);
-
-  const employees = data?.items ?? [];
+  const showDrawer = drawerOpen || searchParams.get("create") === "1";
+  const employees = useMemo(() => data?.items ?? [], [data?.items]);
   const departments = useMemo(
     () => [...new Set(["Executive", "Human Resources", "Operations", "Finance", ...employees.map((employee) => employee.department)].filter(Boolean))],
     [employees],
@@ -148,7 +143,7 @@ export default function HREmployeesWorkspace() {
         ) : null}
       </article>
 
-      {drawerOpen ? (
+      {showDrawer ? (
         <HrCreateEmployeeDrawer
           departments={departments}
           managers={managerOptions}

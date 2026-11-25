@@ -54,9 +54,10 @@ import { startWorkflowWorker } from "./jobs/workflowJob.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const activeWorkers = [];
-const allowedCorsOrigins = env.isProduction
-  ? env.corsOrigins
-  : ["http://localhost:5173", ...env.corsOrigins];
+const configuredCorsOrigins = env.corsOrigins.filter((origin) => origin !== "*");
+const allowedCorsOrigins = env.nodeEnv === "development"
+  ? ["http://localhost:5173", ...configuredCorsOrigins]
+  : configuredCorsOrigins;
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -151,8 +152,9 @@ export const createServerApp = () => {
   app.use(`${env.apiPrefix}/visa-rules`, visaRuleRoutes);
   app.use(`${env.apiPrefix}/documents`, documentRoutes);
   app.use(`${env.apiPrefix}/forms`, formRoutes);
-  // DEV ONLY: keep rule-engine validation available without auth while testing.
-  app.use(`${env.apiPrefix}`, validationRoutes);
+  if (env.nodeEnv === "development") {
+    app.use(`${env.apiPrefix}`, validationRoutes);
+  }
   app.use("/api/invoices", existingInvoiceRoutes);
   app.use("/api", invoiceRoutes);
   app.use(`${env.apiPrefix}`, paymentCreateRoutes);

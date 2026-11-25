@@ -4,6 +4,7 @@ import { AppError, NotFoundError, RequestValidationError, fromSupabaseError } fr
 import {
   applyTenantToPayload,
   assertTenantAccess,
+  getTenantOrganizationScope,
 } from "../utils/tenantSecurity.js";
 
 const normalizeTextValue = (value) => String(value ?? "").trim();
@@ -13,12 +14,15 @@ const toNumberValue = (value, fallback = 0) => {
   return Number.isFinite(numericValue) ? numericValue : fallback;
 };
 
-const fetchInvoiceRecord = async (invoiceId) => {
-  const { data, error } = await supabase
+const fetchInvoiceRecord = async (invoiceId, organizationId = null) => {
+  let request = supabase
     .from("invoices")
     .select("*")
-    .eq("id", invoiceId)
-    .maybeSingle();
+    .eq("id", invoiceId);
+  request = organizationId
+    ? request.eq("organization_id", organizationId)
+    : request.not("organization_id", "is", null);
+  const { data, error } = await request.maybeSingle();
 
   if (error) {
     throw fromSupabaseError(error, "Failed to fetch invoice.");
@@ -56,18 +60,20 @@ const tryInsertPayment = async (payloads) => {
   throw fromSupabaseError(lastError, "Failed to create payment.");
 };
 
-const updateInvoiceAsPaid = async (invoiceId) => {
+const updateInvoiceAsPaid = async (invoiceId, organizationId) => {
   const paidAt = new Date().toISOString();
 
-  const { data, error } = await supabase
+  let request = supabase
     .from("invoices")
     .update({
       status: "paid",
       paid_at: paidAt,
     })
-    .eq("id", invoiceId)
-    .select("*")
-    .maybeSingle();
+    .eq("id", invoiceId);
+  request = organizationId
+    ? request.eq("organization_id", organizationId)
+    : request.not("organization_id", "is", null);
+  const { data, error } = await request.select("*").maybeSingle();
 
   if (error) {
     throw fromSupabaseError(error, "Failed to update invoice after payment.");
@@ -94,7 +100,8 @@ export const createPayment = async (
     throw new RequestValidationError("payment_method is required.");
   }
 
-  const invoice = await fetchInvoiceRecord(invoiceId);
+  const organizationId = getTenantOrganizationScope(authContext);
+  const invoice = await fetchInvoiceRecord(invoiceId, organizationId);
   assertTenantAccess(invoice, authContext, "invoice");
   const resolvedAmount = toNumberValue(
     amount,
@@ -106,6 +113,7 @@ export const createPayment = async (
     applyTenantToPayload({
       invoice_id: invoice.id,
       application_id: invoice.application_id ?? null,
+      organization_id: invoice.organization_id,
       invoice_number: invoice.invoice_no ?? invoice.invoice_number ?? String(invoice.id),
       amount: resolvedAmount,
       payment_method: method,
@@ -116,6 +124,7 @@ export const createPayment = async (
     }, authContext),
     applyTenantToPayload({
       application_id: invoice.application_id ?? null,
+      organization_id: invoice.organization_id,
       invoice_number: invoice.invoice_no ?? invoice.invoice_number ?? String(invoice.id),
       amount: resolvedAmount,
       payment_method: method,
@@ -127,7 +136,7 @@ export const createPayment = async (
 
   try {
     const payment = await tryInsertPayment(paymentPayloads);
-    const updatedInvoice = await updateInvoiceAsPaid(invoice.id);
+    const updatedInvoice = await updateInvoiceAsPaid(invoice.id, organizationId);
 
     return {
       payment,

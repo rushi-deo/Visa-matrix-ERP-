@@ -1,8 +1,8 @@
 ﻿import { describe, expect, it } from 'vitest';
 
-import { createToolManager } from '../src/tools/index.js';
-import { createErpTool } from '../src/tools/erp-tool.js';
 import { createConfirmationManager } from '../src/security/confirmation/manager.js';
+import { createErpTool } from '../src/tools/erp-tool.js';
+import { createToolManager } from '../src/tools/index.js';
 
 describe('tools', () => {
   it('registers and executes tools', async () => {

@@ -46,6 +46,8 @@ export const getSafeAdminUser = (adminUser) => {
     return null;
   }
 
-  const { password_hash, password, ...safeAdminUser } = adminUser;
+  const safeAdminUser = { ...adminUser };
+  delete safeAdminUser.password_hash;
+  delete safeAdminUser.password;
   return safeAdminUser;
 };

@@ -1,6 +1,7 @@
 ﻿import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  VISA_MATRIX_ACTIONS,
   VisaMatrixBackendConnector,
 } from '../src/connectors/visa-matrix-backend.js';
 import { ValidationError } from '../src/shared/errors.js';
@@ -18,6 +19,34 @@ const connector = (timeoutMs = 1_000) =>
     internalToken: 'test-internal-token',
     timeoutMs,
   });
+
+const id = '123e4567-e89b-12d3-a456-426614174000';
+const validPayloads: Record<string, Record<string, unknown>> = {
+  'customer.get': { customerId: id },
+  'customer.list': { page: 1, limit: 25 },
+  'customer.create': { full_name: 'Test Customer' },
+  'application.get': { applicationId: id },
+  'application.list': { page: 1, limit: 25 },
+  'document.get': { documentId: id },
+  'document.list': { applicationId: id },
+  'lead.get': { leadId: id },
+  'lead.list': { page: 1 },
+  'form.list': { countryId: id },
+  'form.get': { formId: id },
+  'form.getByCountryVisa': { countryId: id, visaTypeId: id },
+  'country.list': {},
+  'visa-type.list': { countryId: id },
+  'visa-requirements.get': { countryId: id, visaTypeId: id },
+  'visa-rules.get': { visaRuleId: id },
+  'task.get': { taskId: id },
+  'task.list': { applicationId: id },
+  'workflow.get': { workflowId: id },
+  'workflow.list': { triggerKey: 'application_created', isActive: true },
+  'invoice.get': { invoiceId: id },
+  'invoice.list': { page: 1, limit: 25 },
+  'payment.get': { paymentId: id },
+  'payment.list': { applicationId: id, currency: 'INR' },
+};
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
@@ -143,7 +172,7 @@ describe('Visa Matrix ERP connector', () => {
   });
   it('rejects unsupported actions and extra customer.get fields', async () => {
     await expect(
-      connector().request({ action: 'customer.list' }, {}),
+      connector().request({ action: 'customer.list', payload: { unexpected: true } }, {}),
     ).rejects.toBeInstanceOf(ValidationError);
     await expect(
       connector().request(
@@ -162,7 +191,7 @@ describe('Visa Matrix ERP connector', () => {
   it.each([
     [401, 401, 'ERP_AUTHENTICATION_FAILED'],
     [403, 403, 'ERP_AUTHORIZATION_FAILED'],
-    [404, 404, 'ERP_CUSTOMER_NOT_FOUND'],
+    [404, 404, 'ERP_RESOURCE_NOT_FOUND'],
     [500, 502, 'ERP_UPSTREAM_FAILURE'],
   ])('maps ERP status %s safely', async (upstreamStatus, status, code) => {
     globalThis.fetch = vi.fn(async () => new Response('{}', { status: upstreamStatus })) as typeof fetch;
@@ -220,5 +249,66 @@ describe('Visa Matrix ERP connector', () => {
     await expect(instance.health()).resolves.toEqual({ ok: false });
     await instance.connect({ requestId: 'bootstrap', correlationId: 'bootstrap' });
     await expect(instance.health()).resolves.toEqual({ ok: true });
+  });
+
+  it.each(Object.entries(VISA_MATRIX_ACTIONS))(
+    'maps %s to its explicit ERP endpoint and accepts an array response',
+    async (action, definition) => {
+      const fetchMock = vi.fn(async () => new Response(JSON.stringify({
+        success: true,
+        data: [],
+        requestId: 'request-action',
+        correlationId: 'correlation-action',
+      }), { status: 200 }));
+      globalThis.fetch = fetchMock as typeof fetch;
+
+      const result = await connector().request(
+        { action, payload: validPayloads[action] },
+        { requestId: 'request-action', correlationId: 'correlation-action' },
+      );
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `http://erp.example.test${definition.path}`,
+        expect.objectContaining({ method: 'POST' }),
+      );
+      expect(result.payload?.data).toEqual([]);
+    },
+  );
+
+  it.each(Object.keys(VISA_MATRIX_ACTIONS))(
+    'rejects unknown fields for %s before making a request',
+    async (action) => {
+      const fetchMock = vi.fn();
+      globalThis.fetch = fetchMock as typeof fetch;
+
+      await expect(connector().request(
+        { action, payload: { unexpected: true } },
+        {},
+      )).rejects.toBeInstanceOf(ValidationError);
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not route unknown actions to visa-rules.get', async () => {
+    const fetchMock = vi.fn();
+    globalThis.fetch = fetchMock as typeof fetch;
+    await expect(connector().request({ action: 'visa-rule.lookup', payload: {} }, {}))
+      .rejects.toMatchObject({ code: 'ERP_UNSUPPORTED_ACTION' });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { success: true, data: null, requestId: 'r', correlationId: 'c' },
+    { success: true, data: {}, requestId: '', correlationId: 'c' },
+    { success: true, data: {}, requestId: 'r', correlationId: 4 },
+  ])('rejects malformed response envelopes', async (body) => {
+    globalThis.fetch = vi.fn(async () =>
+      new Response(JSON.stringify(body), { status: 200 }),
+    ) as typeof fetch;
+
+    await expect(connector().request(
+      { action: 'country.list', payload: {} },
+      {},
+    )).rejects.toMatchObject({ code: 'ERP_INVALID_RESPONSE', status: 502 });
   });
 });

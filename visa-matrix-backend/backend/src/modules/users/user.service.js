@@ -6,7 +6,9 @@ const sanitizeUser = (user) => {
     return null;
   }
 
-  const { password, encrypted_password, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete safeUser.password;
+  delete safeUser.encrypted_password;
   return safeUser;
 };
 

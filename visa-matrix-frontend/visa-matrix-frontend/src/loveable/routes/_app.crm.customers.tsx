@@ -83,14 +83,14 @@ function Page() {
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
-  const loadCustomers = React.useCallback(async () => {
-    setLoading(true);
-    setLoadError(null);
+  const loadCustomers = React.useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
 
     try {
       const response = await apiClient.get("/customers");
       const customers = unwrapCustomers(extractResponseData(response));
       setData(customers.map(toCustomerRow));
+      setLoadError(null);
     } catch (error) {
       console.error("Failed to load customers:", error);
       const message =
@@ -103,7 +103,9 @@ function Page() {
   }, []);
 
   React.useEffect(() => {
-    void loadCustomers();
+    // The request updates state only after the backend responds.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadCustomers(false);
   }, [loadCustomers]);
 
   const cols: Column<CustomerRow>[] = [

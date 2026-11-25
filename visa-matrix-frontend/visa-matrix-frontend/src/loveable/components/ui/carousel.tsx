@@ -49,16 +49,12 @@ const Carousel = React.forwardRef<
     },
     plugins,
   );
-  const [canScrollPrev, setCanScrollPrev] = React.useState(false);
-  const [canScrollNext, setCanScrollNext] = React.useState(false);
+  const [, setSelectionVersion] = React.useState(0);
+  const canScrollPrev = api?.canScrollPrev() ?? false;
+  const canScrollNext = api?.canScrollNext() ?? false;
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) {
-      return;
-    }
-
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+  const onSelect = React.useCallback(() => {
+    setSelectionVersion((version) => version + 1);
   }, []);
 
   const scrollPrev = React.useCallback(() => {
@@ -87,6 +83,7 @@ const Carousel = React.forwardRef<
       return;
     }
 
+    // Publish the external Embla controller when the instance becomes available.
     setApi(api);
   }, [api, setApi]);
 
@@ -95,12 +92,12 @@ const Carousel = React.forwardRef<
       return;
     }
 
-    onSelect(api);
     api.on("reInit", onSelect);
     api.on("select", onSelect);
 
     return () => {
       api?.off("select", onSelect);
+      api?.off("reInit", onSelect);
     };
   }, [api, onSelect]);
 

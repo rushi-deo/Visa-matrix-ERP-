@@ -7,6 +7,7 @@ import {
 } from "./customer.repository.js";
 import { ForbiddenError, RequestValidationError } from "../../core/errors.js";
 import { normalizeRoleCode } from "../../config/rbac.js";
+import { applyTenantToPayload, assertTenantAccess } from "../../utils/tenantSecurity.js";
 
 const TENANT_WIDE_ROLE_CODES = new Set(["admin", "super_admin"]);
 
@@ -38,6 +39,7 @@ export const getCustomerTenantContext = (authContext = {}) => {
 export const sanitizeCustomerPayload = (payload = {}) => {
   const sanitizedPayload = { ...payload };
   delete sanitizedPayload.organization_id;
+  delete sanitizedPayload.organizationId;
 
   const data = {
     ...sanitizedPayload,
@@ -59,32 +61,37 @@ export const getCustomers = async (query, authContext) => {
 };
 export const getCustomer = async (id, authContext) => {
   const { organizationId } = getCustomerTenantContext(authContext);
-  return getCustomerById(id, organizationId);
+  return assertTenantAccess(
+    await getCustomerById(id, organizationId),
+    authContext,
+    "customer",
+  );
 };
 export const createCustomerRecord = async (payload, authContext = {}) => {
 
   const customer = sanitizeCustomerPayload(payload);
-  const organizationId = authContext.organization_id;
-
   if (!customer.full_name) {
     throw new RequestValidationError("Customer name is required.");
   }
 
-  if (!organizationId) {
-    throw new RequestValidationError(
-      "Customer organization ownership is required.",
-    );
-  }
-
-  customer.organization_id = organizationId;
-
-  return createCustomer(customer);
+  return createCustomer(applyTenantToPayload(customer, authContext));
 };
 export const updateCustomerRecord = async (id, payload, authContext) => {
   const { organizationId } = getCustomerTenantContext(authContext);
-  return updateCustomer(id, sanitizeCustomerPayload(payload), organizationId);
+  const currentCustomer = await getCustomerById(id, organizationId);
+  assertTenantAccess(currentCustomer, authContext, "customer");
+  return updateCustomer(
+    id,
+    applyTenantToPayload({
+      ...sanitizeCustomerPayload(payload),
+      organization_id: currentCustomer.organization_id,
+    }, authContext),
+    organizationId,
+  );
 };
 export const deleteCustomerRecord = async (id, authContext) => {
   const { organizationId } = getCustomerTenantContext(authContext);
+  const currentCustomer = await getCustomerById(id, organizationId);
+  assertTenantAccess(currentCustomer, authContext, "customer");
   return deleteCustomer(id, organizationId);
 };

@@ -7,7 +7,7 @@ import {
 } from "./payment.service.js";
 
 export const listPaymentsController = asyncHandler(async (req, res) => {
-  const data = await getPayments(req.query);
+  const data = await getPayments(req.query, req.auth);
   return sendSuccess(res, data);
 });
 

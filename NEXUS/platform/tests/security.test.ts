@@ -1,7 +1,7 @@
 ﻿import { describe, expect, it } from 'vitest';
 
-import { createSecurityManager } from '../src/security/index.js';
 import { createConfirmationManager } from '../src/security/confirmation/manager.js';
+import { createSecurityManager } from '../src/security/index.js';
 
 describe('security', () => {
   it('evaluates policies with framework-only logic', () => {

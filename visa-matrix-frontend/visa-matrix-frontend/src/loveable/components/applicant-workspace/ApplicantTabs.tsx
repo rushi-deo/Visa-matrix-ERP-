@@ -5,9 +5,10 @@ import { ApplicantTimeline } from "./ApplicantTimeline";
 import { ApplicantPayments } from "./ApplicantPayments";
 import { ApplicantNotes } from "./ApplicantNotes";
 import { ApplicantActivity } from "./ApplicantActivity";
+import type { ApiRecord } from "@/lib/api-record";
 
 interface ApplicantTabsProps {
-  applicant: any;
+  applicant: ApiRecord;
   loading: boolean;
   applicationId: string;
   error?: string | null;

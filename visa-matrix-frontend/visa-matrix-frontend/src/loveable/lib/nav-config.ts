@@ -3,15 +3,16 @@ import {
   FileText, Plane, Globe, Receipt, ListChecks,
   BarChart3, Settings, ShieldCheck, ClipboardList, Briefcase,
   Bell, Megaphone, KanbanSquare, CheckSquare, CreditCard,
-  TrendingUp, FileCheck2, Key, Server, History, UserPlus, PlusCircle,
+  TrendingUp, Key, Server, History, UserPlus, PlusCircle,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export type Role = "super_admin" | "hr" | "finance" | "crm" | "employee";
 
 export interface NavItem {
   label: string;
   to: string;
-  icon: any;
+  icon: LucideIcon;
   roles?: Role[];
 }
 export interface NavGroup {

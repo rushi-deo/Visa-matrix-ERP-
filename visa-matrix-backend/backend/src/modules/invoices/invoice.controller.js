@@ -1,4 +1,3 @@
-import supabase from "../../config/supabase.js";
 import {
   getInvoices,
   getInvoice,
@@ -9,7 +8,7 @@ import {
 
 export const listInvoices = async (req, res) => {
   try {
-    const data = await getInvoices(req.query);
+    const data = await getInvoices(req.query, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -18,16 +17,16 @@ export const listInvoices = async (req, res) => {
   } catch (error) {
     console.error("Invoice List Error:", error);
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      error: error.message,
+      error: error.statusCode && error.statusCode < 500 ? error.message : "Invoice request failed.",
     });
   }
 };
 
 export const getInvoiceById = async (req, res) => {
   try {
-    const invoice = await getInvoice(req.params.id);
+    const invoice = await getInvoice(req.params.id, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -36,9 +35,9 @@ export const getInvoiceById = async (req, res) => {
   } catch (error) {
     console.error("Invoice Detail Error:", error);
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      error: error.message,
+      error: error.statusCode && error.statusCode < 500 ? error.message : "Invoice request failed.",
     });
   }
 };
@@ -53,7 +52,7 @@ export const createInvoice = async (req, res) => {
       tax_amount: 0,
       total_amount: amount,
       status: status || "pending",
-    });
+    }, req.auth);
 
     return res.status(201).json({
       success: true,
@@ -63,9 +62,9 @@ export const createInvoice = async (req, res) => {
   } catch (error) {
     console.error("Create Invoice Error:", error);
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      error: error.message,
+      error: error.statusCode && error.statusCode < 500 ? error.message : "Invoice request failed.",
     });
   }
 };
@@ -74,7 +73,8 @@ export const updateInvoice = async (req, res) => {
   try {
     const invoice = await updateInvoiceRecord(
       req.params.id,
-      req.body
+      req.body,
+      req.auth,
     );
 
     return res.status(200).json({
@@ -85,16 +85,16 @@ export const updateInvoice = async (req, res) => {
   } catch (error) {
     console.error("Update Invoice Error:", error);
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      error: error.message,
+      error: error.statusCode && error.statusCode < 500 ? error.message : "Invoice request failed.",
     });
   }
 };
 
 export const deleteInvoice = async (req, res) => {
   try {
-    await deleteInvoiceRecord(req.params.id);
+    await deleteInvoiceRecord(req.params.id, req.auth);
 
     return res.status(200).json({
       success: true,
@@ -103,9 +103,9 @@ export const deleteInvoice = async (req, res) => {
   } catch (error) {
     console.error("Delete Invoice Error:", error);
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      error: error.message,
+      error: error.statusCode && error.statusCode < 500 ? error.message : "Invoice request failed.",
     });
   }
 };

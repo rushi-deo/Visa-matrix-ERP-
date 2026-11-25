@@ -11,6 +11,8 @@ import {
   signOutUser,
 } from "@erp/services/authService";
 
+const EMPTY_PERMISSIONS: string[] = [];
+
 export type Role = string;
 
 export interface User {
@@ -267,7 +269,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [clearSession, token]);
 
-  const permissions = React.useMemo(() => user?.permissions ?? [], [user?.permissions]);
+  const permissions = user?.permissions ?? EMPTY_PERMISSIONS;
   const role = user?.role ?? "";
 
   const hasRole = React.useCallback(
@@ -285,7 +287,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return allowed === currentRole || normalizeRoleCode(allowedRole) === currentRoleCode;
       });
     },
-    [user?.role],
+    [user],
   );
 
   const canAccess = React.useCallback(

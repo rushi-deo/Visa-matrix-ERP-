@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import DataTable from "../components/DataTable";
 import PageHeader from "../components/PageHeader";
 import DashboardLayout from "../layout/DashboardLayout";
@@ -27,8 +27,10 @@ export default function Admin() {
     canAccess,
   } = useAuth();
   const [selectedRoleId, setSelectedRoleId] = useState("");
-  const [permissionDraft, setPermissionDraft] = useState({});
-  const [roleDraft, setRoleDraft] = useState({ name: "", description: "" });
+  const [permissionDraftRoleId, setPermissionDraftRoleId] = useState(null);
+  const [permissionDraftValue, setPermissionDraftValue] = useState({});
+  const [roleDraftRoleId, setRoleDraftRoleId] = useState(null);
+  const [roleDraftValue, setRoleDraftValue] = useState({ name: "", description: "" });
   const [userSearch, setUserSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
@@ -41,6 +43,14 @@ export default function Admin() {
     [rbacRoles, roles],
   );
   const selectedRole = roleRecords.find((role) => role.id === selectedRoleId) ?? roleRecords[0];
+  const permissionDraft = selectedRole && permissionDraftRoleId === selectedRole.id
+    ? permissionDraftValue
+    : selectedRole
+      ? rolePermissions[selectedRole.name] ?? rolePermissions[selectedRole.code] ?? rolePermissions[selectedRole.id] ?? {}
+      : {};
+  const roleDraft = selectedRole && roleDraftRoleId === selectedRole.id
+    ? roleDraftValue
+    : { name: selectedRole?.name ?? "", description: selectedRole?.description ?? "" };
 
   const permissionModules = useMemo(() => {
     const modulesWithManagedActions = allPermissions
@@ -49,30 +59,6 @@ export default function Admin() {
 
     return [...new Set(modulesWithManagedActions.length > 0 ? modulesWithManagedActions : modules)];
   }, [allPermissions, modules]);
-
-  useEffect(() => {
-    if (!selectedRoleId && roleRecords[0]?.id) {
-      setSelectedRoleId(roleRecords[0].id);
-    }
-  }, [roleRecords, selectedRoleId]);
-
-  useEffect(() => {
-    if (!selectedRole) {
-      return;
-    }
-
-    const existingMap =
-      rolePermissions[selectedRole.name] ??
-      rolePermissions[selectedRole.code] ??
-      rolePermissions[selectedRole.id] ??
-      {};
-
-    setPermissionDraft(existingMap);
-    setRoleDraft({
-      name: selectedRole.name ?? "",
-      description: selectedRole.description ?? "",
-    });
-  }, [rolePermissions, selectedRole]);
 
   const permissionRows = permissionModules.map((moduleName) => ({
     module: moduleName,
@@ -92,17 +78,26 @@ export default function Admin() {
   });
 
   const togglePermission = (moduleName, action) => {
-    setPermissionDraft((previousDraft) => {
-      const currentActions = previousDraft[moduleName] ?? [];
+    if (!selectedRole) return;
+    setPermissionDraftRoleId(selectedRole.id);
+    setPermissionDraftValue((previousDraft) => {
+      const baseDraft = permissionDraftRoleId === selectedRole.id ? previousDraft : permissionDraft;
+      const currentActions = baseDraft[moduleName] ?? [];
       const nextActions = currentActions.includes(action)
         ? currentActions.filter((item) => item !== action)
         : [...currentActions, action];
 
       return {
-        ...previousDraft,
+        ...baseDraft,
         [moduleName]: nextActions,
       };
     });
+  };
+
+  const updateRoleDraft = (changes) => {
+    if (!selectedRole) return;
+    setRoleDraftRoleId(selectedRole.id);
+    setRoleDraftValue({ ...roleDraft, ...changes });
   };
 
   const saveRolePermissions = async () => {
@@ -223,7 +218,7 @@ export default function Admin() {
               <span>Name</span>
               <input
                 onChange={(event) =>
-                  setRoleDraft((draft) => ({ ...draft, name: event.target.value }))
+                  updateRoleDraft({ name: event.target.value })
                 }
                 value={roleDraft.name}
               />
@@ -232,7 +227,7 @@ export default function Admin() {
               <span>Description</span>
               <input
                 onChange={(event) =>
-                  setRoleDraft((draft) => ({ ...draft, description: event.target.value }))
+                  updateRoleDraft({ description: event.target.value })
                 }
                 value={roleDraft.description ?? ""}
               />

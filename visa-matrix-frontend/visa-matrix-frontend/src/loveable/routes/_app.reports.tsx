@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { StatusPie } from "@/components/dashboard/StatusPie";
 import { Input } from "@/components/ui/input";
+import { monthlyRevenue, statusDistribution } from "@/lib/mock-data";
 export const Route = createFileRoute("/_app/reports")({ component: () => (
   <>
     <PageHeader title="Reports & Analytics" description="Slice and export business insights."
@@ -16,6 +17,6 @@ export const Route = createFileRoute("/_app/reports")({ component: () => (
       <StatCard label="Applications" value="2,348" delta={12.4} icon={Plane} accent="info" />
       <StatCard label="Revenue YTD" value="$1.04M" delta={22.6} icon={Wallet} accent="success" />
     </div>
-    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart /><StatusPie /></div>
+    <div className="grid gap-4 lg:grid-cols-3"><RevenueChart data={monthlyRevenue} /><StatusPie data={statusDistribution} /></div>
   </>
 ) });
